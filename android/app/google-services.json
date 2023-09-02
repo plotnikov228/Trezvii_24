@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "960187355480",
+    "project_id": "trezvii24-5531a",
+    "storage_bucket": "trezvii24-5531a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960187355480:android:274293a6a6b5263cbc552d",
+        "android_client_info": {
+          "package_name": "com.example.sober_driver_analog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960187355480-la76ibgvmmj1dt6djf8o1ntj6u6kleq1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTMkM3i9YYJmzxO-CEVE63XvVjRWh-LAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960187355480-la76ibgvmmj1dt6djf8o1ntj6u6kleq1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:sober_driver_analog/presentation/features/home/ui/map_page/bloc/bloc/bloc.dart';
+import 'package:sober_driver_analog/presentation/features/home/ui/map_page/bloc/state/state.dart';
+import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
+import 'package:sober_driver_analog/presentation/widgets/payment_method_card.dart';
+
+import '../../../../../../utils/size_util.dart';
+import '../../../../../../widgets/app_snack_bar.dart';
+import '../../bloc/event/event.dart';
+import '../map_bottom_bar.dart';
+
+class SelectPaymentMethodWidget extends StatelessWidget {
+  final MapBloc bloc;
+  final SelectPaymentMethodMapState state;
+
+  const SelectPaymentMethodWidget(
+      {super.key, required this.bloc, required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        bloc.add(GoMapEvent(CreateOrderMapState()));
+        return false;
+      },
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 100),
+                child: Text(
+                  'Способ оплаты',
+                  style: AppStyle.black17,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 48),
+                child: Wrap(
+                  direction: Axis.vertical,
+                  spacing: 11,
+                  children: state.methods.isEmpty
+                      ? []
+                      : state.methods
+                          .toList()
+                          .map((e) => PaymentMethodCard(
+
+                      e,
+                      width: size.width - 40,
+                      onTap: (type) {
+                                bloc.add(OnPaymentTapMapEvent(context, e));
+                              }))
+                          .toList(),
+                ),
+              )
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: MapBottomBar(bloc: bloc, onMainButtonTap: () {
+              if(bloc.fromAddress == null || bloc.toAddress == null) {
+                AppSnackBar.showSnackBar(context, content: 'Выберите маршрут поездки');
+              } else {
+                bloc.add(CreateOrderMapEvent());
+              }
+            },
+                onWishesTap: () => bloc.add(GoMapEvent(AddWishesMapState()))
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
