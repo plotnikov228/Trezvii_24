@@ -39,6 +39,7 @@ Widget MapBottomBar(
             child: SizedBox(
               width: size.width - 60,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
                     onTap: onPaymentMethodTap,

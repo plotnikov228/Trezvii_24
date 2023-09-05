@@ -149,7 +149,6 @@ class _SelectAddressWidgetState extends State<SelectAddressWidget>
                             padding: const EdgeInsets.only(top: 20),
                             child: AppTextFormField(
                               height: 45,
-
                                 widget.bloc.secondAddressController,
                                 hintText: 'Куда?',
                                 width: size.width - 70, onChanged: (text) {

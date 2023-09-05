@@ -56,4 +56,15 @@ class Driver extends UserModel {
 
   @override
   Map<String, dynamic> toJson() => _$DriverToJson(this);
+
+  String getRating () {
+    if (ratings.isEmpty) {
+      return '0.0'; // Учтем случай, когда список пустой
+    }
+    else {
+      double total = ratings.reduce((a, b) => a + b);
+      double average = total / ratings.length;
+      return average.toString();
+    }
+  }
 }

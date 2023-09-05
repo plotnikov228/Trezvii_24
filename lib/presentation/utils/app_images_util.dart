@@ -16,6 +16,14 @@ class AppImages {
   static const camera = 'assets/icons/camera.svg';
   static const startPoint = 'assets/icons/start point.svg';
   static const geoMark = 'assets/icons/geo mark.svg';
+  static const startPointPNG = 'assets/icons/start point.png';
+  static const geoMarkPNG = 'assets/icons/geo mark.png';
   static const wishes = 'assets/icons/wishes.svg';
   static const contacts = 'assets/icons/contacts.svg';
+  static const close = 'assets/icons/close.svg';
+  static const call = 'assets/icons/call.svg';
+  static const wait = 'assets/icons/wait.svg';
+  static const star = 'assets/icons/star.svg';
+  static const chatRoom = 'assets/icons/chat room.svg';
+
 }

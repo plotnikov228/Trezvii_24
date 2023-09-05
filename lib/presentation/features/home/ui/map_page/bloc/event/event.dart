@@ -80,3 +80,7 @@ class OnPaymentTapMapEvent extends MapEvent {
 
   OnPaymentTapMapEvent(this.context, this.paymentUiModel, {this.card});
 }
+
+class CancelSearchMapEvent extends MapEvent {
+
+}

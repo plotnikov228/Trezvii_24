@@ -15,6 +15,7 @@ import 'package:sober_driver_analog/domain/firebase/order/model/order.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_for_another.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_status.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/create_order.dart';
+import 'package:sober_driver_analog/domain/firebase/order/usecases/delete_order_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/remove_changes_order_listener.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/set_changes_order_listener.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_addresses_from_text.dart';
@@ -34,6 +35,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../../../../../../../data/auth/repository/repository.dart';
 import '../../../../../../../data/firebase/auth/models/driver.dart';
 import '../../../../../../../data/firebase/auth/repository.dart';
+import '../../../../../../../domain/firebase/order/model/order_with_id.dart';
 import '../../../../../../../domain/firebase/order/usecases/get_your_orders.dart';
 import '../../../../../../../domain/map/models/address_model.dart';
 import '../../../../../../../domain/map/usecases/get_duration_between_two_points.dart';
@@ -61,29 +63,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   bool get getAddressFromMap => _getAddressFromMap;
 
-  PolylineMapObject? _polylineMapObject;
 
-  PolylineMapObject? get polylineMapObject => _polylineMapObject;
-
-  PlacemarkMapObject? _firstPoint;
-
-  PlacemarkMapObject? get firstPoint => _firstPoint;
-
-  PlacemarkMapObject? _secondPoint;
-
-  PlacemarkMapObject? get secondPoint => _secondPoint;
 
   CameraPosition? _cameraPosition;
 
   CameraPosition? get cameraPosition => _cameraPosition;
 
   void setGetAddressFromMap(bool _) => _getAddressFromMap = _;
-
-  void setPolylineMapObject(PolylineMapObject _) => _polylineMapObject = _;
-
-  void setFirstPoint(PlacemarkMapObject _) => _firstPoint = _;
-
-  void setSecondPoint(PlacemarkMapObject _) => _secondPoint = _;
 
   void setCameraPosition(CameraPosition _) => _cameraPosition = _;
 
@@ -121,7 +107,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Driver? _driver;
 
-  late final List<Order> activeOrders;
+  late final List<OrderWithId> activeOrders;
 
   void setOrderListeners() {
     _orderStateChangesListener = _orderStateChanges.stream.listen((event) {
@@ -146,16 +132,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _methodsList = GetCurrentPaymentModels(_paymentRepo).call(true);
       activeOrders = (await GetYourOrders(_orderRepo).call())
           .where((element) =>
-              element.status != OrderCancelledByDriverOrderStatus() &&
-              element.status != CancelledOrderStatus() &&
-              element.status != SuccessfullyCompletedOrderStatus())
+              element.order.status != OrderCancelledByDriverOrderStatus() &&
+              element.order.status != CancelledOrderStatus() &&
+              element.order.status != SuccessfullyCompletedOrderStatus())
           .toList();
       if (activeOrders.isNotEmpty) {
-        _currentOrder = activeOrders.first;
+        _currentOrderId = activeOrders.first.id;
+        _currentOrder = activeOrders.first.order;
+        final dur = _currentOrder!.startTime.difference(DateTime.now());
+        if(dur.inDays > 0) {
+          _orderIsPremilinary = true;
+        }
         setOrderListeners();
-        if (activeOrders.first.driverId != null) {
+        if (activeOrders.first.order.driverId != null) {
           _driver = await GetDriverById(_fbAuthRepo)
-              .call(activeOrders.first.driverId!) as Driver?;
+              .call(activeOrders.first.order.driverId!) as Driver?;
         }
         setGetAddressFromMap(false);
         add(RecheckOrderMapEvent());
@@ -229,7 +220,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (event.newState is OrderAcceptedMapState) {
         emit(OrderAcceptedMapState(
             driver: _driver,
-            waitingTime: await GetDurationBetweenTwoPoints(_mapRepo)
+            waitingTime: _orderIsPremilinary ? _currentOrder!.startTime.difference(DateTime.now()) :  await GetDurationBetweenTwoPoints(_mapRepo)
                 .call(fromAddress!.appLatLong, _driver!.currentPosition!)));
       }
       if (event.newState is CheckBonusesMapState) {
@@ -264,43 +255,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (event.selectedAddress == 0) {
         fromAddress = event.selectedAddress;
         firstAddressController.text = fromAddress!.addressName;
-        setFirstPoint(PlacemarkMapObject(
-            mapId: const MapObjectId('1'),
-            point: fromAddress!.appLatLong.toPoint(),
-            icon: PlacemarkIcon.composite([
-              PlacemarkCompositeIconItem(
-                  style: PlacemarkIconStyle(
-                      image: BitmapDescriptor.fromAssetImage(
-                          AppImages.startPoint)),
-                  name: '')
-            ])));
       } else {
         toAddress = event.selectedAddress;
         secondAddressController.text = fromAddress!.addressName;
-        setSecondPoint(PlacemarkMapObject(
-            mapId: const MapObjectId('2'),
-            point: toAddress!.appLatLong.toPoint(),
-            icon: PlacemarkIcon.composite([
-              PlacemarkCompositeIconItem(
-                  style: PlacemarkIconStyle(
-                      image:
-                          BitmapDescriptor.fromAssetImage(AppImages.geoMark)),
-                  name: '')
-            ])));
       }
-      if (fromAddress != null && toAddress != null) {
+      /*if (fromAddress != null && toAddress != null) {
         _currentRoute = (await GetRoutes(_mapRepo)
                 .call([fromAddress!.appLatLong, toAddress!.appLatLong]))!
             .first;
-        setPolylineMapObject(PolylineMapObject(
-          mapId: const MapObjectId('0'),
-          polyline: Polyline(
-            points: _currentRoute!.geometry,
-          ),
-          strokeWidth: 3,
-          strokeColor: AppColor.routeColor,
-        ));
-      }
+      }*/
       setCameraPosition(
           CameraPosition(target: event.selectedAddress!.appLatLong.toPoint()));
 
@@ -405,6 +368,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
       emit(PromoCodeMapState(controller: _promoController, message: message));
 
+    });
+
+    on<CancelSearchMapEvent>((event, emit) async {
+      if(_currentOrder!.status is WaitingForTheDriverOrderStatus) {
+        DeleteOrderById(_orderRepo).call(_currentOrderId!);
+      }
     });
   }
 }

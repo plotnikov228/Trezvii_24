@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:sober_driver_analog/domain/db/usecases/db_query.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order.dart';
+import 'package:sober_driver_analog/domain/firebase/order/model/order_with_id.dart';
 import 'package:sober_driver_analog/domain/firebase/order/repository/repository.dart';
 import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 
@@ -43,10 +44,10 @@ class OrderRepositoryImpl extends OrderRepository {
   }
 
   @override
-  Future<List<Order>> getYourOrders() async {
+  Future<List<OrderWithId>> getYourOrders() async {
     final coll = _instance.collection(_orderCollection);
     final datas = coll.where(AppOperationMode.mode == AppOperationModeEnum.user ? 'employerId' : 'driverId', isEqualTo: (await DBQuery(DBRepositoryImpl()).call('user')).first['userId']);
-    return (await datas.get()).docs.map((e) => Order.fromJson(e.data())).toList();
+    return (await datas.get()).docs.map((e) => OrderWithId(Order.fromJson(e.data()), e.id)).toList();
     }
 
   @override
