@@ -102,7 +102,7 @@ class MapPage extends StatelessWidget {
                 WaitingForOrderAcceptanceWidget(state: state, bloc: bloc),
               if(state is OrderAcceptedMapState)
                 WaitingForTheDriverWidget(state: state, bloc: bloc,)
-              if(state is ActiveOrderMapState)
+
 
 
 

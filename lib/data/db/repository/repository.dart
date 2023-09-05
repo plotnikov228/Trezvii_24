@@ -37,7 +37,9 @@ class DBRepositoryImpl extends DBRepository {
       number STRING NOT NULL,
       email STRING NOT NULL,
       name STRING NOT NULL,
-      registrationDate STRING NOT NULL);
+      registrationDate STRING NOT NULL,
+      bonuses INTEGER NULL
+      );
   ''');
   }
 
