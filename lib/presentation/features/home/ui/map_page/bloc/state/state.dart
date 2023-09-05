@@ -86,9 +86,9 @@ class OrderCancelledByDriverMapState extends MapState {
 class OrderAcceptedMapState extends MapState {
   final Driver? driver;
   final Duration? waitingTime;
-
+  final String? distance;
   OrderAcceptedMapState(
-      {this.driver, this.waitingTime,super.exception, super.status = Status.Success});
+      {this.distance, this.driver, this.waitingTime,super.exception, super.status = Status.Success});
 }
 
 class SelectPaymentMethodMapState extends MapState {

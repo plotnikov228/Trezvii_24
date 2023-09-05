@@ -158,6 +158,7 @@ class _CreateOrderWidgetState extends State<CreateOrderWidget>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     AddressButton(
+                                      addressModel: widget.bloc.fromAddress,
                                       prefixIcon: const Icon(
                                         Icons.location_pin,
                                         color: Colors.black87,
@@ -184,15 +185,15 @@ class _CreateOrderWidgetState extends State<CreateOrderWidget>
                                       height: 27,
                                     ),
                                     AddressButton(
+                                      addressModel: widget.bloc.toAddress,
+
                                       prefixIcon: PointWidget(),
                                       width: size.width - 70,
                                       onTap: () {
                                         height = initialEndHeight;
-
                                         setState(() {
                                           showContent = false;
                                         });
-
                                         Future.delayed(
                                             const Duration(milliseconds: 500),
                                             () {

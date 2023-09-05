@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:sober_driver_analog/data/map/repository/repository.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_address_from_point.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_last_point.dart';
+import 'package:sober_driver_analog/extensions/point_extension.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
@@ -12,29 +14,30 @@ import '../../../domain/map/models/address_model.dart';
 import '../../../domain/map/models/app_lat_long.dart';
 import '../../../domain/map/usecases/check_permission.dart';
 import '../../../domain/map/usecases/get_current_location.dart';
+import '../../../domain/map/usecases/get_routes.dart';
 import '../../../domain/map/usecases/request_permission.dart';
 import '../../../domain/map/usecases/set_last_point.dart';
 import '../../utils/app_color_util.dart';
 
 class MapWidget extends StatefulWidget {
   final Size size;
-  final PolylineMapObject? polylineMapObject;
-  final PlacemarkMapObject? firstPlacemark;
-  final PlacemarkMapObject? secondPlacemark;
+  final AppLatLong? firstPlacemark;
+  final AppLatLong? secondPlacemark;
 
   final Function(AddressModel)? getAddress;
   final Function(CameraPosition)? getCameraPosition;
   final CameraPosition? initialCameraPosition;
 
-  const MapWidget(
-      {super.key,
-      this.getAddress,
-      required this.size,
-      this.getCameraPosition,
-      this.initialCameraPosition,
-      this.polylineMapObject,
-      this.firstPlacemark,
-      this.secondPlacemark});
+  final bool follow;
+
+  const MapWidget({super.key,
+    this.getAddress,
+    required this.size,
+    this.getCameraPosition,
+    this.initialCameraPosition,
+    this.polylineMapObject,
+    this.firstPlacemark,
+    this.secondPlacemark, this.follow = false});
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -76,13 +79,11 @@ class _MapWidgetState extends State<MapWidget> {
     _moveToCurrentLocation(location);
   }
 
-  Future<void> _moveToCurrentLocation(
-    AppLatLong appLatLong,
-  ) async {
+  Future<void> _moveToCurrentLocation(AppLatLong appLatLong,) async {
     _currentPoint = appLatLong.toPoint();
     final cameraPos = CameraPosition(
       target: _currentPoint!,
-      zoom: 14,
+      zoom: zoom,
     );
     (await mapControllerCompleter.future).moveCamera(
       animation: const MapAnimation(type: MapAnimationType.linear, duration: 1),
@@ -93,13 +94,17 @@ class _MapWidgetState extends State<MapWidget> {
     }
   }
 
+  PolylineMapObject? _polylineMapObject;
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     mapControllerCompleter.future.then((value) => value.dispose());
+    if (_listener != null) _listener!.cancel();
   }
 
+  double zoom = 14;
   late Point _currentPoint;
 
   BoundingBox getBounds(List<Point> points) {
@@ -117,25 +122,97 @@ class _MapWidgetState extends State<MapWidget> {
     );
   }
 
+  StreamSubscription<Position>? _listener;
+  DrivingRoute? _currentRoute;
+
   @override
   Widget build(BuildContext context) {
+    if (_listener != null && !widget.follow) {
+      _listener?.cancel();
+      _listener = null;
+    }
+    if (_listener == null && widget.follow) {
+      _listener = Geolocator.getPositionStream().listen((event) async {
+        _currentPoint =
+            Point(latitude: event.latitude, longitude: event.longitude);
+
+        _currentRoute = (await GetRoutes(repo)
+            .call([_currentPoint.toAppLatLong(), widget.secondPlacemark!]))!
+            .first;
+        _polylineMapObject = PolylineMapObject(
+          mapId: const MapObjectId('0'),
+          polyline: Polyline(
+            points: _currentRoute!.geometry,
+          ),
+          strokeWidth: 3,
+          strokeColor: AppColor.routeColor,
+        );
+        final cameraPos = CameraPosition(
+          target: _currentPoint,
+          zoom: zoom,
+        );
+        (await mapControllerCompleter.future).moveCamera(
+          animation: const MapAnimation(
+              type: MapAnimationType.linear, duration: 0),
+          CameraUpdate.newCameraPosition(cameraPos),
+        );
+        setState(() {});
+      });
+    }
     if (_mapObjects.length < 3 &&
-        widget.polylineMapObject != null &&
         widget.firstPlacemark != null &&
         widget.secondPlacemark != null) {
-      mapControllerCompleter.future.then((value) => value.moveCamera(
-          CameraUpdate.newBounds(getBounds(
-              [widget.secondPlacemark!.point, widget.firstPlacemark!.point]))));
+      mapControllerCompleter.future.then((value) =>
+          value.moveCamera(
+              CameraUpdate.newBounds(getBounds(
+                  [
+                    widget.secondPlacemark!.toPoint(),
+                    widget.firstPlacemark!.toPoint()
+                  ]))));
     }
     _mapObjects.removeRange(0, _mapObjects.length);
-    if (widget.polylineMapObject != null) {
-      _mapObjects.add(widget.polylineMapObject!);
+    if (_polylineMapObject == null && widget.firstPlacemark != null &&
+        widget.secondPlacemark != null && !widget.follow) {
+       GetRoutes(repo)
+          .call([_currentPoint.toAppLatLong(), widget.secondPlacemark!]).then((
+          value) async {
+        _currentRoute = value!.first;
+        setState(() {
+
+        });
+      });
+          _mapObjects.add(_polylineMapObject =PolylineMapObject(
+            mapId: const MapObjectId('0'),
+            polyline: Polyline(
+              points: _currentRoute!.geometry,
+            ),
+            strokeWidth: 3,
+            strokeColor: AppColor.routeColor,
+          ));
     }
-    if (widget.firstPlacemark != null) {
-      _mapObjects.add(widget.firstPlacemark!);
+    if (widget.firstPlacemark != null && !widget.follow) {
+      _mapObjects.add(PlacemarkMapObject(
+          mapId: const MapObjectId('1'),
+          point: widget.firstPlacemark!.toPoint(),
+          icon: PlacemarkIcon.composite([
+            PlacemarkCompositeIconItem(
+                style: PlacemarkIconStyle(
+                    image: BitmapDescriptor.fromAssetImage(
+                        AppImages.startPointPNG)),
+                name: '')
+          ])));
     }
     if (widget.secondPlacemark != null) {
-      _mapObjects.add(widget.secondPlacemark!);
+      _mapObjects.add(PlacemarkMapObject(
+          mapId: const MapObjectId('2'),
+          point: widget.secondPlacemark!.toPoint(),
+          icon: PlacemarkIcon.composite([
+            PlacemarkCompositeIconItem(
+                style: PlacemarkIconStyle(
+                    image:
+                    BitmapDescriptor.fromAssetImage(AppImages.geoMark)),
+                name: '')
+          ])));
     }
     return SizedBox(
       height: widget.size.height,
@@ -144,11 +221,12 @@ class _MapWidgetState extends State<MapWidget> {
         children: [
           YandexMap(
             onCameraPositionChanged: (_, __, ___) async {
+              zoom = _.zoom;
               final p = _.target;
               setState(() {
                 _currentPoint = p;
               });
-              if (widget.polylineMapObject == null) {
+              if (!widget.follow) {
                 final address = await GetAddressFromPoint(repo)
                     .call(AppLatLong(lat: p.latitude, long: p.longitude));
                 if (widget.getAddress != null && address != null) {
@@ -163,8 +241,8 @@ class _MapWidgetState extends State<MapWidget> {
               final lastPoint = await GetLastPoint(repo).call();
               final cameraPos = CameraPosition(
                 target:
-                    widget.initialCameraPosition?.target ?? lastPoint.toPoint(),
-                zoom: widget.initialCameraPosition?.zoom ?? 14,
+                widget.initialCameraPosition?.target ?? lastPoint.toPoint(),
+                zoom: widget.initialCameraPosition?.zoom ?? zoom,
               );
               controller.moveCamera(
                 CameraUpdate.newCameraPosition(cameraPos),
@@ -176,7 +254,7 @@ class _MapWidgetState extends State<MapWidget> {
             },
             mapObjects: _mapObjects,
           ),
-          if (widget.polylineMapObject == null)
+          if (_polylineMapObject == null)
             IgnorePointer(
               child: Center(
                 child: Container(
