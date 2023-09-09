@@ -4,7 +4,9 @@ import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 
-Widget TariffCard(TariffModel tariffModel, {bool selected = false, VoidCallback? onTap}) {
+import '../../domain/payment/models/tariff.dart';
+
+Widget TariffCard(TariffModel? tariffModel, {Tariff? tariff, bool selected = false, VoidCallback? onTap}) {
   return InkWell(
     onTap: onTap,
     child: Container(
@@ -24,7 +26,7 @@ Widget TariffCard(TariffModel tariffModel, {bool selected = false, VoidCallback?
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                tariffModel.name,
+                tariff?.name ?? tariffModel!.name,
                 style: AppStyle.darkBlue14,
               ),
               Padding(
@@ -33,7 +35,7 @@ Widget TariffCard(TariffModel tariffModel, {bool selected = false, VoidCallback?
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'от ${tariffModel.cost.round()} р.',
+                      tariff?.displayCost??  'от ${tariffModel!.cost.round()} р.',
                       style:
                           AppStyle.black14.copyWith(fontWeight: FontWeight.bold),
                     ),

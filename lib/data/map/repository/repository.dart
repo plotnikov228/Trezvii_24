@@ -1,23 +1,26 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sober_driver_analog/data/payment/repository/repository.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
 import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/domain/map/repository/repository.dart';
+import 'package:sober_driver_analog/domain/payment/usecases/get_costs.dart';
+import 'package:sober_driver_analog/extensions/point_extension.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
-class MapRepositoryImpl extends MapRepository {
+import '../../../domain/payment/models/tariff.dart';
 
+class MapRepositoryImpl extends MapRepository {
   static const defLocation = MoscowLocation();
   static const _lastLatKey = 'lastLatKey';
   static const _lastLongKey = 'lastLongKey';
-
 
   @override
   Future<bool> checkPermission() {
     return Geolocator.checkPermission()
         .then((value) =>
-    value == LocationPermission.always ||
-        value == LocationPermission.whileInUse)
+            value == LocationPermission.always ||
+            value == LocationPermission.whileInUse)
         .catchError((_) => false);
   }
 
@@ -26,7 +29,7 @@ class MapRepositoryImpl extends MapRepository {
     return Geolocator.getCurrentPosition().then((value) {
       return AppLatLong(lat: value.latitude, long: value.longitude);
     }).catchError(
-          (_) => defLocation,
+      (_) => defLocation,
     );
   }
 
@@ -34,8 +37,8 @@ class MapRepositoryImpl extends MapRepository {
   Future<bool> requestPermission() {
     return Geolocator.requestPermission()
         .then((value) =>
-    value == LocationPermission.always ||
-        value == LocationPermission.whileInUse)
+            value == LocationPermission.always ||
+            value == LocationPermission.whileInUse)
         .catchError((_) => false);
   }
 
@@ -59,39 +62,119 @@ class MapRepositoryImpl extends MapRepository {
     final p = point.toPoint();
     final result = YandexSearch.searchByPoint(
         point: p, searchOptions: const SearchOptions());
-    final addressName =(await result.result).items?.first.name;
+    final addressName = (await result.result).items?.first.name;
 
-    if (addressName != null) return AddressModel(addressName: addressName, appLatLong: AppLatLong(lat: p.latitude, long: p.longitude));
+    if (addressName != null) {
+      return AddressModel(
+          addressName: addressName,
+          appLatLong: AppLatLong(lat: p.latitude, long: p.longitude));
+    }
     return null;
   }
 
   @override
-  Future<List<AddressModel>> getAddressesFromText(String address, AppLatLong point) async {
+  Future<List<AddressModel>> getAddressesFromText(
+      String address, AppLatLong point) async {
     final result = YandexSearch.searchByText(
-        searchText: address, searchOptions: const SearchOptions(), geometry: Geometry.fromPoint(point.toPoint()));
-    final list = ((await result.result).items ?? []).map((e) => AddressModel(addressName: e.name, appLatLong: AppLatLong(lat: e.geometry.first.point!.latitude, long: e.geometry.first.point!.longitude))).toList();
+        searchText: address,
+        searchOptions: const SearchOptions(),
+        geometry: Geometry.fromPoint(point.toPoint()));
+    final list = ((await result.result).items ?? [])
+        .map((e) => AddressModel(
+            addressName: e.name,
+            appLatLong: AppLatLong(
+                lat: e.geometry.first.point!.latitude,
+                long: e.geometry.first.point!.longitude)))
+        .toList();
     return list;
   }
 
   @override
   Future<List<DrivingRoute>?> getRoutes(List<AppLatLong> points) async {
-    return (await YandexDriving.requestRoutes(points: points.map((e) => RequestPoint(point: e.toPoint(), requestPointType: RequestPointType.wayPoint)).toList(), drivingOptions: const DrivingOptions()).result).routes;
+    return (await YandexDriving.requestRoutes(
+                points: points
+                    .map((e) => RequestPoint(
+                        point: e.toPoint(),
+                        requestPointType: RequestPointType.wayPoint))
+                    .toList(),
+                drivingOptions: const DrivingOptions())
+            .result)
+        .routes;
   }
 
   @override
-  Future<Duration> getDurationBetweenTwoPoints(AppLatLong first, AppLatLong second) async {
-    final route = (await YandexDriving.requestRoutes(points: [first, second].map((e) => RequestPoint(point: e.toPoint(), requestPointType: RequestPointType.wayPoint)).toList(), drivingOptions: const DrivingOptions()).result).routes;
-    return Duration(minutes: route!.first.metadata.weight.timeWithTraffic.value!.toInt());
+  Future<Duration> getDurationBetweenTwoPoints(
+      AppLatLong first, AppLatLong second) async {
+    final route = (await YandexDriving.requestRoutes(
+                points: [first, second]
+                    .map((e) => RequestPoint(
+                        point: e.toPoint(),
+                        requestPointType: RequestPointType.wayPoint))
+                    .toList(),
+                drivingOptions: const DrivingOptions())
+            .result)
+        .routes;
+    return Duration(
+        minutes: route!.first.metadata.weight.timeWithTraffic.value! ~/ 60);
   }
 
   @override
-  Future<double> getCostInRub(List<AppLatLong> points) async {
-    AppLatLong? startPoint;
-    AppLatLong? endPoint;
-    for(var item in points) {
+  Future<double> getCostInRub(Tariff tariff, DrivingRoute route) async {
+    final points = route.geometry;
+    Point? startPoint;
+
+    final useCase = GetCosts(PaymentRepositoryImpl());
+    var hours = route.metadata.weight.timeWithTraffic.value! / 60 / 60;
+    double tripPrice = await useCase.call(tariff, getStartPrice: true);
+    final hourPrice = await useCase.call(tariff,getHourPrice: true);
+    final kmPrice = await useCase.call(tariff, getKmPrice: true);
+    final firstHoursPrice = await useCase.call(tariff, getPriceOfFirstHours: true);
+    print('kmPrice - $kmPrice hourPrice - $hourPrice startPrice - $tripPrice');
+    if(firstHoursPrice != 0 && tariff.hoursCount != null) {
+      if(hours < tariff.hoursCount!) {
+        tripPrice += hours * firstHoursPrice;
+        hours = 0;
+
+      }
+    }
+    final resultFirst = (await YandexSearch.searchByPoint(
+            point: points.first, searchOptions: const SearchOptions())
+        .result);
+
+    final resultSecond = (await YandexSearch.searchByPoint(
+            point: points.last, searchOptions: const SearchOptions())
+        .result);
+    final outCity = resultFirst.items!.first.toponymMetadata!.address
+                .addressComponents[SearchComponentKind.locality] ==
+            null ||
+        resultFirst.items!.first.toponymMetadata!.address
+                .addressComponents[SearchComponentKind.locality] !=
+            resultSecond.items!.first.toponymMetadata!.address
+                .addressComponents[SearchComponentKind.locality];
+
+
+    if ((tariff.checkOutCity && outCity) || kmPrice != 0) {
+      final distanceStr = route.metadata.weight.distance.text;
+      double distanceInKm = 0;
+      if (distanceStr.contains('км')) {
+        distanceInKm = double.parse(distanceStr.replaceAll('км', ''));
+      } else {
+        if (distanceStr.contains('м')) {
+          distanceInKm = double.parse(distanceStr.replaceAll('м', '')) / 1000;
+        } else if (distanceStr.contains('km')) {
+          distanceInKm = double.parse(distanceStr.replaceAll('km', ''));
+        }
+      }
+      tripPrice += kmPrice * distanceInKm.round();
+      print('trip price after add km tariff - $tripPrice');
 
     }
-    return 0.0;
-  }
+    if(hourPrice != 0) {
+      tripPrice += hours * hourPrice;
+    }
 
+    print('trip price after add hour tariff - $tripPrice');
+
+    return tripPrice.round().toDouble();
+  }
 }

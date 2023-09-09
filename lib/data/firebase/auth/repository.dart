@@ -50,9 +50,13 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
 
   @override
   Future<UserModel?> getDriverById(String userId) async{
-    final doc = _instance.collection(_driversCollection).doc(userId);
-    if((await doc.get()).exists) {
-    return Driver.fromJson((await doc.get()).data()!);
+    try {
+      final doc = _instance.collection(_driversCollection).doc(userId);
+      if ((await doc.get()).exists) {
+        return Driver.fromJson((await doc.get()).data()!);
+      }
+    } catch (_) {
+
     }
   }
 

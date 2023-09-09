@@ -8,6 +8,8 @@
     <string>Доступ к геолокации пользователя необходим для отображения текущей геопозиции</string>
 	<key>CFBundleDisplayName</key>
 	<string>Sober Driver Analog</string>
+	<key>NSContactsUsageDescription</key>
+    <string>calling a car for a person from a notebook</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

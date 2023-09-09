@@ -9,8 +9,8 @@ extension StringExtension on String {
         return CancelledOrderStatus();
       case 'Order accepted':
         return OrderAcceptedOrderStatus();
-      case 'Waiting for the driver':
-        return WaitingForTheDriverOrderStatus();
+      case 'Waiting for order acceptance':
+        return WaitingForOrderAcceptanceOrderStatus();
       case 'Order cancelled by driver':
         return OrderCancelledByDriverOrderStatus();
       default:

@@ -11,7 +11,7 @@ Widget circleToggleButton({bool value = false, Function(bool)? onChange, double 
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: value? AppColor.darkGray : AppColor.firstColor, width: 2),
+        border: Border.all(color: !value? AppColor.darkGray : AppColor.firstColor, width: 2),
 
       ),
       child: value ? Center(

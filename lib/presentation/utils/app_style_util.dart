@@ -4,6 +4,8 @@ import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 class AppStyle {
   static const black10 = TextStyle(fontSize: 10, color: Colors.black);
 
+  static const black12 = TextStyle(fontSize: 12, color: Colors.black);
+
   static const black14 = TextStyle(fontSize: 14, color: Colors.black);
 
   static final darkBlue14 = TextStyle(fontSize: 14, color: AppColor.darkBlue);

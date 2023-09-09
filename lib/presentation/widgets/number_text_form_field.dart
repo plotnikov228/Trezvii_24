@@ -7,13 +7,13 @@ import '../utils/app_style_util.dart';
 import '../utils/size_util.dart';
 import 'app_text_form_field.dart';
 
-Widget NumberTextFormField(TextEditingController controller, {required double width, double height = 49, bool hasError = false, TextInputAction textInputAction = TextInputAction.done}) {
+Widget NumberTextFormField(TextEditingController controller, {String? Function(String?)? validator, required double width, double height = 49, bool hasError = false, TextInputAction textInputAction = TextInputAction.done}) {
   return AppTextFormField(controller,
       height: height,
       width: width,
       keyboardType: TextInputType.phone,
       maxLength: 10,
-      validator: (text) {
+      validator: validator ?? (text) {
          if(text!.trim().isEmpty) {
           return 'Заполните поле';
         }if(text!.trim().length < 10) {

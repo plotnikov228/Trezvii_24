@@ -3,4 +3,5 @@ class AppRoutes {
   static const auth = '/auth';
   static const tutorial = '/tutorial';
   static const splash = '/splash';
+  static const chat = '/chat';
 }

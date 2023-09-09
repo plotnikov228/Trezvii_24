@@ -25,5 +25,7 @@ class AppImages {
   static const wait = 'assets/icons/wait.svg';
   static const star = 'assets/icons/star.svg';
   static const chatRoom = 'assets/icons/chat room.svg';
+  static const send = 'assets/icons/send.svg';
+
 
 }

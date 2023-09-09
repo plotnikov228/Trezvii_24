@@ -87,7 +87,6 @@ class AppCheckBox extends StatelessWidget {
         width: width - 8 - (iconSize ?? 25),
         child: Text(
           text ?? "",
-          textAlign: TextAlign.center,
           style: fontStyle,
         ),
       ),

@@ -172,7 +172,6 @@ class AuthRepositoryImpl extends AuthRepository {
                       driverLicenceFrontUrl: front.imageUrl,
                       driverLicenseBackUrl: back.imageUrl,
                       driverPhotoUrl: driver.imageUrl));
-              userModel =
               await SendDriverDataForVerification(_repo).call(_driver);
             }
           }
@@ -193,7 +192,7 @@ class AuthRepositoryImpl extends AuthRepository {
                 await removeUsecase.call('user', (item as UserModel).toJson(), 'userId');
               }
             }
-            await inserUsecase.call('user', userModel.toJson());
+            await inserUsecase.call('user', userModel.toDB());
 
           }
         }

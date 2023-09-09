@@ -1,3 +1,4 @@
+import '../models/tariff.dart';
 import '../repository/repostitory.dart';
 
 class GetCosts {
@@ -5,7 +6,10 @@ class GetCosts {
 
   GetCosts(this.repository);
 
-  Future<double> call({bool inCity = true, bool outCity = false}) async {
-    return repository.getCosts(inCity: inCity, outCity: outCity);
+  Future<double> call(Tariff tariff, {bool getHourPrice = true, getKmPrice = false, bool getStartPrice = false, bool getPriceOfFirstHours = false}) async {
+    return repository.getCosts(tariff,
+        getHourPrice: getHourPrice,
+        getKmPrice: getKmPrice,
+        getStartPrice: getStartPrice);
   }
 }

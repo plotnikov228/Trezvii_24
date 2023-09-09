@@ -6,7 +6,7 @@ class SetChangesOrderListener {
 
   SetChangesOrderListener(this.repository);
 
-  void call (Function(Order?) getOrder, String id) {
-    return repository.setOrderChangesListener(getOrder, id);
+  Stream<Order?> call(String orderId) {
+    return repository.setOrderChangesListener( orderId);
   }
 }

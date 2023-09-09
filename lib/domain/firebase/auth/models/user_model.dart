@@ -17,4 +17,5 @@ abstract class UserModel {
       required this.registrationDate});
 
   Map<String, dynamic> toJson () => _$UserModelToJson(this);
+  Map<String, dynamic> toDB ();
 }

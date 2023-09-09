@@ -30,4 +30,7 @@ class User extends UserModel {
   }
   @override
   Map<String, dynamic> toJson() => _$UserToJson(this);
+
+  @override
+  Map<String, dynamic> toDB() => _$UserToJson(this);
 }

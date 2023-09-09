@@ -15,7 +15,8 @@ Widget AddressButton ({AddressModel? addressModel,required double width, Functio
           prefixIcon,
           SizedBox(width: 10,),
           Flexible(
-            child: Text(addressModel?.addressName ?? hintText, style: addressModel == null ? AppStyle.hintText16 : AppStyle.black16,),
+            fit: FlexFit.loose,
+            child: Text(addressModel?.addressName ?? hintText, style: addressModel == null ? AppStyle.hintText16 : AppStyle.black16, overflow: TextOverflow.ellipsis,),
           ),
         ],
       )

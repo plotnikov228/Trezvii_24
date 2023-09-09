@@ -1,0 +1,9 @@
+<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect id="Gift Card" width="25" height="25" fill="url(#pattern0)"/>
+<defs>
+<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+<use xlink:href="#image0_328_9424" transform="scale(0.0416667)"/>
+</pattern>
+<image id="image0_328_9424" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA6UlEQVR4nO2UXQrCMAzHdwtBEGl88UHv4TyQ8x5C6vA2iheZoLgTuPShkmm3uU3G2okKC4S26b/5pR/U83r7GZOglijoJEHpsnu5Rjc550BQfgXwLrlsCUhdUFS3A90ZAPI1tQAUlEig1WakhzuhB0bDfY4hUPDQ2AKAgqY7Q6C1NYCrTGNCHRHUIdMUxqyxBphj4WQ1d7A3x9UK8P8mq285DiGZl3Xh+DZFoLPTM5WCrgjJjOOmLfa5ZY0LIK2eq5VAl0xTitsDnrswVb5oCnE3QNdfBX76s0NQPk84AwRF24laVAC9fc3uFbxqadK5rrwAAAAASUVORK5CYII="/>
+</defs>
+</svg>

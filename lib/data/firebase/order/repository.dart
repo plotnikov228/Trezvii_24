@@ -16,13 +16,13 @@ class OrderRepositoryImpl extends OrderRepository {
   final _instance = firestore.FirebaseFirestore.instance;
 
   @override
-  Future<String?> createOrder(Order order) async {
-    try {
-      final doc = await _instance.collection(_orderCollection).add(order.toJson());
-      return doc.id;
-    } catch (_) {
+  Future<String> createOrder(Order order) async {
 
-    }
+      final doc = await _instance.collection(_orderCollection).add(order.toJson());
+      print('created order id  -${doc.id}');
+
+      return doc.id;
+
   }
 
   Future<Order?> updateOrderById(String id, Order order) async {
@@ -60,22 +60,16 @@ class OrderRepositoryImpl extends OrderRepository {
       return Status.Failed;
     }
     }
-  StreamSubscription? _listener;
   @override
-  void setOrderChangesListener(Function(Order? p1) getChangedOrder, String orderId) async {
-     _listener = _instance.collection(_orderCollection).snapshots().listen((event) {
-      final changedDoc = event.docChanges.where((element) => element.doc.id == orderId).toList();
-      if(changedDoc.isNotEmpty) {
-        getChangedOrder(Order.fromJson(changedDoc.first.doc.data()!));
-      }
-    });
+  Stream<Order?> setOrderChangesListener(String orderId) {
+     return _instance.collection(_orderCollection).snapshots().map((event) {
+       final changedDoc = event.docChanges.where((element) => element.doc.id == orderId).toList();
+        if(changedDoc.isNotEmpty) {
+          return Order.fromJson(changedDoc.first.doc.data()!);
+        }
+         return null;
+     });
   }
 
-  @override
-  void removeOrderChangesListener() async {
-    if(_listener != null) {
-      _listener!.cancel();
-    }
-  }
 
 }

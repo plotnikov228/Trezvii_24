@@ -11,11 +11,11 @@ class ActiveOrderStatus extends OrderStatus {
   }
 }
 
-class WaitingForTheDriverOrderStatus extends OrderStatus {
+class WaitingForOrderAcceptanceOrderStatus extends OrderStatus {
   @override
   String toString() {
     // TODO: implement toString
-    return 'Waiting for the driver';
+    return 'Waiting for order acceptance';
   }
 }
 

@@ -6,7 +6,7 @@ import '../model/order_with_id.dart';
 abstract class OrderRepository {
   Future<Order?> getOrderById (String id);
 
-  Future<String?> createOrder (Order order);
+  Future<String> createOrder (Order order);
 
   Future<Status> deleteOrderById (String id);
 
@@ -14,9 +14,8 @@ abstract class OrderRepository {
 
   Future<Order?> updateOrderById (String id, Order order);
 
-  void setOrderChangesListener (Function(Order?) getChangedOrder, String orderId);
+  Stream<Order?> setOrderChangesListener(String orderId);
 
-  void removeOrderChangesListener();
 
 
 }

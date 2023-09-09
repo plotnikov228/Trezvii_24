@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sober_driver_analog/presentation/features/chat/chat_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/ui/home_page.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 
@@ -51,6 +52,12 @@ class AppRouter {
         },
         routes: <RouteBase>[],
       ),
+      GoRoute(
+        path: '${AppRoutes.chat}/:chatId',
+        builder: (BuildContext context, GoRouterState state) {
+          return ChatPage(chatId: state.pathParameters['chatId'] ?? '');
+        },
+      )
     ],
   );
 }

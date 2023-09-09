@@ -57,6 +57,15 @@ class Driver extends UserModel {
   @override
   Map<String, dynamic> toJson() => _$DriverToJson(this);
 
+  Map<String, dynamic> toDB() => {
+    'userId': userId,
+    'number': number,
+    'email': email,
+    'name': name,
+    'registrationDate': registrationDate.toIso8601String(),
+    'bonuses': null
+  };
+
   String getRating () {
     if (ratings.isEmpty) {
       return '0.0'; // Учтем случай, когда список пустой

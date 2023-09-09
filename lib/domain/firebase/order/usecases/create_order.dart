@@ -7,7 +7,7 @@ class CreateOrder {
 
   CreateOrder(this.repository);
 
-  Future<String?> call (Order order) {
+  Future<String> call (Order order) {
     return repository.createOrder(order);
   }
 }

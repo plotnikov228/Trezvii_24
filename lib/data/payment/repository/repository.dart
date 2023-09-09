@@ -13,6 +13,7 @@ import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_user.da
 import 'package:sober_driver_analog/domain/firebase/firestore/usecases/get_collection_data.dart';
 import 'package:sober_driver_analog/domain/payment/models/payment_ui_model.dart';
 import 'package:sober_driver_analog/domain/payment/models/promo_code.dart';
+import 'package:sober_driver_analog/domain/payment/models/tariff.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
 
 import '../../../domain/payment/enums/payment_types.dart';
@@ -20,6 +21,8 @@ import '../../../domain/payment/models/card.dart';
 import '../../../domain/payment/repository/repostitory.dart';
 import '../../../presentation/utils/app_color_util.dart';
 import '../../firebase/auth/models/user.dart';
+
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class PaymentRepositoryImpl extends PaymentRepository {
   final _promo = 'Promo';
@@ -240,12 +243,21 @@ class PaymentRepositoryImpl extends PaymentRepository {
   final _repo = FirebaseFirestoreRepositoryImpl();
 
   @override
-  Future<double> getCosts({bool inCity = true, outCity = false}) async {
-    final tariff = (await GetCollectionData(_repo).call('Tariff')).first;
-    if(inCity) {
-      return double.parse(tariff['inCity']);
-    } else {
-      return double.parse(tariff['outCity']);
+  Future<double> getCosts(Tariff tariff, {bool getHourPrice = true, getKmPrice = false, bool getStartPrice = false, bool getPriceOfFirstHours = false}) async {
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.fetch();
+    await remoteConfig.activate();
+    if(getStartPrice && tariff.startPriceKey != null) {
+      return remoteConfig.getDouble(tariff.startPriceKey??'');
     }
+    if(getHourPrice && tariff.hourPriceKey != null) {
+      return remoteConfig.getDouble(tariff.hourPriceKey??'');
+    } if(getKmPrice && tariff.kmPriceKey != null) {
+      return remoteConfig.getDouble(tariff.kmPriceKey??'');
+    }
+    if(getPriceOfFirstHours && tariff.theCostOfFirstHoursKey != null) {
+      return remoteConfig.getDouble(tariff.theCostOfFirstHoursKey??'');
+    }
+    return 0;
   }
 }

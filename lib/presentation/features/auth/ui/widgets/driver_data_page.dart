@@ -87,8 +87,8 @@ class DriverDataPage extends StatelessWidget {
                               hintText: 'ФИО'),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 41),
-                          child: AppTextFormField(state.driverName!,
+                          padding: const EdgeInsets.only(top: 20),
+                          child: AppTextFormField(state.driverEmail!,
                               validator: (text) {
                             if (text!.trim() == "") {
                               return "Заполните поле";

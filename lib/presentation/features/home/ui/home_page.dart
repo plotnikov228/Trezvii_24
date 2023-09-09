@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sober_driver_analog/presentation/features/home/ui/map_page/bloc/bloc/bloc.dart';
-import 'package:sober_driver_analog/presentation/features/home/ui/map_page/bloc/event/event.dart';
-import 'package:sober_driver_analog/presentation/features/home/ui/map_page/bloc/state/state.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/event/event.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
 
 import '../../../utils/status_enum.dart';
 import '../../../widgets/map/map_widget.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
-import 'map_page/map_page.dart';
+import '../map_page/map_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
