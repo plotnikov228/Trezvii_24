@@ -40,11 +40,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (chat == null) {
         emit(ChatState(status: ChatStateStatus.chatDoesNotExist));
       } else {
-        if(isDriver) {
+        if(!isDriver) {
           talker = (await GetUserById(FirebaseAuthRepositoryImpl()).call(chat!.employerId));
           talkerPhotoUrl = await FirebaseStorage.instance.ref('${talker?.userId}/photo.png').getDownloadURL();
         }
-        if(!isDriver) {
+        if(isDriver) {
           talker = (await GetDriverById(FirebaseAuthRepositoryImpl()).call(chat!.driverId));
           talkerPhotoUrl = (talker as Driver?)?.personalDataOfTheDriver.driverPhotoUrl;
         }

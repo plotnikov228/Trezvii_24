@@ -16,6 +16,9 @@ class AppStyle {
 
   static const black17 = TextStyle(fontSize: 17, color: Colors.black);
 
+  static const black20 = TextStyle(fontSize: 20, color: Colors.black);
+
+
   static const black25 = TextStyle(fontSize: 25, color: Colors.black);
 
   static const black36 = TextStyle(fontSize: 36, color: Colors.black);

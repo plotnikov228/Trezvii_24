@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sober_driver_analog/domain/payment/enums/payment_types.dart';
 import 'package:sober_driver_analog/domain/payment/models/payment_ui_model.dart';
@@ -32,8 +31,8 @@ Widget PaymentMethodCard(
           children: [
             Row(
               children: [
-                paymentUiModel.prefixWidget,
-                SizedBox(
+                paymentUiModel.prefixWidget(),
+                const SizedBox(
                   width: 12,
                 ),
                 Text(

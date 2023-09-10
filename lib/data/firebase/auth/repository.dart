@@ -44,7 +44,8 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(email != null) mapForUpdate['email'] = email;
     if(name != null) mapForUpdate['name'] = name;
     if(bonuses != null) mapForUpdate['bonuses'] = bonuses;
-    final doc = _instance.collection(_usersCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
+      await _instance.collection( _usersCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
+      print('updated');
 
   }
 
@@ -86,7 +87,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(car != null) mapForUpdate['car'] = car.toJson();
     if(personalDataOfTheDriver != null) mapForUpdate['personalDataOfTheDriver'] = personalDataOfTheDriver.toJson();
     if(ratings != null) mapForUpdate['ratings'] = ratings;
-    final doc = _instance.collection(_usersCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
+    final doc = _instance.collection(_driversCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
 
   }
 

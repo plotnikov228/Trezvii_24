@@ -67,7 +67,7 @@ class InputCodePage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: size.height / 2 - 150),
+                padding: EdgeInsets.only(top: size.height / 2 - 150, left: 30, right:  30),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Pinput(

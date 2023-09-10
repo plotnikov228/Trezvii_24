@@ -9,14 +9,21 @@ class UpdateDriver {
 
   UpdateDriver(this.repository);
 
-  Future call (
-      {
-        String? number,
-        String? email,
-        String? name,
-        AppLatLong? currentPosition,
-        Car? car,
-        PersonalDataOfTheDriver? personalDataOfTheDriver,
-        List<int>? ratings,
-      }) async => repository.updateDriver;
+  Future call({
+    String? number,
+    String? email,
+    String? name,
+    AppLatLong? currentPosition,
+    Car? car,
+    PersonalDataOfTheDriver? personalDataOfTheDriver,
+    List<int>? ratings,
+  }) async =>
+      repository.updateDriver(
+          number: number,
+          name: name,
+          email: email,
+          currentPosition: currentPosition,
+          car: car,
+          personalDataOfTheDriver: personalDataOfTheDriver,
+          ratings: ratings);
 }

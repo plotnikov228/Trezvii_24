@@ -95,7 +95,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   Order? _currentOrder;
   String? _currentOrderId;
 
-  final _orderStateChanges = StreamController<Order>();
   StreamSubscription? _orderStateChangesListener;
 
   PromoCode? _activePromo;

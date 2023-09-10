@@ -8,7 +8,7 @@ import '../utils/app_images_util.dart';
 import '../utils/app_style_util.dart';
 
 Widget AppPopButton(BuildContext context,
-    {required String text, required Color color, Function? onTap}) {
+    {required String text, required Color color, Function? onTap, double iconWidth = 12, double iconHeight = 20, TextStyle? textStyle}) {
   return Padding(
     padding: const EdgeInsets.only(top: 15, left: 16),
     child: InkWell(
@@ -26,15 +26,15 @@ Widget AppPopButton(BuildContext context,
               angle: pi,
               child: Image.asset(
                 AppImages.rightArrow,
-                width: 12,
-                height: 20,
+                width: iconWidth,
+                height: iconHeight,
                 color: color,
               )),
           Padding(
             padding: const EdgeInsets.only(left: 27),
             child: Text(
               text,
-              style: AppStyle.black22.copyWith(color: color),
+              style: textStyle ?? AppStyle.black22.copyWith(color: color),
             ),
           )
         ],

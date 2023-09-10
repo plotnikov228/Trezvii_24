@@ -44,7 +44,7 @@ Widget NumberTextFormField(TextEditingController controller, {String? Function(S
             ),
             Text(
               '+7',
-              style: AppStyle.black17.copyWith(color: AppColor.darkBlue),
+              style: AppStyle.black16.copyWith(color: AppColor.darkBlue),
             ),
             const SizedBox(
               width: 2,

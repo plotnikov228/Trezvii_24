@@ -6,5 +6,5 @@ class UpdateUser {
   UpdateUser(this.repository);
 
   Future call (
-      {String? number, String? email, String? name, int? bonuses}) async => repository.updateUser;
+      {String? number, String? email, String? name, int? bonuses}) async => repository.updateUser(name: name,number: number,bonuses: bonuses,email: email);
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -26,7 +27,7 @@ Widget ImageButton({
         child: file != null
             ? Image.file(file, fit: BoxFit.cover,)
             : url != null
-                ? Image.network(url, fit: BoxFit.cover)
+                ? CachedNetworkImage(imageUrl: url, fit: BoxFit.cover)
                 : asset != null
                     ? Image.asset(asset, fit: BoxFit.cover)
                     : svgAsset != null

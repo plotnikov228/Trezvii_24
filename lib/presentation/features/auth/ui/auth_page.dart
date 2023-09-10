@@ -10,6 +10,7 @@ import 'package:sober_driver_analog/presentation/features/auth/ui/widgets/sign_u
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_snack_bar.dart';
 
+import '../../../widgets/app_loading_message.dart';
 import '../bloc/bloc.dart';
 import '../bloc/state.dart';
 import 'widgets/input_code_page.dart';
@@ -57,24 +58,7 @@ class AuthPage extends StatelessWidget {
               AppSnackBar.showSnackBar(context, content: state.error!);
             }
             else if (state.status == AuthStatus.Loading) {
-              showDialog(
-                  barrierColor: Colors.transparent,
-                  context: context, builder: (context) {
-                return Center(
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.7),
-                        borderRadius: const BorderRadius.all(Radius.circular(8))
-                    ),
-                    child: Center(child: CircularProgressIndicator(
-                      color: AppColor.firstColor,
-                    ),),
-                  ),
-                );
-              });
+              AppLoadingMessage.show(context);
             }
           },
           builder: (BuildContext context, state) {

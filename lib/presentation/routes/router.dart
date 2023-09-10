@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sober_driver_analog/presentation/features/chat/chat_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/ui/home_page.dart';
+import 'package:sober_driver_analog/presentation/features/profile/profile_page.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 
 import '../features/auth/ui/auth_page.dart';
@@ -50,7 +51,15 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
         },
-        routes: <RouteBase>[],
+        routes: <RouteBase>[
+          GoRoute(
+            path: AppRoutes.profile,
+            name: AppRoutes.profile,
+            builder: (BuildContext context, GoRouterState state) {
+              return const ProfilePage();
+            },
+          )
+        ],
       ),
       GoRoute(
         path: '${AppRoutes.chat}/:chatId',

@@ -153,18 +153,10 @@ class MapRepositoryImpl extends MapRepository {
                 .addressComponents[SearchComponentKind.locality];
 
 
-    if ((tariff.checkOutCity && outCity) || kmPrice != 0) {
-      final distanceStr = route.metadata.weight.distance.text;
-      double distanceInKm = 0;
-      if (distanceStr.contains('км')) {
-        distanceInKm = double.parse(distanceStr.replaceAll('км', ''));
-      } else {
-        if (distanceStr.contains('м')) {
-          distanceInKm = double.parse(distanceStr.replaceAll('м', '')) / 1000;
-        } else if (distanceStr.contains('km')) {
-          distanceInKm = double.parse(distanceStr.replaceAll('km', ''));
-        }
-      }
+    if ((tariff.checkOutCity && outCity) || (!tariff.checkOutCity && kmPrice != 0)) {
+      double distanceInKm = route.metadata.weight.distance.value! / 1000;
+      print(distanceInKm);
+
       tripPrice += kmPrice * distanceInKm.round();
       print('trip price after add km tariff - $tripPrice');
 

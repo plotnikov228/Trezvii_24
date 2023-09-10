@@ -1,3 +1,4 @@
+import 'package:sober_driver_analog/domain/db/constants.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -21,17 +22,17 @@ class DBRepositoryImpl extends DBRepository {
   void onCreate(Database db, int version) async {
     db
       ..execute('''
-    CREATE TABLE favoriteAddresses (
+    CREATE TABLE ${DBConstants.favoriteAddressesTable} (
       id INTEGER PRIMARY KEY NOT NULL,
       name STRING NOT NULL,
       addressName STRING NOT NULL,
       lat INTEGER NOT NULL,
       long INTEGER NOT NULL
-    
+      comment STRING NULL,
     );
   ''')
       ..execute('''
-    CREATE TABLE user (
+    CREATE TABLE ${DBConstants.userTable} (
       id INTEGER NOT NULL PRIMARY KEY,
       userId STRING NOT NULL,
       number STRING NOT NULL,

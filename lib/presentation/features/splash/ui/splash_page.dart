@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sober_driver_analog/presentation/features/splash/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
+import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
 
 import '../../../utils/size_util.dart';
 import '../bloc/bloc.dart';
@@ -32,6 +33,9 @@ class _SplashPageState extends State<SplashPage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [AppColor.firstColor, Colors.white])),
+            child: Center(
+              child: Image.asset(AppImages.logo, width: size.width - 100, height: size.width - 100,),
+            ),
           );
         })));
   }

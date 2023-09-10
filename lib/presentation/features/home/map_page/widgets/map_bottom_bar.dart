@@ -45,10 +45,8 @@ Widget MapBottomBar(
                     onTap: onPaymentMethodTap,
                     child: Row(
                       children: [
-                        Image(
-                          image:
-                              (bloc.currentPaymentModel.prefixWidget as Image)
-                                  .image,
+                        SvgPicture.asset(
+                              bloc.currentPaymentModel.prefixWidgetAsset,
                           color: onWishesTap == null && onPaymentMethodTap != null
                               ? AppColor.iconDisableColor
                               : AppColor.firstColor,

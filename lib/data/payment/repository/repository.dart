@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sober_driver_analog/data/auth/repository/repository.dart';
 import 'package:sober_driver_analog/data/db/repository/repository.dart';
@@ -44,46 +45,46 @@ class PaymentRepositoryImpl extends PaymentRepository {
       PaymentUiModel(
           onTap: onPromoTap,
           paymentType: PaymentTypes.promo,
-          prefixWidget: Image.asset(
-            AppImages.discount,
-            width: 25,
-            height: 25,
-          ),
+          prefixWidgetAsset: AppImages.discount,
           title: 'Промокод',
           suffixWidget: Image.asset(AppImages.rightArrow,
               width: 25, height: 25, color: AppColor.firstColor)),
       PaymentUiModel(
           onTap: onBonusTap,
           paymentType: PaymentTypes.bonus,
-          prefixWidget: Image.asset(
-            AppImages.giftCard,
-            width: 25,
-            height: 25,
-          ),
+          prefixWidgetAsset: AppImages.giftCard,
           title: 'Бонусы',
           suffixWidget: Image.asset(AppImages.rightArrow,
               width: 25, height: 25, color: AppColor.firstColor)),
       PaymentUiModel(
           onTap: onCashTap,
           paymentType: PaymentTypes.cash,
-          prefixWidget: Image.asset(
-            AppImages.wallet,
+          prefixWidgetAsset: AppImages.wallet,
+          title: 'Наличные',
+          suffixWidget: Container(
             width: 25,
             height: 25,
-          ),
-          title: 'Наличные',
-          suffixWidget:
-              Image.asset(AppImages.degrees360, width: 25, height: 25)),
+            decoration: BoxDecoration(
+                color: AppColor.firstColor, shape: BoxShape.circle),
+          )),
       PaymentUiModel(
           onTap: onCardTap,
           paymentType: PaymentTypes.cardAdd,
-          prefixWidget: Image.asset(
-            AppImages.card,
+          prefixWidgetAsset: AppImages.card,
+          title: 'Добавить карту',
+          suffixWidget: Container(
             width: 25,
             height: 25,
-          ),
-          title: 'Добавить карту',
-          suffixWidget: Image.asset(AppImages.plus, width: 25, height: 25)),
+            decoration: BoxDecoration(
+                color: AppColor.firstColor, shape: BoxShape.circle),
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 15,
+              ),
+            ),
+          )),
     ];
     if (cards.isNotEmpty) {
       for (var item in cards) {
@@ -93,11 +94,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
               onTap: onCardTap,
               paymentType: PaymentTypes.card,
               card: item,
-              prefixWidget: Image.asset(
-                AppImages.card,
-                width: 25,
-                height: 25,
-              ),
+              prefixWidgetAsset: AppImages.card,
               title:
                   '${item.number.substring(0, 4)} **** **** ${item.number.substring(12, item.number.length)}',
               suffixWidget: Image.asset(AppImages.rightArrow,
@@ -114,7 +111,8 @@ class PaymentRepositoryImpl extends PaymentRepository {
     final data = await doc.get();
     if ((data).exists) {
       final promocode = PromoCode.fromJson(data.data()!);
-      if(!promocode.activatedUsers.contains(await GetUserId(AuthRepositoryImpl()).call())) {
+      if (!promocode.activatedUsers
+          .contains(await GetUserId(AuthRepositoryImpl()).call())) {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString(_promoPrefsKey, promocode.promo);
         return promocode;
@@ -189,12 +187,12 @@ class PaymentRepositoryImpl extends PaymentRepository {
 
     try {
       bonusesOnDb = (await GetUserById(_fbAuthRepo)
-          .call(auth.FirebaseAuth.instance.currentUser!.uid) as User)
+              .call(auth.FirebaseAuth.instance.currentUser!.uid) as User)
           .bonuses;
     } catch (_) {
       bonusesOnDb = balance;
     }
-    if(bonusesOnDb != balance) {
+    if (bonusesOnDb != balance) {
       balance = bonusesOnDb;
       await prefs.setInt(_bonusesBalancePrefsKey, balance);
     }
@@ -226,7 +224,8 @@ class PaymentRepositoryImpl extends PaymentRepository {
   }
 
   @override
-  Future<PaymentUiModel> setCurrentPaymentUiModel(PaymentUiModel newPaymentUiModel) async {
+  Future<PaymentUiModel> setCurrentPaymentUiModel(
+      PaymentUiModel newPaymentUiModel) async {
     final prefs = await SharedPreferences.getInstance();
     final currentPaymentMethod =
         prefs.setString('currentPaymentMethod', newPaymentUiModel.title);
@@ -243,20 +242,25 @@ class PaymentRepositoryImpl extends PaymentRepository {
   final _repo = FirebaseFirestoreRepositoryImpl();
 
   @override
-  Future<double> getCosts(Tariff tariff, {bool getHourPrice = true, getKmPrice = false, bool getStartPrice = false, bool getPriceOfFirstHours = false}) async {
+  Future<double> getCosts(Tariff tariff,
+      {bool getHourPrice = true,
+      getKmPrice = false,
+      bool getStartPrice = false,
+      bool getPriceOfFirstHours = false}) async {
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.fetch();
     await remoteConfig.activate();
-    if(getStartPrice && tariff.startPriceKey != null) {
-      return remoteConfig.getDouble(tariff.startPriceKey??'');
+    if (getStartPrice && tariff.startPriceKey != null) {
+      return remoteConfig.getDouble(tariff.startPriceKey ?? '');
     }
-    if(getHourPrice && tariff.hourPriceKey != null) {
-      return remoteConfig.getDouble(tariff.hourPriceKey??'');
-    } if(getKmPrice && tariff.kmPriceKey != null) {
-      return remoteConfig.getDouble(tariff.kmPriceKey??'');
+    if (getHourPrice && tariff.hourPriceKey != null) {
+      return remoteConfig.getDouble(tariff.hourPriceKey ?? '');
     }
-    if(getPriceOfFirstHours && tariff.theCostOfFirstHoursKey != null) {
-      return remoteConfig.getDouble(tariff.theCostOfFirstHoursKey??'');
+    if (getKmPrice && tariff.kmPriceKey != null) {
+      return remoteConfig.getDouble(tariff.kmPriceKey ?? '');
+    }
+    if (getPriceOfFirstHours && tariff.theCostOfFirstHoursKey != null) {
+      return remoteConfig.getDouble(tariff.theCostOfFirstHoursKey ?? '');
     }
     return 0;
   }

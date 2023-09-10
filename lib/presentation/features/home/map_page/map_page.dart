@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sober_driver_analog/presentation/features/home/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/event/event.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
@@ -21,6 +22,8 @@ import '../../../utils/app_color_util.dart';
 import '../../../utils/size_util.dart';
 import '../../../utils/status_enum.dart';
 import '../../../widgets/app_snack_bar.dart';
+import '../bloc/event.dart';
+import '../ui/widgets/menu_button.dart';
 import 'widgets/orders_count_widget.dart';
 import 'widgets/pages/add_price_page.dart';
 import 'widgets/pages/order_accepted_widget.dart';
@@ -89,6 +92,7 @@ class MapPage extends StatelessWidget {
                 },
                 initialCameraPosition: bloc.cameraPosition,
               ),
+
               IgnorePointer(
                 child: Align(
                   alignment: Alignment.topCenter,
@@ -102,6 +106,13 @@ class MapPage extends StatelessWidget {
                       )
                     ),
                   ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 48,left: 8),
+                  child: MenuButton(() => context.read<HomeBloc>().add(GoToMenuHomeEvent())),
                 ),
               ),
 

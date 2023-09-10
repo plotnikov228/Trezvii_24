@@ -42,4 +42,6 @@ class AppColor {
 
   static final iconDisableColor = _fromHex('#C0C0C0');
 
+  static final textTabColor = _fromHex('#777777');
+
 }

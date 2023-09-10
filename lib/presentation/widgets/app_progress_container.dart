@@ -8,10 +8,10 @@ Widget AppProgressContainer () {
       width: 150,
       height: 150,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        shape: BoxShape.circle,
         color: AppColor.firstColor,
       ),
-      child: CircularProgressIndicator(color: Colors.white,),
+      child: const Center(child: CircularProgressIndicator(color: Colors.white,)),
     ),
   );
 }
