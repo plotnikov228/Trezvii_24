@@ -133,9 +133,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
    List<Tariff> _tariffs = [];
-
+  int _currentTariffIndex = 0;
   MapBloc(super.initialState) {
-    int currentTariffIndex = 0;
+
 
     on<InitMapBloc>((event, emit) async {
       _activePromo = await CheckPromoForActivity(_paymentRepo).call();
@@ -208,14 +208,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         }
 
         if ((event.newState as CreateOrderMapState).currentIndexTariff !=
-            currentTariffIndex) {
-          currentTariffIndex =
+            _currentTariffIndex) {
+          _currentTariffIndex =
               (event.newState as CreateOrderMapState).currentIndexTariff;
         }
         emit(CreateOrderMapState(
           status: event.newState.status,
           currentPaymentUiModel: _currentPaymentModel,
-          currentIndexTariff: currentTariffIndex,
+          currentIndexTariff: _currentTariffIndex,
           tariffList: _tariffs,
         ));
       }
@@ -341,7 +341,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     on<CreateOrderMapEvent>((event, emit) async {
       emit(state.copyWith(status: Status.Loading));
-      final cost = await GetCostInRub(_mapRepo).call(_tariffs[currentTariffIndex],currentRoute!);
+      final cost = await GetCostInRub(_mapRepo).call(_tariffs[_currentTariffIndex],currentRoute!);
       print(cost);
       _currentOrder = Order(WaitingForOrderAcceptanceOrderStatus(),
           from: fromAddress!,

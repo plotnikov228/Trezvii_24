@@ -21,3 +21,7 @@ class OrdersMenuState extends MenuState {
 class FavoriteAddressesMenuState extends MenuState {
 
 }
+
+class AboutCompanyMenuState extends MenuState {
+
+}
