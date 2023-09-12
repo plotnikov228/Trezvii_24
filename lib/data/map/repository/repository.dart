@@ -124,17 +124,21 @@ class MapRepositoryImpl extends MapRepository {
     Point? startPoint;
 
     final useCase = GetCosts(PaymentRepositoryImpl());
-    var hours = route.metadata.weight.timeWithTraffic.value! / 60 / 60;
+    int hours = route.metadata.weight.timeWithTraffic.value! / 60 ~/ 60;
     double tripPrice = await useCase.call(tariff, getStartPrice: true);
     final hourPrice = await useCase.call(tariff,getHourPrice: true);
     final kmPrice = await useCase.call(tariff, getKmPrice: true);
     final firstHoursPrice = await useCase.call(tariff, getPriceOfFirstHours: true);
-    print('kmPrice - $kmPrice hourPrice - $hourPrice startPrice - $tripPrice');
+    print('kmPrice - $kmPrice hourPrice - $hourPrice startPrice - $tripPrice first hour price - $firstHoursPrice');
     if(firstHoursPrice != 0 && tariff.hoursCount != null) {
       if(hours < tariff.hoursCount!) {
+        hours = hours > 1 ? hours : 1;
         tripPrice += hours * firstHoursPrice;
         hours = 0;
 
+      } else {
+        tripPrice += 3 * firstHoursPrice;
+        hours -= 3;
       }
     }
     final resultFirst = (await YandexSearch.searchByPoint(

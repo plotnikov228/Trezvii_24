@@ -13,7 +13,7 @@ Widget CustomTabButton ({required String text, double? width, VoidCallback? onTa
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Center(child: Text(text, style: isSelected ? AppStyle.black22 : AppStyle.gray22, textAlign: TextAlign.center,)),
+          Center(child: Text(text, style: isSelected ? AppStyle.black22.copyWith(fontSize: 18) : AppStyle.gray22.copyWith(fontSize: 18), textAlign: TextAlign.center,)),
           Align(
             alignment: Alignment.bottomCenter,
             child: Visibility(

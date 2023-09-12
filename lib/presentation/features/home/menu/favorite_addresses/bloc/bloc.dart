@@ -30,6 +30,7 @@ class FavoriteAddressesBloc extends Bloc<FavoriteAddressesEvent, FavoriteAddress
     });
 
     on<AddAddressEvent>((event, emit) async {
+      print('new Address');
       await DBInsert(_dbRepo).call(DBConstants.favoriteAddressesTable, event.addressModel.toJson());
       _addresses.add(event.addressModel);
       emit(FavoriteAddressesState(_addresses));

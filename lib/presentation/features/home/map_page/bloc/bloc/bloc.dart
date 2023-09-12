@@ -117,9 +117,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _orderStateChangesListener = SetChangesOrderListener(_orderRepo)
         .call(_currentOrderId!)
         .listen((event) async {
-      if (event == null) {
-        add(GoMapEvent(CreateOrderMapState()));
-      } else if (_currentOrder!.status != event.status) {
+      if (_currentOrder!.status != event?.status) {
         _currentOrder = event;
         add(RecheckOrderMapEvent());
       }

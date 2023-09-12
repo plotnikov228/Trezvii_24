@@ -7,9 +7,10 @@ class AddressModel {
   final String addressName;
   final AppLatLong appLatLong;
   final String? name;
+  final String? entrance;
   final String? comment;
 
-  AddressModel({this.name, this.comment,required this.addressName, required this.appLatLong});
+  AddressModel( {this.name, this.comment,required this.addressName,this.entrance, required this.appLatLong});
 
   factory AddressModel.fromJson (Map<String, dynamic> json) => _$AddressModelFromJson(json);
   Map<String, dynamic> toJson () => _$AddressModelToJson(this);

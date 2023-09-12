@@ -119,11 +119,11 @@ class MenuScreen extends StatelessWidget {
                       ),
                       menuChapter(
                           title: 'Способ оплаты',
-                          prefixWidget: SvgPicture.asset(context.read<HomeBloc>().paymentUiModel.prefixWidgetAsset,
+                          prefixWidget: SvgPicture.asset(context.read<HomeBloc>().paymentUiModel?.prefixWidgetAsset ?? AppImages.wallet,
                               width: 25, height: 25, color: Colors.deepPurple)),
                       menuChapter(
                           title: 'Избранные адреса',
-                          onTap: () => bloc.add(GoMenuEvent(newState: OrdersMenuState())),
+                          onTap: () => bloc.add(GoMenuEvent(newState: FavoriteAddressesMenuState())),
                           prefixWidget: const Icon(Icons.favorite,
                               size: 25, color: Colors.deepPurple)),
                       menuChapter(

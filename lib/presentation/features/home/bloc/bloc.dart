@@ -10,14 +10,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   final  PageController pageController;
 
-  late PaymentUiModel paymentUiModel;
+  PaymentUiModel? paymentUiModel;
 
   HomeBloc(super.initialState, this.pageController) {
 
 
     on<GoToMenuHomeEvent>((event, emit) async {
       paymentUiModel = await GetCurrentPaymentModel(PaymentRepositoryImpl()).call();
-      pageController.jumpToPage(0);
+      pageController.animateToPage(0, duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
 
       add(UpdateHomeEvent(0));
     });

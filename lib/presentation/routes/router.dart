@@ -6,6 +6,8 @@ import 'package:sober_driver_analog/presentation/features/home/ui/home_page.dart
 import 'package:sober_driver_analog/presentation/features/profile/profile_page.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 
+import '../features/add_address_to_favorite/add_address_to_favorite_page.dart';
+import '../features/add_address_to_favorite/ui/add_address_to_favorite_screen.dart';
 import '../features/auth/ui/auth_page.dart';
 import '../features/auth/ui/widgets/sign_up_page.dart';
 import '../features/splash/ui/splash_page.dart';
@@ -58,7 +60,13 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const ProfilePage();
             },
-          )
+          ),
+          GoRoute(
+              path: AppRoutes.addNewAddress,
+              name: AppRoutes.addNewAddress,
+              builder: (context, state) {
+                return const AddAddressToFavoritePage();
+              })
         ],
       ),
       GoRoute(

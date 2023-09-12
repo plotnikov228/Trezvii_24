@@ -243,23 +243,32 @@ class PaymentRepositoryImpl extends PaymentRepository {
 
   @override
   Future<double> getCosts(Tariff tariff,
-      {bool getHourPrice = true,
+      {bool getHourPrice = false,
       getKmPrice = false,
       bool getStartPrice = false,
       bool getPriceOfFirstHours = false}) async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
+    final remoteConfig = FirebaseRemoteConfig.instance
+      ..setConfigSettings(RemoteConfigSettings(
+          fetchTimeout: const Duration(seconds: 14),
+          minimumFetchInterval: const Duration(seconds: 5)));
     await remoteConfig.fetch();
     await remoteConfig.activate();
-    if (getStartPrice && tariff.startPriceKey != null) {
+    if (getStartPrice) {
+      print('${tariff.startPriceKey} 1');
       return remoteConfig.getDouble(tariff.startPriceKey ?? '');
     }
-    if (getHourPrice && tariff.hourPriceKey != null) {
+    if (getHourPrice) {
+      print('${tariff.hourPriceKey} 2');
+
       return remoteConfig.getDouble(tariff.hourPriceKey ?? '');
     }
-    if (getKmPrice && tariff.kmPriceKey != null) {
+    if (getKmPrice) {
+      print('${tariff.kmPriceKey} 3');
+
       return remoteConfig.getDouble(tariff.kmPriceKey ?? '');
     }
-    if (getPriceOfFirstHours && tariff.theCostOfFirstHoursKey != null) {
+    if (getPriceOfFirstHours) {
+      print('${tariff.theCostOfFirstHoursKey} 4');
       return remoteConfig.getDouble(tariff.theCostOfFirstHoursKey ?? '');
     }
     return 0;
