@@ -6,4 +6,5 @@ class AppRoutes {
   static const chat = '/chat';
   static const profile = 'profile';
   static const addNewAddress = 'addNewAddress';
+  static const privacyPolicy = 'privacyPolicy';
 }
