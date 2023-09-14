@@ -14,14 +14,17 @@ class InitialMenuState extends MenuState {
   InitialMenuState({this.bonuses = 0, this.userModel, this.userUrl, this.currentPaymentModel});
 }
 
-class OrdersMenuState extends MenuState {
+class OrdersMenuState extends MenuState {}
 
-}
+class FavoriteAddressesMenuState extends MenuState {}
 
-class FavoriteAddressesMenuState extends MenuState {
+class AboutCompanyMenuState extends MenuState {}
 
-}
+class AboutTariffsMenuState extends MenuState {}
 
-class AboutCompanyMenuState extends MenuState {
+class NewsMenuState extends MenuState {}
 
-}
+class FeedbackMenuState extends MenuState {}
+
+class SettingsMenuState extends MenuState {}
+

@@ -120,14 +120,16 @@ class MenuScreen extends StatelessWidget {
                       menuChapter(
                           title: 'Способ оплаты',
                           prefixWidget: SvgPicture.asset(context.read<HomeBloc>().paymentUiModel?.prefixWidgetAsset ?? AppImages.wallet,
-                              width: 25, height: 25, color: Colors.deepPurple)),
+                              width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
                           title: 'Избранные адреса',
                           onTap: () => bloc.add(GoMenuEvent(newState: FavoriteAddressesMenuState())),
-                          prefixWidget: const Icon(Icons.favorite,
-                              size: 25, color: Colors.deepPurple)),
+                          prefixWidget: Icon(Icons.favorite,
+                              size: 25, color: AppColor.firstColor)),
                       menuChapter(
                           title: 'О компании',
+                          onTap: () => bloc.add(GoMenuEvent(newState: AboutCompanyMenuState())),
+
                           prefixWidget: Icon(
                             Icons.info,
                             size: 25,
@@ -135,6 +137,7 @@ class MenuScreen extends StatelessWidget {
                           )),
                       menuChapter(
                           title: 'Тарифы',
+                          onTap: () => bloc.add(GoMenuEvent(newState: AboutTariffsMenuState())),
                           prefixWidget: Icon(
                             Icons.star,
                             size: 25,
@@ -142,12 +145,14 @@ class MenuScreen extends StatelessWidget {
                           )),
                       menuChapter(
                           title: 'Новости',
+                          onTap: () => bloc.add(GoMenuEvent(newState: NewsMenuState())),
                           prefixWidget: SvgPicture.asset(AppImages.news,
-                              width: 25, height: 25, color: Colors.deepPurple)),
+                              width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
                           title: 'Обратная связь',
+                          onTap: () => bloc.add(GoMenuEvent(newState: FeedbackMenuState())),
                           prefixWidget: SvgPicture.asset(AppImages.feedback,
-                              width: 25, height: 25, color: Colors.deepPurple)),
+                              width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
                           title: 'Настройки',
                           prefixWidget: Icon(

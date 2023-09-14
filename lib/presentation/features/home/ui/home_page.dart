@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
             return PageView(
               clipBehavior: Clip.none,
               allowImplicitScrolling: true,
-              physics: state.currentPage == 1 ? const NeverScrollableScrollPhysics() : const PageScrollPhysics(),
+              physics: state.currentPage == 1 || context.read<MenuBloc>().state is! InitialMenuState ? const NeverScrollableScrollPhysics() : const PageScrollPhysics(),
               onPageChanged: (val) => bloc.add(UpdateHomeEvent(val)),
               controller: state.pageController,
               children: const [

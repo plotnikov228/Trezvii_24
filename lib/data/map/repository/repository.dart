@@ -14,6 +14,7 @@ class MapRepositoryImpl extends MapRepository {
   static const defLocation = MoscowLocation();
   static const _lastLatKey = 'lastLatKey';
   static const _lastLongKey = 'lastLongKey';
+  static const _locallyKey = 'locallyKey';
 
   @override
   Future<bool> checkPermission() {
@@ -172,5 +173,18 @@ class MapRepositoryImpl extends MapRepository {
     print('trip price after add hour tariff - $tripPrice');
 
     return tripPrice.round().toDouble();
+  }
+
+  @override
+  Future<String?> getLocally() async {
+    final prefs = await SharedPreferences.getInstance();
+   return prefs.getString(_locallyKey);
+  }
+
+  @override
+  Future<String> setLocally(String locally) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_locallyKey, locally);
+    return locally;
   }
 }

@@ -7,7 +7,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'driver.g.dart';
 
-@JsonSerializable()
 class Driver extends UserModel {
   final List<double> ratings;
   final AppLatLong? currentPosition;

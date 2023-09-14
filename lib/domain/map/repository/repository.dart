@@ -24,4 +24,8 @@ abstract class MapRepository {
   Future<Duration> getDurationBetweenTwoPoints(AppLatLong first, AppLatLong second);
 
   Future<double> getCostInRub(Tariff tariff,DrivingRoute route);
+
+  Future<String?> getLocally ();
+
+  Future<String> setLocally (String locally);
 }

@@ -10,7 +10,7 @@ class FirebaseFirestoreRepositoryImpl extends FirebaseFirestoreRepository {
       String collection) async {
     return (await _instance.collection(collection).get())
         .docs
-        .map((e) => e.data()!)
+        .map((e) => e.data())
         .toList();
   }
 }

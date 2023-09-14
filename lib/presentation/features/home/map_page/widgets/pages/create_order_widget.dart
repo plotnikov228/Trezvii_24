@@ -153,7 +153,7 @@ class _CreateOrderWidgetState extends State<CreateOrderWidget>
                         ),
                         Padding(
                             padding: const EdgeInsets.only(
-                                top: 31, bottom: 11, left: 35),
+                                top: 31, bottom: 11),
                             child: SizedBox(
                               height: 62,
                               child: ListView.builder(
@@ -161,8 +161,8 @@ class _CreateOrderWidgetState extends State<CreateOrderWidget>
                                   itemCount: widget.state.tariffList!.length,
                                   itemBuilder: (context, index) {
                                     return Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 10,
+                                      padding: EdgeInsets.only(
+                                        left: index == 0 ? 35 : 10,
                                       ),
                                       child: TariffCard(null,
                                          tariff: widget.state.tariffList![index],

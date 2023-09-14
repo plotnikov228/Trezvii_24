@@ -4,6 +4,7 @@ part 'tariff.g.dart';
 @JsonSerializable()
 class Tariff {
   final String name;
+  final String description;
   final String displayCost;
   final String? startPriceKey;
   final bool checkOutCity;
@@ -14,7 +15,7 @@ class Tariff {
   final String? kmPriceInVillageKey;
 
   Tariff(
-      {required this.name,required this.checkOutCity,
+      {required this.name,required this.checkOutCity,required this.description,
         required this.displayCost,
       required this.theCostOfFirstHoursKey,
       required this.kmPriceKey,required this.startPriceKey,

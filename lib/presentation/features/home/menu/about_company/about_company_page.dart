@@ -34,14 +34,17 @@ class AboutCompanyPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: AppPopButton(context,
                             onTap: () => context.read<MenuBloc>().add(GoMenuEvent(newState: InitialMenuState())),
-                            text: 'История заказов', color: Colors.white),
+                            text: 'О компании', color: Colors.black,
+                            textStyle: AppStyle.black16),
                       ),
                     ),
-                    Padding(padding:const EdgeInsets.symmetric(vertical: 30),
+                    Padding(padding:const EdgeInsets.only(top: 10, bottom: 30),
                     child: Image.asset(AppImages.logo, width: size.width - 200, height: size.width - 200,),
                     ),
                     Padding(padding: const EdgeInsets.symmetric(horizontal: 22,
-                    ), child: Text(state.description, style: AppStyle.black16, overflow: TextOverflow.visible,),)
+                    ), child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(state.description, style: AppStyle.black16, overflow: TextOverflow.visible, textAlign: TextAlign.start,)),)
                   ],
                 ),
               ),

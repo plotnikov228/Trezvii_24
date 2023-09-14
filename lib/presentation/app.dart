@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sober_driver_analog/l10n/all_locales.dart';
 import 'package:sober_driver_analog/presentation/routes/router.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 
@@ -14,6 +15,13 @@ class App extends StatelessWidget {
       routeInformationProvider: _router.routeInformationProvider,
       routeInformationParser: _router.routeInformationParser,
       routerDelegate: _router.routerDelegate,
+    /*supportedLocales: AllLocale.all,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],*/
       title: 'Трезвый 24',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

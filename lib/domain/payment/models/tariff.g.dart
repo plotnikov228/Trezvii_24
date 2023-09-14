@@ -8,6 +8,7 @@ part of 'tariff.dart';
 
 Tariff _$TariffFromJson(Map<String, dynamic> json) => Tariff(
       name: json['name'] as String,
+      description: json['description'],
       checkOutCity: json['checkOutCity'] as bool,
       displayCost: json['displayCost'] as String,
       theCostOfFirstHoursKey: json['theCostOfFirstHoursKey'] as String?,
@@ -28,4 +29,5 @@ Map<String, dynamic> _$TariffToJson(Tariff instance) => <String, dynamic>{
       'hourPriceKey': instance.hourPriceKey,
       'hoursCount': instance.hoursCount,
       'kmPriceInVillageKey': instance.kmPriceInVillageKey,
+      'description': instance.description
     };

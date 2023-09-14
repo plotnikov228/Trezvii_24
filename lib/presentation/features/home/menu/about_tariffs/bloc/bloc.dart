@@ -11,11 +11,8 @@ class AboutTariffsBloc extends Bloc<AboutTariffsEvent, AboutTariffsState> {
     List<Tariff> _tariffs = [];
 
     on<InitAboutTariffsEvent>((event, emit) async {
-      if(_tariffs.isEmpty) {
         _tariffs = (await GetCollectionData(FirebaseFirestoreRepositoryImpl()).call('Tariffs')).map((e) => Tariff.fromJson(e)).toList();
         emit(AboutTariffsState(tariffs: _tariffs));
-      }
-
     });
   }
 }

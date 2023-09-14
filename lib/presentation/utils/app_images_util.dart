@@ -32,6 +32,13 @@ class AppImages {
   static const news = 'assets/icons/news.svg';
   static const time = 'assets/icons/time.svg';
   static const feedback = 'assets/icons/feedback.svg';
+  static const vk = 'assets/icons/vk.svg';
+  static const ok = 'assets/icons/ok.svg';
+  static const instagram = 'assets/icons/instagram.svg';
+  static const facebook = 'assets/icons/facebook.svg';
+  static const support = 'assets/icons/support.svg';
+  static const operator = 'assets/icons/operator.svg';
+
 
   static const logo = 'assets/images/logo.PNG';
 
