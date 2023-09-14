@@ -8,6 +8,7 @@ import 'package:sober_driver_analog/presentation/routes/routes.dart';
 
 import '../features/auth/ui/auth_page.dart';
 import '../features/auth/ui/widgets/sign_up_page.dart';
+import '../features/privacy_policy/privacy_policy_page.dart';
 import '../features/splash/ui/splash_page.dart';
 import '../features/tutorial/ui/tutorial_page.dart';
 
@@ -58,6 +59,12 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const ProfilePage();
             },
+          ),
+          GoRoute(path: AppRoutes.privacyPolicy,
+          name: AppRoutes.privacyPolicy,
+            builder: (context, state) {
+              return const PrivacyPolicyPage();
+            }
           )
         ],
       ),
