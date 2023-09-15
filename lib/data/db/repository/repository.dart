@@ -36,7 +36,7 @@ class DBRepositoryImpl extends DBRepository {
       id INTEGER NOT NULL PRIMARY KEY,
       userId STRING NOT NULL,
       number STRING NOT NULL,
-      email STRING NOT NULL,
+      notification STRING NOT NULL,
       name STRING NOT NULL,
       registrationDate STRING NOT NULL,
       bonuses INTEGER NULL

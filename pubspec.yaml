@@ -44,6 +44,7 @@ dependencies:
   cloud_firestore: ^4.8.4
   firebase_storage: ^11.2.6
   firebase_remote_config: ^4.2.5
+  firebase_messaging: ^14.4.1
 
   # router
   go_router: ^10.0.0

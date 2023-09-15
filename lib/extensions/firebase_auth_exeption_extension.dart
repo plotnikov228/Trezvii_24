@@ -31,10 +31,10 @@ const _authErrors = {
   "This operation is sensitive and requires recent authentication. Log in again before retrying this request.",
   "dynamic-link-not-activated":
   "Please activate Dynamic Links in the Firebase Console and agree to the terms and conditions.",
-  "email-change-needs-verification":
-  "Multi-factor users must always have a verified email.",
-  "email-already-in-use":
-  "The email address is already in use by another account.",
+  "notification-change-needs-verification":
+  "Multi-factor users must always have a verified notification.",
+  "notification-already-in-use":
+  "The notification address is already in use by another account.",
   "expired-action-code": "The action code has expired. ",
   "cancelled-popup-request":
   "This operation has been cancelled due to another conflicting popup being opened.",
@@ -56,14 +56,14 @@ const _authErrors = {
   "The custom token format is incorrect. Please check the documentation.",
   "invalid-dynamic-link-domain":
   "The provided dynamic link domain is not configured or authorized for the current project.",
-  "invalid-email": "The email address is badly formatted.",
+  "invalid-notification": "The notification address is badly formatted.",
   "invalid-api-key":
   "Your API key is invalid, please check you have copied it correctly.",
   "invalid-cert-hash": "The SHA-1 certificate hash provided is invalid.",
   "invalid-credential":
   "The supplied auth credential is malformed or has expired.",
   "invalid-message-payload":
-  "The email template corresponding to this action contains invalid characters in its message. Please fix by going to the Auth email templates section in the Firebase Console.",
+  "The notification template corresponding to this action contains invalid characters in its message. Please fix by going to the Auth notification templates section in the Firebase Console.",
   "invalid-multi-factor-session":
   "The request does not contain a valid proof of first factor successful sign-in.",
   "invalid-oauth-provider":
@@ -81,10 +81,10 @@ const _authErrors = {
   "invalid-phone-number":
   "The format of the phone number provided is incorrect. Please enter the phone number in a format that can be parsed into E.164 format. E.164 phone numbers are written in the format [+][country code][subscriber number including area code].",
   "invalid-provider-id": "The specified provider ID is invalid.",
-  "invalid-recipient-email":
-  "The email corresponding to this action failed to send as the provided recipient email address is invalid.",
+  "invalid-recipient-notification":
+  "The notification corresponding to this action failed to send as the provided recipient notification address is invalid.",
   "invalid-sender":
-  "The email template corresponding to this action contains an invalid sender email or name. Please fix by going to the Auth email templates section in the Firebase Console.",
+  "The notification template corresponding to this action contains an invalid sender notification or name. Please fix by going to the Auth notification templates section in the Firebase Console.",
   "invalid-verification-id":
   "The verification ID used to create the phone auth credential is invalid.",
   "invalid-tenant-id": "The Auth instance's tenant ID is invalid.",
@@ -115,7 +115,7 @@ const _authErrors = {
   "The phone auth credential was created with an empty verification ID.",
   "app-deleted": "This instance of FirebaseApp has been deleted.",
   "account-exists-with-different-credential":
-  "An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
+  "An account already exists with the same notification address but different sign-in credentials. Sign in using a provider associated with this notification address.",
   "network-request-failed":
   "A network error (such as timeout, interrupted connection or unreachable host) has occurred.",
   "no-auth-event": "An internal error has occurred.",
@@ -160,7 +160,7 @@ const _authErrors = {
   "The current environment does not support the specified persistence type.",
   "unsupported-tenant-operation":
   "This operation is not supported in a multi-tenant context.",
-  "unverified-email": "The operation requires a verified email.",
+  "unverified-notification": "The operation requires a verified notification.",
   "user-cancelled":
   "The user did not grant your application the permissions it requested.",
   "user-not-found":

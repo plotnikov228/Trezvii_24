@@ -12,8 +12,10 @@ class ChangeLanguageSettingsEvent extends SettingsEvent {
 
 }
 
-class ChangeEmailDisabledSettingsEvent extends SettingsEvent {
-  final bool val;
+class ChangeNotifyDisabledSettingsEvent extends SettingsEvent {
+  final bool email;
+  final bool push;
 
-  ChangeEmailDisabledSettingsEvent({required this.val});
+
+  ChangeNotifyDisabledSettingsEvent( {required this.push,required this.email});
 }

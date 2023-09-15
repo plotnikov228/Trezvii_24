@@ -7,6 +7,7 @@ import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 
 import '../../../../../utils/app_style_util.dart';
 import '../../../../../utils/size_util.dart';
+import '../../../../../widgets/app_switch.dart';
 
 class SelectTimeTab extends StatefulWidget {
   final MapBloc bloc;
@@ -94,23 +95,14 @@ class _SelectTimeTabState extends State<SelectTimeTab> {
                 'Предварительный заказ',
                 style: AppStyle.black14,
               ),
-              Switch(
-                  thumbColor: MaterialStateProperty.resolveWith((Set states) {
-                    return Colors.white;
-                  }),
-                  trackOutlineColor:  MaterialStateProperty.resolveWith((Set states) {
-                    if(preliminary) return AppColor.firstColor;
-
-                    return AppColor.gray;
-                  }),
-                  activeTrackColor: AppColor.firstColor,
-                  inactiveTrackColor: AppColor.gray,
-                  value: preliminary,
-                  onChanged: (val) {
-                    preliminary = val;
-                    checkDate();
-                    setState(() {});
-                  })
+              AppSwitch(
+                value: preliminary,
+                onChange: (val) {
+                  preliminary = val;
+                  checkDate();
+                  setState(() {});
+                },
+              ),
             ],
           ),
           IgnorePointer(
@@ -136,7 +128,7 @@ class _SelectTimeTabState extends State<SelectTimeTab> {
                               });
                               checkDate();
                             },
-                            itemExtent: 55,
+                            itemExtent: 70,
                             childDelegate: ListWheelChildLoopingListDelegate(
                               children: List<Widget>.generate(
                                   dates.length,

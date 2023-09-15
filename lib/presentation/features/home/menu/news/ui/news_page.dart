@@ -7,6 +7,7 @@ import 'package:sober_driver_analog/presentation/features/home/menu/news/bloc/st
 import '../../../../../utils/app_color_util.dart';
 import '../../../../../utils/app_style_util.dart';
 import '../../../../../utils/size_util.dart';
+import '../../../../../utils/status_enum.dart';
 import '../../../../../widgets/app_pop_button.dart';
 import '../../bloc/bloc.dart';
 import '../../bloc/event.dart';
@@ -43,7 +44,9 @@ class NewsPage extends StatelessWidget {
                 SizedBox(
                   height: size.height - 100,
                   width: size.width - 60,
-                  child: state.news.isEmpty
+                  child: state.status == Status.Loading ? SizedBox(width: 50, height: 50, child: Center(
+                    child: CircularProgressIndicator(color: AppColor.firstColor,),
+                  ),) : state.news.isEmpty
                       ? Center(
                           child: Text(
                             'Нету новостей',

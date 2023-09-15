@@ -80,17 +80,19 @@ class _MapWidgetState extends State<MapWidget> {
     } catch (_) {
       location = defLocation;
     }
-    final result = await YandexSearch.searchByPoint(
-            point: location.toPoint(), searchOptions: SearchOptions())
-        .result;
-    final locally = result.items!.first.businessMetadata!.address
-        .addressComponents[SearchComponentKind.locality];
-    if (result.items != null &&
-        result.items!.first.businessMetadata!.address
-                .addressComponents[SearchComponentKind.locality] !=
-            null &&
-        (await GetLocally(repo).call()) == null) {
-      SetLocally(repo).call(locally!);
+    try {
+      final result = await YandexSearch
+          .searchByPoint(
+          point: location.toPoint(), searchOptions: SearchOptions());
+      final locally = (await result.result).items?.first.toponymMetadata?.address
+          .addressComponents[SearchComponentKind.locality];
+      final savedLocally = await GetLocally(repo).call();
+      if (locally !=
+          null &&
+          (savedLocally != locally)) {
+        SetLocally(repo).call(locally);
+      }
+    } catch (_) {
     }
     _moveToCurrentLocation(location);
   }

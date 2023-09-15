@@ -62,10 +62,8 @@ class SelectContactBottomSheet extends StatelessWidget {
                                       ? ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(100),
-                                          child: Image.file(
-                                            File.fromRawPath(photo),
-                                            fit: BoxFit.cover,
-                                          ))
+                                          child: CircleAvatar(
+                                              backgroundImage:MemoryImage(photo)))
                                       : const Icon(
                                           Icons.camera_alt_rounded,
                                           color: Colors.black45,

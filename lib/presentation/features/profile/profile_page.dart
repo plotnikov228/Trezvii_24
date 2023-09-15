@@ -146,7 +146,7 @@ class ProfilePage extends StatelessWidget {
                                           focusNode: FocusNode(),
                                           height: 45,
                                           width: size.width - 80,
-                                          hintText: 'email'),
+                                          hintText: 'notification'),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 19),

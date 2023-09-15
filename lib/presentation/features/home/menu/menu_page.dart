@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sober_driver_analog/presentation/features/home/menu/about_app/about_app_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/about_company/about_company_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/about_company/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/about_company/bloc/event.dart';
@@ -20,7 +21,12 @@ import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/orders_page.dart';
+import 'package:sober_driver_analog/presentation/features/home/menu/settings/bloc/bloc.dart';
+import 'package:sober_driver_analog/presentation/features/home/menu/settings/bloc/event.dart';
+import 'package:sober_driver_analog/presentation/features/home/menu/settings/bloc/state.dart';
+import 'package:sober_driver_analog/presentation/features/home/menu/settings/settings_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/ui/menu_screen.dart';
+import '../../../utils/status_enum.dart';
 import 'about_tariffs/bloc/state.dart';
 import 'favorite_addresses/bloc/bloc.dart';
 import 'favorite_addresses/bloc/event.dart';
@@ -35,8 +41,10 @@ class MenuPage extends StatelessWidget {
         BlocProvider<OrdersBloc>(create: (_) => OrdersBloc(OrdersState())..add(InitOrdersEvent())),
         BlocProvider<FavoriteAddressesBloc>(create: (_) => FavoriteAddressesBloc(FavoriteAddressesState([]))..add(InitFavoriteAddressesEvent())),
         BlocProvider<AboutCompanyBloc>(create: (_) => AboutCompanyBloc(AboutCompanyState())..add(InitAboutCompanyEvent())),
-        BlocProvider<AboutTariffsBloc>(create: (_) => AboutTariffsBloc(AboutTariffsState())..add(InitAboutTariffsEvent())),
-        BlocProvider<NewsBloc>(create: (_) => NewsBloc(NewsState())..add(InitNewsEvent())),
+        BlocProvider<AboutTariffsBloc>(create: (_) => AboutTariffsBloc(AboutTariffsState(status: Status.Loading))..add(InitAboutTariffsEvent())),
+        BlocProvider<NewsBloc>(create: (_) => NewsBloc(NewsState(status: Status.Loading))..add(InitNewsEvent())),
+        BlocProvider<SettingsBloc>(create: (_) => SettingsBloc(SettingsState())..add(InitSettingsEvent())),
+
 
 
       ],
@@ -58,6 +66,10 @@ class MenuPage extends StatelessWidget {
             return const NewsPage();
           } if(state is FeedbackMenuState) {
             return const FeedbackPage();
+          } if(state is AboutAppMenuState) {
+            return const AboutAppPage();
+          } if(state is SettingsMenuState) {
+            return const SettingsPage();
           }
           return MenuScreen(bloc: bloc, state: state as InitialMenuState,);
         },

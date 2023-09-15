@@ -43,10 +43,10 @@ class OrdersPage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Container(
                         height: 42,
-                        width: size.width - 40,
+                        width: size.width - 20,
                         decoration: BoxDecoration(
                             color: Colors.grey,
                             borderRadius: BorderRadius.circular(50)),
@@ -65,9 +65,10 @@ class OrdersPage extends StatelessWidget {
                             ],
                             labelStyle: AppStyle.black16,
                             unselectedLabelColor: AppColor.textTabColor,
-                            indicatorColor: Colors.transparent,
+                            dividerColor: Colors.transparent,
                             indicator: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
+                              border: null,
                               color: Colors.white,
                             )),
                       ),

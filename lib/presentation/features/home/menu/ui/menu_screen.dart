@@ -155,6 +155,7 @@ class MenuScreen extends StatelessWidget {
                               width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
                           title: 'Настройки',
+                          onTap: () => bloc.add(GoMenuEvent(newState: SettingsMenuState())),
                           prefixWidget: Icon(
                             Icons.settings,
                             size: 25,
@@ -162,6 +163,7 @@ class MenuScreen extends StatelessWidget {
                           )),
                       menuChapter(
                           title: 'О приложении',
+                          onTap: () => bloc.add(GoMenuEvent(newState: AboutAppMenuState())),
                           prefixWidget: SvgPicture.asset(
                             AppImages.aboutApp,
                             width: 25,

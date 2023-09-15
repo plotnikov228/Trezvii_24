@@ -28,3 +28,5 @@ class FeedbackMenuState extends MenuState {}
 
 class SettingsMenuState extends MenuState {}
 
+class AboutAppMenuState extends MenuState {}
+

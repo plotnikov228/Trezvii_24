@@ -98,7 +98,7 @@ class SignUpPage extends StatelessWidget {
                             height: 45,
                             width: size.width - 80,
                             textInputAction: TextInputAction.next,
-                            hintText: 'email'),
+                            hintText: 'notification'),
                       ),
                       Padding(
                           padding: const EdgeInsets.only(top: 22),

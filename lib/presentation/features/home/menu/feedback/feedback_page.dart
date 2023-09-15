@@ -42,8 +42,8 @@ class FeedbackPage extends StatelessWidget {
                       title: 'Написать в VK',
                       prefixWidget: SvgPicture.asset(
                         AppImages.vk,
-                        width: 25,
-                        height: 25,
+                        width: 30,
+                        height: 30,
                         fit: BoxFit.cover,
                         color: AppColor.firstColor,
                       ),
@@ -55,8 +55,8 @@ class FeedbackPage extends StatelessWidget {
                       title: 'Написать в Одноклассники',
                       prefixWidget: SvgPicture.asset(
                         AppImages.ok,
-                        width: 25,
-                        height: 25,
+                        width: 30,
+                        height: 30,
                         fit: BoxFit.cover,
                         color: AppColor.firstColor,
                       ),
@@ -68,8 +68,8 @@ class FeedbackPage extends StatelessWidget {
                       title: 'Написать в Instagram',
                       prefixWidget: SvgPicture.asset(
                         AppImages.instagram,
-                        width: 25,
-                        height: 25,
+                        width: 30,
+                        height: 30,
                         fit: BoxFit.cover,
                         color: AppColor.firstColor,
                       ),
@@ -79,12 +79,16 @@ class FeedbackPage extends StatelessWidget {
                   padding: const EdgeInsets.only(left:40,top: 20),
                   child: menuChapter(
                       title: 'Написать в Facebook',
-                      prefixWidget: SvgPicture.asset(
-                        AppImages.facebook,
-                        width: 25,
-                        height: 25,
-                        fit: BoxFit.cover,
-                        color: AppColor.firstColor,
+                      prefixWidget: SizedBox(width: 30,height: 30,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            AppImages.facebook,
+                            width: 25,
+                            height: 25,
+                            fit: BoxFit.cover,
+                            color: AppColor.firstColor,
+                          ),
+                        ),
                       ),
                       onTap: () {}),
                 ),
@@ -92,12 +96,16 @@ class FeedbackPage extends StatelessWidget {
                   padding: const EdgeInsets.only(left:40,top: 20),
                   child: menuChapter(
                       title: 'Написать в службу поддержки',
-                      prefixWidget: SvgPicture.asset(
-                        AppImages.support,
-                        width: 20,
-                        height: 20,
-                        fit: BoxFit.cover,
-                        color: AppColor.firstColor,
+                      prefixWidget: SizedBox(width: 30,height: 30,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            AppImages.support,
+                            width: 18,
+                            height: 18,
+                            fit: BoxFit.cover,
+                            color: AppColor.firstColor,
+                          ),
+                        ),
                       ),
                       onTap: () {}),
                 ),
@@ -105,12 +113,16 @@ class FeedbackPage extends StatelessWidget {
                   padding: const EdgeInsets.only(left:40,top: 20),
                   child: menuChapter(
                       title: 'Позвонить оператору',
-                      prefixWidget: SvgPicture.asset(
-                        AppImages.operator,
-                        width: 25,
-                        height: 25,
-                        fit: BoxFit.cover,
-                        color: AppColor.firstColor,
+                      prefixWidget: SizedBox(width: 30,height: 30,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            AppImages.operator,
+                            width: 20,
+                            height: 20,
+                            fit: BoxFit.cover,
+                            color: AppColor.firstColor,
+                          ),
+                        ),
                       ),
                       onTap: () {}),
                 ),

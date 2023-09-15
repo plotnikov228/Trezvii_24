@@ -1,4 +1,6 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/app_style_util.dart';
 import '../../utils/size_util.dart';
@@ -8,8 +10,10 @@ import '../../widgets/composite_text_widget.dart';
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
 
-  void goToPrivacyPolicy () {
-
+  void goToPrivacyPolicy () async {
+    await FirebaseRemoteConfig.instance.activate();
+    await FirebaseRemoteConfig.instance.fetch();
+    launchUrl(Uri.parse(FirebaseRemoteConfig.instance.getString('privacy_policy_key')));
   }
 
   @override
