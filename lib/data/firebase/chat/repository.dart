@@ -12,7 +12,8 @@ class ChatRepositoryImpl extends ChatRepository {
   @override
   Future<Chat> createChat(String driverId, String employerId) async {
     final doc = await _chatCollection().add(Chat(driverId: driverId, employerId: employerId).toJson());
-    final chat = Chat.fromJson((await doc.get()).data()!)..id = doc.id;
+    final chat = Chat.fromJson((await doc.get()).data()!);
+    chat.id = doc.id;
     return chat;
   }
 
@@ -28,25 +29,23 @@ class ChatRepositoryImpl extends ChatRepository {
   Future<Chat?> findChat(String driverId, String employerId) async {
     final doc = await _chatCollection().where('employerId', isEqualTo: employerId).where('driverId', isEqualTo: driverId).get();
     if(doc.docs.isNotEmpty) {
-      final chat = Chat.fromJson(doc.docs.first.data())
-        ..id = doc.docs.first.id;
+      final chat = Chat.fromJson(doc.docs.first.data());
+      chat.id =doc.docs.first.id;
       return chat;
     }
   }
 
   @override
-  Future<Chat> sendMessageToChat(ChatMessages message, Chat chat) async {
-    final currentChat = Chat.fromJson((await _chatCollection().doc().get()).data()!);
+  Future sendMessageToChat(ChatMessages message, String chat) async {
     DocumentReference documentReference = _chatCollection()
-        .doc(chat.id)
-        .collection(chat.id!)
+        .doc(chat)
+        .collection(chat)
         .doc(DateTime.now().toUtc().millisecondsSinceEpoch.toString());
 
 
     _instance.runTransaction((transaction) async {
       transaction.set(documentReference, message.toJson());
     });
-    return currentChat;
   }
 
   @override

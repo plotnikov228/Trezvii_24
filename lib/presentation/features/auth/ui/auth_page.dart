@@ -10,7 +10,9 @@ import 'package:sober_driver_analog/presentation/features/auth/ui/widgets/sign_u
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_snack_bar.dart';
 
+import '../../../utils/size_util.dart';
 import '../../../widgets/app_loading_message.dart';
+import '../../../widgets/app_progress_container.dart';
 import '../bloc/bloc.dart';
 import '../bloc/state.dart';
 import 'widgets/input_code_page.dart';
@@ -32,7 +34,7 @@ class AuthPage extends StatelessWidget {
       create: (BuildContext context) =>
           AuthBloc(
               SignInState(numberController: _signInNumber),
-              () {
+                  () {
                 return context;
               },
               signInNumber: _signInNumber,
@@ -57,32 +59,40 @@ class AuthPage extends StatelessWidget {
             if (state.error != null) {
               AppSnackBar.showSnackBar(context, content: state.error!);
             }
-            else if (state.status == AuthStatus.Loading) {
-              AppLoadingMessage.show(context);
-            }
           },
           builder: (BuildContext context, state) {
             final bloc = context.read<AuthBloc>();
-            if (state is SignInState) {
-              return SignInPage(bloc: bloc, state: state);
-            }
-            if (state is SignUpState) {
-              return SignUpPage(bloc: bloc, state: state);
-            }
-            if (state is DriverDataState) {
-              return DriverDataPage(bloc: bloc, state: state);
-            }
-            if (state is AuthDriverState) {
-              return AuthDriverPage(bloc: bloc, state: state);
-            }
-            if (state is CarDataState) {
-              return CarDataPage(bloc: bloc, state: state);
-            }
-            if (state is EnterPhotoState) {
-              return EnterPhotoPage(bloc: bloc, state: state);
-            }
+            return Stack(
+              children: [
+                if (state is SignInState)
+                  SignInPage(bloc: bloc, state: state),
 
-            return InputCodePage(bloc: bloc, state: state as InputCodeState);
+                if (state is SignUpState)
+                  SignUpPage(bloc: bloc, state: state),
+
+                if (state is DriverDataState)
+                  DriverDataPage(bloc: bloc, state: state),
+
+                if (state is AuthDriverState)
+                  AuthDriverPage(bloc: bloc, state: state),
+
+                if (state is CarDataState)
+                  CarDataPage(bloc: bloc, state: state),
+
+                if (state is EnterPhotoState)
+                  EnterPhotoPage(bloc: bloc, state: state),
+                if (state is InputCodeState)
+                  InputCodePage(bloc: bloc, state: state as InputCodeState),
+                if(state.status == AuthStatus.Loading) Container(
+                    width: size.width,
+                    height: size.height,
+                    color: Colors.grey.withOpacity(0.3),
+                    child: Center(
+                        child: AppProgressContainer()
+                    )
+                    )
+              ],
+            );
           },
         ),
       ),

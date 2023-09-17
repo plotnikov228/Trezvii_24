@@ -88,9 +88,12 @@ class OrdersPage extends StatelessWidget {
                           child: state.completedOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
                             children: List.generate(
                                 state.completedOrders.length,
-                                (index) => FullOrderCardWidget(
-                                    state.completedOrders[index],
-                                    driver: state.completedOrderDrivers[index])),
+                                (index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: FullOrderCardWidget(
+                                      state.completedOrders[index],
+                                      driver: state.completedOrderDrivers[index]),
+                                )),
                           ),
                         ),
                         SizedBox(
@@ -99,9 +102,12 @@ class OrdersPage extends StatelessWidget {
                           child:state.cancelledOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
                             children: List.generate(
                                 state.cancelledOrders.length,
-                                (index) => FullOrderCardWidget(
-                                    state.cancelledOrders[index],
-                                    driver: state.cancelledOrderDrivers[index])),
+                                (index) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: FullOrderCardWidget(
+                                      state.cancelledOrders[index],
+                                      driver: state.cancelledOrderDrivers[index]),
+                                )),
                           ),
                         ),
                       ],

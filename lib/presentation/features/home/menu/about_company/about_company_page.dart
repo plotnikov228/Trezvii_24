@@ -4,6 +4,7 @@ import 'package:sober_driver_analog/presentation/features/home/menu/about_compan
 import 'package:sober_driver_analog/presentation/features/home/menu/about_company/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
 
+import '../../../../utils/app_color_util.dart';
 import '../../../../utils/app_style_util.dart';
 import '../../../../utils/size_util.dart';
 import '../../../../widgets/app_pop_button.dart';
@@ -44,7 +45,11 @@ class AboutCompanyPage extends StatelessWidget {
                     Padding(padding: const EdgeInsets.symmetric(horizontal: 22,
                     ), child: Align(
                         alignment: Alignment.topLeft,
-                        child: Text(state.description, style: AppStyle.black16, overflow: TextOverflow.visible, textAlign: TextAlign.start,)),)
+                        child: state.description.isEmpty ? Center(
+                          child: SizedBox(width: 40, height: 40, child: CircularProgressIndicator(
+                            color: AppColor.firstColor,
+                          ),),
+                        ) :  Text(state.description, style: AppStyle.black16, overflow: TextOverflow.visible, textAlign: TextAlign.start,)),)
                   ],
                 ),
               ),

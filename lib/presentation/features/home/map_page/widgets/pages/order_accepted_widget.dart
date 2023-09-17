@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_status.dart';
@@ -26,6 +28,11 @@ class OrderAcceptedWidget extends StatefulWidget {
 class _OrderAcceptedWidgetState extends State<OrderAcceptedWidget> {
   @override
   Widget build(BuildContext context) {
+    Timer(const Duration(seconds: 10), () {
+      if(widget.bloc.state is OrderAcceptedMapState) {
+        widget.bloc.add(GoMapEvent(OrderAcceptedMapState()));
+      }
+    });
     return Container(
       height: 292,
       width: size.width,
@@ -55,6 +62,7 @@ class _OrderAcceptedWidgetState extends State<OrderAcceptedWidget> {
                     Flexible(
                         flex: 4,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Ожидайте водителя',
@@ -108,17 +116,18 @@ class _OrderAcceptedWidgetState extends State<OrderAcceptedWidget> {
                 IconButton(
                     onPressed: () {
                       widget.bloc.add(GoMapEvent(CancelledOrderMapState()));
-                    }, icon: const Icon(Icons.close, color:  Colors.deepPurple, size: 30,)),
+                    }, icon: Icon(Icons.close, color:  AppColor.firstColor, size: 30,)),
                 IconButton(
                     onPressed: () {
                       //some func
                     },
-                    icon: SvgPicture.asset(AppImages.call)),
+                    icon: SvgPicture.asset(AppImages.call, color:  AppColor.firstColor,)),
                 IconButton(
                     onPressed: () {
+                      widget.bloc.add(GoToChatMapEvent(context));
                       //some func
                     },
-                    icon: SvgPicture.asset(AppImages.chatRoom))
+                    icon: SvgPicture.asset(AppImages.chatRoom, width: 30, height: 30, color:  AppColor.firstColor,))
               ],
             )
           ],

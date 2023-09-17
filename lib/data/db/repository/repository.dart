@@ -16,7 +16,7 @@ class DBRepositoryImpl extends DBRepository {
 
   @override
   Future<Database> initDB() async {
-    return _db == null ? await _getDb() : _db!;
+    return _db ??= await _getDb();
   }
 
   void onCreate(Database db, int version) async {
@@ -28,7 +28,8 @@ class DBRepositoryImpl extends DBRepository {
       addressName STRING NOT NULL,
       lat INTEGER NOT NULL,
       long INTEGER NOT NULL
-      comment STRING NULL,
+      entrance STRING NULL,
+      comment STRING NULL
     );
   ''')
       ..execute('''
@@ -36,7 +37,7 @@ class DBRepositoryImpl extends DBRepository {
       id INTEGER NOT NULL PRIMARY KEY,
       userId STRING NOT NULL,
       number STRING NOT NULL,
-      notification STRING NOT NULL,
+      email STRING NOT NULL,
       name STRING NOT NULL,
       registrationDate STRING NOT NULL,
       bonuses INTEGER NULL

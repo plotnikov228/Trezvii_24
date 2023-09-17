@@ -40,13 +40,26 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (chat == null) {
         emit(ChatState(status: ChatStateStatus.chatDoesNotExist));
       } else {
-        if(!isDriver) {
-          talker = (await GetUserById(FirebaseAuthRepositoryImpl()).call(chat!.employerId));
-          talkerPhotoUrl = await FirebaseStorage.instance.ref('${talker?.userId}/photo.png').getDownloadURL();
-        }
         if(isDriver) {
+          talker = (await GetUserById(FirebaseAuthRepositoryImpl()).call(chat!.employerId));
+          try {
+            talkerPhotoUrl =
+            await FirebaseStorage.instance.ref('${talker?.userId}/photo')
+                .getDownloadURL();
+          } catch (_) {
+
+          }
+        }
+        if(!isDriver) {
           talker = (await GetDriverById(FirebaseAuthRepositoryImpl()).call(chat!.driverId));
-          talkerPhotoUrl = (talker as Driver?)?.personalDataOfTheDriver.driverPhotoUrl;
+          try {
+            talkerPhotoUrl =
+            await FirebaseStorage.instance.ref('${talker?.userId}/photo')
+                .getDownloadURL();
+          } catch (_) {
+            talkerPhotoUrl =
+                (talker as Driver?)?.personalDataOfTheDriver.driverPhotoUrl;
+          }
         }
         _chat = chat;
         emit(ChatState(
@@ -65,7 +78,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                 idTo: isDriver ? _chat!.employerId : _chat!.driverId,
                 timestamp: DateTime.now().toIso8601String(),
                 content: _controller.text.trim()),
-            chat: _chat!);
+            chatId: chatId);
+        _controller.text = '';
       }
     });
   }

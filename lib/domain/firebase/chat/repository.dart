@@ -12,7 +12,7 @@ abstract class ChatRepository {
   Future<Chat?> findChatById (String id);
   Future deleteChatById(String id);
 
-  Future<Chat> sendMessageToChat(ChatMessages message, Chat chat);
+  Future sendMessageToChat(ChatMessages message, String chat);
 
   Stream<List<ChatMessages>> getChatMessage(String chatId, int limit);
 

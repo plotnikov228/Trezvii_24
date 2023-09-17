@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sober_driver_analog/data/db/repository/repository.dart';
+import 'package:sober_driver_analog/data/firebase/chat/repository.dart';
 import 'package:sober_driver_analog/data/firebase/firestore/repository.dart';
 import 'package:sober_driver_analog/data/firebase/order/repository.dart';
 import 'package:sober_driver_analog/data/map/repository/repository.dart';
@@ -14,6 +16,9 @@ import 'package:sober_driver_analog/domain/db/usecases/init_db.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/models/user_model.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_driver_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_user_by_id.dart';
+import 'package:sober_driver_analog/domain/firebase/chat/usecases/create_chat.dart';
+import 'package:sober_driver_analog/domain/firebase/chat/usecases/delete_chat.dart';
+import 'package:sober_driver_analog/domain/firebase/chat/usecases/find_chat.dart';
 import 'package:sober_driver_analog/domain/firebase/firestore/usecases/get_collection_data.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_for_another.dart';
@@ -22,6 +27,7 @@ import 'package:sober_driver_analog/domain/firebase/order/usecases/create_order.
 import 'package:sober_driver_analog/domain/firebase/order/usecases/delete_order_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/set_changes_order_listener.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/update_order_by_id.dart';
+import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_addresses_from_text.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_cost_in_rub.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_routes.dart';
@@ -37,6 +43,8 @@ import 'package:sober_driver_analog/domain/payment/usecases/set_current_payment_
 import 'package:sober_driver_analog/extensions/double_extension.dart';
 import 'package:sober_driver_analog/extensions/point_extension.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/select_contact_bottom_sheet.dart';
+import 'package:sober_driver_analog/presentation/routes/routes.dart';
+import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../../../../../../../data/auth/repository/repository.dart';
 import '../../../../../../../data/firebase/auth/models/driver.dart';
@@ -117,7 +125,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     _orderStateChangesListener = SetChangesOrderListener(_orderRepo)
         .call(_currentOrderId!)
         .listen((event) async {
-      if (_currentOrder!.status != event?.status) {
+      if (_currentOrder!.status != event?.status && event != null) {
         _currentOrder = event;
         add(RecheckOrderMapEvent());
       }
@@ -187,10 +195,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
       if (event.newState is SelectAddressesMapState) {
         event.newState as SelectAddressesMapState;
-        print((event.newState as SelectAddressesMapState)
-            .addresses
-            .map((e) => e.addressName)
-            .toList());
+
         emit(SelectAddressesMapState(
           status: event.newState.status,
           autoFocusedIndex:
@@ -255,15 +260,17 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             status: event.newState.status, driver: _driver));
       }
       if (event.newState is OrderAcceptedMapState) {
+
+       final route = (await GetRoutes(_mapRepo).call([_driver!.currentPosition ?? const MoscowLocation(), fromAddress!.appLatLong]))!.first;
+       print(route.metadata.weight.timeWithTraffic.value! ~/ 60);
         emit(OrderAcceptedMapState(
             status: event.newState.status,
-            distance: currentRoute!.metadata.weight.distance.text,
+            distance: route.metadata.weight.distance.text,
             driver: _driver,
             waitingTime: _orderIsPremilinary
                 ? _currentOrder!.startTime.difference(DateTime.now())
                 : _driver!.currentPosition != null
-                    ? await GetDurationBetweenTwoPoints(_mapRepo).call(
-                        fromAddress!.appLatLong, _driver!.currentPosition!)
+                    ? Duration(minutes: route.metadata.weight.timeWithTraffic.value! ~/ 60)
                     : const Duration(minutes: 15)));
       }
       if (event.newState is CheckBonusesMapState) {
@@ -356,6 +363,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               : null,
           startTime: _orderStartTime ?? DateTime.now(),
           costInRub: cost);
+      print(_currentOrder);
       await CreateOrder(_orderRepo).call(_currentOrder!).then((value) {
         _currentOrderId = value;
         activeOrders.add(OrderWithId(_currentOrder!, _currentOrderId!));
@@ -442,6 +450,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
 
     on<CancelSearchMapEvent>((event, emit) async {
+      print(_currentOrder);
+
       if (_currentOrder!.status is WaitingForOrderAcceptanceOrderStatus) {
         DeleteOrderById(_orderRepo).call(_currentOrderId!);
         activeOrders.removeLast();
@@ -454,6 +464,11 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _currentOrder = _currentOrder!
           .copyWith(status: CancelledOrderStatus(), cancelReason: event.reason);
       await UpdateOrderById(_orderRepo).call(_currentOrderId!, _currentOrder!);
+      final chatRepo = ChatRepositoryImpl();
+      var chat = await FindChat(chatRepo).call(driverId: _currentOrder!.driverId! , employerId: _currentOrder!.employerId);
+      if(chat != null) {
+        DeleteChat(chatRepo).call(driverId: _currentOrder!.driverId! , employerId: _currentOrder!.employerId);
+      }
       add(GoMapEvent(CreateOrderMapState()));
     });
 
@@ -486,6 +501,15 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       _currentOrder = _currentOrder!.copyWith(costInRub: event.changedCost);
       await UpdateOrderById(_orderRepo).call(_currentOrderId!, _currentOrder!);
       add(GoMapEvent(WaitingForOrderAcceptanceMapState()));
+    });
+
+    on<GoToChatMapEvent>((event, emit) async {
+      final chatRepo = ChatRepositoryImpl();
+      var chat = await FindChat(chatRepo).call(driverId: _currentOrder!.driverId! , employerId: _currentOrder!.employerId);
+      chat ??= await CreateChat(chatRepo).call(driverId: _currentOrder!.driverId! , employerId: _currentOrder!.employerId);
+      if(chat.id != null) {
+        event.context.pushNamed(AppRoutes.chat, pathParameters: {'chatId': chat.id!});
+      }
     });
   }
 }

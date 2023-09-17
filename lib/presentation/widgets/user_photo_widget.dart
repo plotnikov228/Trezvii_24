@@ -10,15 +10,8 @@ Widget UserPhotoWidget(
   return ClipRRect(
     borderRadius: BorderRadius.circular(100),
     child: CachedNetworkImage(
-      placeholder: (_, __) {
-        return SizedBox(
-          width: size / 2,
-          height: size / 2,
-          child: CircularProgressIndicator(
-            color: AppColor.firstColor,
-          ),
-        );
-      },
+      fit: BoxFit.cover,
+      width: size, height: size,
       errorWidget: (_, __, ___) {
         return SizedBox(
           width: size / 2,

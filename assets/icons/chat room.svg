@@ -1,9 +1,18 @@
-<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="25" height="25" fill="url(#pattern0)"/>
-<defs>
-<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image0_328_9475" transform="scale(0.0416667)"/>
-</pattern>
-<image id="image0_328_9475" width="24" height="24" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAfElEQVR4nO2U0Q2AMAgFWQVcxk6lU4DrqVtAooYBNNoWY0xfwu+79EoA+G2EbM8ZRl2ZLIUBxAd1CX85vA5gsuT+Sp3LOUDnGs7lArCVfCw0gDRFXGmLYm4PfQHAJYrwxvXMBqAuU2f9I0VMOkDtSGS5J7QcHIA2hpVH5gCvstL16RikwAAAAABJRU5ErkJggg=="/>
-</defs>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="96px" height="96px" viewBox="0 0 96 96" enable-background="new 0 0 96 96" xml:space="preserve">  <image id="image0" width="96" height="96" x="0" y="0"
+    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAh1BMVEUAAADrw1HqwlHrw1Hu
+xVHqwVDqw1D/1FXpxFDqw0/qw1DtxFPrxFHqwlDqwlHtwk/rwlD/zGbsw0//v0Drw0/qw1Dpw1Dq
+wVPpwlDqw1HswVHqwlHrw1HqwVDrw1DrwlDrw0/qw1HowVDqwlHrwlHsxlPqwlHrw1Drw1DqwlHr
+w1Lrw1H///8OYyebAAAAK3RSTlMA9NSQLP2VBr2U/CuO0/IqjwWRBLe6jCX6+ymHjcvq9vf4+fGL
+KLnzf/6AdcvmigAAAAFiS0dELLrdcasAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfnCRES
+ERaajzJOAAABGElEQVRo3u3Y207CUBCF4WmxgLUFilpsFTxwUuf9308vrNgLs4c9WSGEte77f2nS
+ErpFOI77dxq5JB1cQYHvZcMRFlAdGwQXoNdoIL8BA1qggRINTEyPasw6gQCBcwWmszQ59o1K0mJq
+BKp5HvfW5vPKAtzexf8w3FcGoI7vqw7CwOLBAzRtEHj09FWfgsDSB5RBYOUDJkHg2QcoAQIiLwQI
+uIFXAgTcwBsBAm7A9ddUDV80BC4AaAgQcAORxwjd1ug7CB9jOu9gAwaaLRgInyT7gF0FBZrC0I8G
+9mXdGvIiWf+6d9NFxywD9/sAoN8DEH35APf/AJj+AQD1fwFUvwNg/R8A1xd0X9B9QfcF3Rd0Xz7B
+fe50+wJFP8JsKLORJwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMy0wOS0xN1QxNjoxNzoyMiswMjow
+MPDzQZQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjMtMDktMTdUMTY6MTc6MjIrMDI6MDCBrvkoAAAA
+AElFTkSuQmCC" />
 </svg>

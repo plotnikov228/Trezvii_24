@@ -13,15 +13,20 @@ class MessageItem extends StatelessWidget {
   final int index;
   final ChatBloc bloc;
 
-  const MessageItem({
+  MessageItem({
     super.key,
     required this.messages,
     required this.index,
     required this.bloc,
   });
 
+
+  final left = TringularClipper(false);
+  final right = TringularClipper(true);
+
   @override
   Widget build(BuildContext context) {
+    bool showTriangle = index == 0 && messages.asMap().containsKey(index + 1) && messages[index].idFrom == messages[index + 1].idFrom;
     bool isCurrentUser = messages[index].idFrom == bloc.yourId;
     return Column(
       children: [
@@ -54,31 +59,53 @@ class MessageItem extends StatelessWidget {
                 isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
             child: Column(
               children: [
-                DecoratedBox(
-                  // chat bubble decoration
-                  decoration: BoxDecoration(
-                    color:
-                        isCurrentUser ? AppColor.firstColor : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Text(
-                      messages[index].content,
-                      style: AppStyle.black17.copyWith(
-                          color: isCurrentUser ? Colors.white : Colors.black87),
+                Align(
+                  alignment: isCurrentUser
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: DecoratedBox(
+                    // chat bubble decoration
+                    decoration: BoxDecoration(
+                        color: isCurrentUser
+                            ? AppColor.firstColor
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(16),
+                          topRight: const Radius.circular(16),
+                          bottomLeft: Radius.circular(isCurrentUser || !showTriangle? 16 : 0),
+                          bottomRight: Radius.circular(isCurrentUser && showTriangle ? 0 : 16),
+                        )),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        messages[index].content,
+                        style: AppStyle.black17.copyWith(
+                            color:
+                                isCurrentUser ? Colors.white : Colors.black87),
+                      ),
                     ),
                   ),
                 ),
-                ClipPath(
-                  clipper: TringularClipper(!isCurrentUser),
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    color:
-                        isCurrentUser ? AppColor.firstColor : Colors.grey[200],
+                if(showTriangle)
+                Align(
+                  alignment: isCurrentUser
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Positioned(
+                    right: 0,
+                    bottom: -10,
+                    child: ClipPath(
+                      clipper: !isCurrentUser ? left : right,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        color: isCurrentUser
+                            ? AppColor.firstColor
+                            : Colors.grey[200],
+                      ),
+                    ),
                   ),
-                )
+                ),
               ],
             ),
           ),

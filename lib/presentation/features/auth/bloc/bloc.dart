@@ -4,11 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sober_driver_analog/data/auth/repository/repository.dart';
+import 'package:sober_driver_analog/data/firebase/notification/repository.dart';
 import 'package:sober_driver_analog/domain/auth/models/auth_result.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/sign_in.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/sign_up.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/sign_up_for_driver.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/models/personal_data_of_the_driver.dart';
+import 'package:sober_driver_analog/domain/firebase/notification/usecases/add_user_to_newsletter.dart';
+import 'package:sober_driver_analog/domain/firebase/notification/usecases/add_user_to_pushes.dart';
 import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 import '../../../../data/firebase/auth/models/driver.dart';
@@ -232,6 +235,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 status: AuthStatus.Error)));
           }
         } else {
+          final notifyRepo =NotificationRepositoryImpl();
+          try {
+            AddUserToPushes(notifyRepo).call();
+            AddUserToNewsletter(notifyRepo).call();
+          } catch (_) {
+
+          }
           getBuildContext().pushReplacement(AppRoutes.home);
         }
       }, type: _authType!);

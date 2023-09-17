@@ -36,7 +36,9 @@ class ChatAppBar extends StatelessWidget {
           children: [
             AppPopButton(context, text: userModel?.name ?? 'Неизвестный пользователь', color: Colors.white),
             if (bloc.talkerPhotoUrl != null)
-              UserPhotoWidget(bloc.talkerPhotoUrl!)
+              SizedBox(
+                  width: 85,height: 85,
+                  child: Center(child: UserPhotoWidget(bloc.talkerPhotoUrl!)))
           ],
         ),
       ),

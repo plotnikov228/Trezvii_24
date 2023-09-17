@@ -13,6 +13,7 @@ import '../../../utils/app_style_util.dart';
 import '../../../utils/size_util.dart';
 import '../../../widgets/app_elevated_button.dart';
 import '../../../widgets/app_pop_button.dart';
+import '../../home/menu/favorite_addresses/bloc/event.dart';
 
 class AddAddressToFavoriteScreen extends StatelessWidget {
   AddAddressToFavoriteScreen({Key? key}) : super(key: key);

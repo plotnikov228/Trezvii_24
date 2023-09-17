@@ -51,13 +51,16 @@ android {
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
-        multiDexEnabled true
+        ndk {
+            abiFilters "x86", "x86_64", "armeabi", "armeabi-v7a", "arm64-v8a"
+        }
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            minifyEnabled true
             signingConfig signingConfigs.debug
         }
     }
@@ -72,9 +75,8 @@ dependencies {
     implementation 'com.yandex.android:maps.mobile:4.3.2-full'
     // Import the BoM for the Firebase platform
     implementation platform ("com.google.firebase:firebase-bom:32.2.2")
-    implementation "com.google.firebase:firebase-analytics"
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation "com.google.firebase:firebase-auth-ktx"
+    implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-storage'
 }

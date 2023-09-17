@@ -14,4 +14,13 @@ class AddressModel {
 
   factory AddressModel.fromJson (Map<String, dynamic> json) => _$AddressModelFromJson(json);
   Map<String, dynamic> toJson () => _$AddressModelToJson(this);
+  Map<String, dynamic> toDBFormat () =>
+      <String, dynamic>{
+        'addressName': addressName,
+        'lat': appLatLong.lat,
+        'long': appLatLong.long,
+        'name': name,
+        'entrance': entrance,
+        'comment': comment,
+      };
 }

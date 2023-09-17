@@ -1,6 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.sober_driver_analog">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -24,15 +26,13 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+
             <intent-filter>
-                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-                    <action android:name="android.intent.action.VIEW" />
-                    <data android:scheme="sms" />
-                <!-- If your app checks for call support -->
-                    <action android:name="android.intent.action.VIEW" />
-                    <data android:scheme="tel" />
+
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
 
         </activity>

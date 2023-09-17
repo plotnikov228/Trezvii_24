@@ -7,6 +7,7 @@ import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dar
 
 import '../../../../utils/app_images_util.dart';
 import '../../../../utils/size_util.dart';
+import '../../bloc/event.dart';
 
 class ChatBottomBar extends StatelessWidget {
   final ChatState state;
@@ -22,11 +23,18 @@ class ChatBottomBar extends StatelessWidget {
         color: Colors.white,
         border: Border(top: BorderSide(width: 1, color: AppColor.lightGray))
       ),
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(top: 10,left: 10, right: 10),
       child: Row(
-        children: [AppTextFormField(state.controller!),
-        SvgPicture.asset(AppImages.send,
-        color: AppColor.firstColor,)
+        children: [AppTextFormField(state.controller!, textInputAction: TextInputAction.newline, width: size.width - 75),
+        SizedBox(width: 10,),
+        IconButton(
+          visualDensity: VisualDensity.compact,
+          iconSize: 30,
+          icon: SvgPicture.asset(AppImages.send,
+          color: AppColor.firstColor,), onPressed: () {
+            bloc.add(SendMessageChatEvent());
+        },
+        )
         ],
       ),
     );

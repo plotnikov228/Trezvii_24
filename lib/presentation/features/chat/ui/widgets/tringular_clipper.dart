@@ -10,13 +10,13 @@ class TringularClipper extends CustomClipper<Path> {
    late Path path;
    if(left) {
      path = Path()
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, 0)
-      ..close();
+       ..lineTo(size.width, size.height) // меняем направление линии отрисовки
+       ..lineTo(size.width, 0) // меняем направление линии отрисовки
+       ..close();
    } else {
      path = Path()
-       ..lineTo(0, size.height)
-       ..lineTo(size.width, 0)
+       ..lineTo(0, size.height) // меняем направление линии отрисовки
+       ..lineTo(size.width, 0) // меняем направление линии отрисовки
        ..close();
    }
 
@@ -25,7 +25,7 @@ class TringularClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return false;
+    return true;
   }
 
 }

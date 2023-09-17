@@ -81,19 +81,19 @@ class _MapWidgetState extends State<MapWidget> {
       location = defLocation;
     }
     try {
-      final result = await YandexSearch
-          .searchByPoint(
-          point: location.toPoint(), searchOptions: SearchOptions());
-      final locally = (await result.result).items?.first.toponymMetadata?.address
+      final result = await YandexSearch.searchByPoint(
+          point: location.toPoint(), searchOptions: const SearchOptions());
+      final locally = (await result.result)
+          .items
+          ?.first
+          .toponymMetadata
+          ?.address
           .addressComponents[SearchComponentKind.locality];
       final savedLocally = await GetLocally(repo).call();
-      if (locally !=
-          null &&
-          (savedLocally != locally)) {
+      if (locally != null && (savedLocally != locally)) {
         SetLocally(repo).call(locally);
       }
-    } catch (_) {
-    }
+    } catch (_) {}
     _moveToCurrentLocation(location);
   }
 
@@ -127,7 +127,7 @@ class _MapWidgetState extends State<MapWidget> {
   double zoom = 14;
   late Point _currentPoint;
 
-  BoundingBox getBounds(List<Point> points) {
+  void getBounds(List<Point> points) {
     final lngs = points.map<double>((m) => m.longitude).toList();
     final lats = points.map<double>((m) => m.latitude).toList();
 
@@ -136,16 +136,22 @@ class _MapWidgetState extends State<MapWidget> {
     final lowestLat = lats.reduce(min);
     final lowestLng = lngs.reduce(min);
 
-    return BoundingBox(
-      northEast: Point(latitude: highestLat, longitude: highestLng),
-      southWest: Point(latitude: lowestLat, longitude: lowestLng),
-    );
+    mapControllerCompleter.future.then((value) => value.moveCamera(
+        CameraUpdate.newBounds(
+          BoundingBox(
+            northEast: Point(latitude: highestLat, longitude: highestLng),
+            southWest: Point(latitude: lowestLat, longitude: lowestLng),
+          ),
+        ),
+        animation:
+            const MapAnimation(type: MapAnimationType.linear, duration: 1)));
   }
 
   StreamSubscription<Position>? _listener;
   DrivingRoute? _currentRoute;
 
   var lastChanges = DateTime.now();
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -183,8 +189,11 @@ class _MapWidgetState extends State<MapWidget> {
       });
     }
     if (widget.drivingRoute != null && !widget.follow) {
-      if(_currentRoute != widget.drivingRoute) {
-        getBounds([widget.drivingRoute!.geometry.first, widget.drivingRoute!.geometry.last]);
+      if (_currentRoute != widget.drivingRoute) {
+        getBounds([
+          widget.drivingRoute!.geometry.first,
+          widget.drivingRoute!.geometry.last
+        ]);
         _currentRoute = widget.drivingRoute;
       }
       _polylineMapObject = PolylineMapObject(
@@ -232,7 +241,14 @@ class _MapWidgetState extends State<MapWidget> {
                 _currentPoint = p;
               });
               lastChanges = DateTime.now();
-              Future.delayed(Duration(seconds: 2), () async {
+              if (!loading) {
+                setState(() {
+                  if (!widget.follow) {
+                    loading = true;
+                  }
+                });
+              }
+              Future.delayed(const Duration(seconds: 2), () async {
                 if (!widget.follow &&
                     (lastChanges.second - DateTime.now().second).abs() >= 2) {
                   final address = await GetAddressFromPoint(repo)
@@ -240,6 +256,9 @@ class _MapWidgetState extends State<MapWidget> {
                   if (widget.getAddress != null && address != null) {
                     widget.getAddress!(address);
                   }
+                  setState(() {
+                    loading = false;
+                  });
                 }
               });
 
@@ -273,7 +292,36 @@ class _MapWidgetState extends State<MapWidget> {
                     decoration: BoxDecoration(
                         color: Colors.cyan.withOpacity(0.05),
                         shape: BoxShape.circle),
-                    child: Image.asset(AppImages.point)),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          AppImages.point,
+                          width: 25,
+                          height: 40,
+                        ),
+
+                           AnimatedOpacity(
+                             opacity: loading ? 1 : 0,
+
+                             duration: const Duration(seconds: 1),
+                             child: Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: 15),
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 5.9,
+                                    color: AppColor.firstColor,
+                                  ),
+                                ),
+                              ),
+                          ),
+                           )
+                      ],
+                    )),
               ),
             )
         ],

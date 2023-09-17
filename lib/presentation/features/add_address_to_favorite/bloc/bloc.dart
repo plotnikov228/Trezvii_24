@@ -45,5 +45,9 @@ class AddAddressToFavoriteBloc
           entrance: event.entrance);
       event.context.pop(newAddress);
     });
+
+    on<SelectAddressEvent>((event, emit) async {
+      addressModel = event.addressModel;
+    });
   }
 }

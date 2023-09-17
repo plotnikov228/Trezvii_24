@@ -36,51 +36,58 @@ class _CanceledOrderWidgetState extends State<CanceledOrderWidget> {
         height: size.height,
         width: size.width,
         color: Colors.white,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 100),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 100),
+                child: Center(
                   child: Text(
                     'Причина отмены заказа  ',
                     style: AppStyle.black17,
                   ),
                 ),
-                Padding(
-                    padding: const EdgeInsets.only(top: 48, bottom: 20),
-                    child: Wrap(
-                      spacing: 10,
-                      direction: Axis.vertical,
-                      children: widget.state.reasons!
-                          .map((e) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              Padding(
+                  padding: const EdgeInsets.only(top: 48, bottom: 20, left: 35, right: 25),
+                  child: Wrap(
+                    spacing: 10,
+                    direction: Axis.vertical,
+                    children: widget.state.reasons!
+                        .map((e) => SizedBox(
+                      width: size.width - 60,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     e,
                                     style: AppStyle.black15,
                                   ),
-                                  circleToggleButton(
-                                      value: currentReason == e,
-                                      onChange: (val) {
-                                        if (val && e != 'Другая причина:') {
-                                          currentReason = e;
-                                        } else if (val &&
-                                            e == 'Другая причина:') {
-                                          textFieldFocusNode.requestFocus();
-                                        }
-                                        if (currentReason == e && !val) {
-                                          currentReason = null;
-                                        }
-                                        setState(() {});
-                                      })
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: circleToggleButton(
+                                        value: currentReason == e,
+                                        onChange: (val) {
+                                          if (val && e != 'Другая причина:') {
+                                            currentReason = e;
+                                          } else if (val &&
+                                              e == 'Другая причина:') {
+                                            textFieldFocusNode.requestFocus();
+                                            currentReason = e;
+                                          }
+                                          setState(() {});
+                                        }),
+                                  )
                                 ],
-                              ))
-                          .toList(),
-                    )),
-                IgnorePointer(
-                  ignoring: currentReason !=
-                      widget.state.reasons[widget.state.reasons.length - 1],
+                              ),
+                        ))
+                        .toList(),
+                  )),
+              IgnorePointer(
+                ignoring: currentReason !=
+                    widget.state.reasons[widget.state.reasons.length - 1],
+                child: Center(
                   child: AppTextFormField(widget.state.otherReason!,
                       width: size.width - 40,
                       height: 160,
@@ -89,25 +96,26 @@ class _CanceledOrderWidgetState extends State<CanceledOrderWidget> {
                       maxLength: 200,
                       focusNode: textFieldFocusNode),
                 ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 80),
-              child: AppElevatedButton(
-                  width: size.width - 40,
-                  text: 'Готово',
-                  onTap: () {
-                    if (currentReason != null) {
+              ),Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 40),
+                child: Center(
+                  child: AppElevatedButton(
+                      width: size.width - 40,
+                      text: 'Готово',
+                      onTap: () {
+                        if (currentReason != null) {
 
-                      widget.bloc.add(CancelOrderMapEvent(currentReason !=
-                          widget.state.reasons[widget.state.reasons.length - 1] ? currentReason! :widget.state.otherReason!.text));
-                    } else {
-                      AppSnackBar.showSnackBar(context,
-                          content: 'Выберите причину отмены');
-                    }
-                  }),
-            )
-          ],
+                          widget.bloc.add(CancelOrderMapEvent(currentReason !=
+                              widget.state.reasons[widget.state.reasons.length - 1] ? currentReason! :widget.state.otherReason!.text));
+                        } else {
+                          AppSnackBar.showSnackBar(context,
+                              content: 'Выберите причину отмены');
+                        }
+                      }),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

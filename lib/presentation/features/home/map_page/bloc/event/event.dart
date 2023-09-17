@@ -94,3 +94,9 @@ class ChangeCostMapEvent extends MapEvent {
 
   ChangeCostMapEvent(this.changedCost);
 }
+
+class GoToChatMapEvent extends MapEvent {
+  final BuildContext context;
+
+  GoToChatMapEvent(this.context);
+}

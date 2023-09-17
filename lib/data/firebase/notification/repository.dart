@@ -11,9 +11,8 @@ class NotificationRepositoryImpl extends NotificationRepository {
 
 
   @override
-  Future addUserToNewsletter() {
-    // TODO: implement addUserToNewsletter
-    throw UnimplementedError();
+  Future addUserToNewsletter() async {
+
   }
 
   @override
@@ -36,9 +35,8 @@ class NotificationRepositoryImpl extends NotificationRepository {
   }
 
   @override
-  Future deleteUserFromPushes() {
-    // TODO: implement deleteUserFromPushes
-    throw UnimplementedError();
+  Future deleteUserFromPushes()  async{
+
   }
 
   @override

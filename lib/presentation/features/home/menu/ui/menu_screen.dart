@@ -108,6 +108,8 @@ class MenuScreen extends StatelessWidget {
                     direction: Axis.vertical,
                     children: [
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'История заказов',
                           prefixWidget: SvgPicture.asset(
                             AppImages.time,
@@ -118,15 +120,22 @@ class MenuScreen extends StatelessWidget {
                       onTap: () => bloc.add(GoMenuEvent(newState: OrdersMenuState()))
                       ),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'Способ оплаты',
                           prefixWidget: SvgPicture.asset(context.read<HomeBloc>().paymentUiModel?.prefixWidgetAsset ?? AppImages.wallet,
                               width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'Избранные адреса',
                           onTap: () => bloc.add(GoMenuEvent(newState: FavoriteAddressesMenuState())),
                           prefixWidget: Icon(Icons.favorite,
                               size: 25, color: AppColor.firstColor)),
                       menuChapter(
+                                                width: size.width - 60,
+
+
                           title: 'О компании',
                           onTap: () => bloc.add(GoMenuEvent(newState: AboutCompanyMenuState())),
 
@@ -136,6 +145,8 @@ class MenuScreen extends StatelessWidget {
                             color: AppColor.firstColor,
                           )),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'Тарифы',
                           onTap: () => bloc.add(GoMenuEvent(newState: AboutTariffsMenuState())),
                           prefixWidget: Icon(
@@ -144,16 +155,22 @@ class MenuScreen extends StatelessWidget {
                             color: AppColor.firstColor,
                           )),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'Новости',
                           onTap: () => bloc.add(GoMenuEvent(newState: NewsMenuState())),
                           prefixWidget: SvgPicture.asset(AppImages.news,
                               width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'Обратная связь',
                           onTap: () => bloc.add(GoMenuEvent(newState: FeedbackMenuState())),
                           prefixWidget: SvgPicture.asset(AppImages.feedback,
                               width: 25, height: 25, color: AppColor.firstColor)),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'Настройки',
                           onTap: () => bloc.add(GoMenuEvent(newState: SettingsMenuState())),
                           prefixWidget: Icon(
@@ -162,6 +179,8 @@ class MenuScreen extends StatelessWidget {
                             color: AppColor.firstColor,
                           )),
                       menuChapter(
+                                                width: size.width - 60,
+
                           title: 'О приложении',
                           onTap: () => bloc.add(GoMenuEvent(newState: AboutAppMenuState())),
                           prefixWidget: SvgPicture.asset(

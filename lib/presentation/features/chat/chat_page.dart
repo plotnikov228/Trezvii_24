@@ -6,6 +6,7 @@ import 'package:sober_driver_analog/presentation/features/chat/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/features/chat/ui/widgets/build_list_messages.dart';
 import 'package:sober_driver_analog/presentation/features/chat/ui/widgets/chat_app_bar.dart';
 
+import '../../utils/size_util.dart';
 import '../../utils/status_enum.dart';
 import '../../widgets/app_progress_container.dart';
 import 'ui/widgets/chat_bottom_bar.dart';
@@ -33,7 +34,13 @@ class ChatPage extends StatelessWidget {
 
             return Stack(
               children: [
-                buildListMessage(state: state, bloc: bloc),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 80),
+                  child: SizedBox(
+                      height: size.height,
+                      width: size.width,
+                      child: buildListMessage(state: state, bloc: bloc)),
+                ),
                 Align(
                     alignment: Alignment.topCenter,
                     child: ChatAppBar(

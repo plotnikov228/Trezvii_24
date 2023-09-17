@@ -9,7 +9,7 @@ class AboutCompanyBloc extends Bloc<AboutCompanyEvent, AboutCompanyState>{
       final remoteConfig = FirebaseRemoteConfig.instance;
       await remoteConfig.fetch();
       await remoteConfig.activate();
-      final description = remoteConfig.getString('app_description');
+      final description = remoteConfig.getString('company_description');
       emit(AboutCompanyState(description: description));
     });
   }

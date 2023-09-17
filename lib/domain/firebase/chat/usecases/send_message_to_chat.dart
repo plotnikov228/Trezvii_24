@@ -7,7 +7,7 @@ class SendMessageToChat {
 
   SendMessageToChat(this.repository);
 
-  Future<Chat> call ({required ChatMessages message, required Chat chat}) {
-    return repository.sendMessageToChat(message, chat);
+  Future call ({required ChatMessages message, required String chatId}) {
+    return repository.sendMessageToChat(message, chatId);
   }
 }

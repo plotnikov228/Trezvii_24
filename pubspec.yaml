@@ -61,7 +61,6 @@ dependencies:
 
   # ui
   pinput: ^3.0.0
-  badges: ^3.1.2
 
   # images
   image_picker: ^1.0.2

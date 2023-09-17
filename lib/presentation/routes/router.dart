@@ -77,6 +77,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '${AppRoutes.chat}/:chatId',
+        name: '${AppRoutes.chat}',
         builder: (BuildContext context, GoRouterState state) {
           return ChatPage(chatId: state.pathParameters['chatId'] ?? '');
         },

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sober_driver_analog/data/db/repository/repository.dart';
 import 'package:sober_driver_analog/domain/db/usecases/db_insert.dart';
 import 'package:sober_driver_analog/domain/db/usecases/db_query.dart';
+import 'package:sober_driver_analog/domain/db/usecases/init_db.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/favorite_addresses/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/favorite_addresses/bloc/state.dart';
@@ -31,7 +32,8 @@ class FavoriteAddressesBloc extends Bloc<FavoriteAddressesEvent, FavoriteAddress
 
     on<AddAddressEvent>((event, emit) async {
       print('new Address');
-      await DBInsert(_dbRepo).call(DBConstants.favoriteAddressesTable, event.addressModel.toJson());
+      await InitDB(_dbRepo).call();
+      await DBInsert(_dbRepo).call(DBConstants.favoriteAddressesTable, event.addressModel.toDBFormat());
       _addresses.add(event.addressModel);
       emit(FavoriteAddressesState(_addresses));
     });
