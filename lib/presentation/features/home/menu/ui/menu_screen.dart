@@ -5,6 +5,7 @@ import 'package:sober_driver_analog/presentation/features/home/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/ui/widgets/menu_chapter.dart';
+import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/widgets/user_photo_with_border.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
@@ -23,6 +24,7 @@ class MenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isUser = AppOperationMode.mode == AppOperationModeEnum.user;
     return Stack(
       children: [
         SingleChildScrollView(
@@ -110,7 +112,7 @@ class MenuScreen extends StatelessWidget {
                       menuChapter(
                                                 width: size.width - 60,
 
-                          title: 'История заказов',
+                          title: isUser ? 'История заказов' : 'Заказы',
                           prefixWidget: SvgPicture.asset(
                             AppImages.time,
                             width: 25,
@@ -119,12 +121,16 @@ class MenuScreen extends StatelessWidget {
                           ),
                       onTap: () => bloc.add(GoMenuEvent(newState: OrdersMenuState()))
                       ),
+                      if(isUser)
                       menuChapter(
                                                 width: size.width - 60,
 
                           title: 'Способ оплаты',
                           prefixWidget: SvgPicture.asset(context.read<HomeBloc>().paymentUiModel?.prefixWidgetAsset ?? AppImages.wallet,
                               width: 25, height: 25, color: AppColor.firstColor)),
+                      if(!isUser)
+                        menuChapter(title: 'Баланс', prefixWidget: SvgPicture.asset(AppImages.wallet, width: 30, height: 30, color: AppColor.firstColor,)),
+                      if(isUser)
                       menuChapter(
                                                 width: size.width - 60,
 
@@ -132,6 +138,7 @@ class MenuScreen extends StatelessWidget {
                           onTap: () => bloc.add(GoMenuEvent(newState: FavoriteAddressesMenuState())),
                           prefixWidget: Icon(Icons.favorite,
                               size: 25, color: AppColor.firstColor)),
+                      if(isUser)
                       menuChapter(
                                                 width: size.width - 60,
 
@@ -144,6 +151,7 @@ class MenuScreen extends StatelessWidget {
                             size: 25,
                             color: AppColor.firstColor,
                           )),
+                      if(isUser)
                       menuChapter(
                                                 width: size.width - 60,
 
@@ -154,6 +162,7 @@ class MenuScreen extends StatelessWidget {
                             size: 25,
                             color: AppColor.firstColor,
                           )),
+                      if(isUser)
                       menuChapter(
                                                 width: size.width - 60,
 
@@ -178,6 +187,7 @@ class MenuScreen extends StatelessWidget {
                             size: 25,
                             color: AppColor.firstColor,
                           )),
+                      if(isUser)
                       menuChapter(
                                                 width: size.width - 60,
 

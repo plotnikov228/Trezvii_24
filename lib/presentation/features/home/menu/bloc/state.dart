@@ -30,3 +30,5 @@ class SettingsMenuState extends MenuState {}
 
 class AboutAppMenuState extends MenuState {}
 
+class BalanceMenuState extends MenuState {}
+

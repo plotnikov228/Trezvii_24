@@ -168,6 +168,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         _currentOrder = nearestOrder.order;
         fromAddress = _currentOrder!.from;
         toAddress = _currentOrder!.to;
+
+        firstAddressController.text = fromAddress!.addressName!;
+        secondAddressController.text = toAddress!.addressName!;
         currentRoute = (await GetRoutes(_mapRepo)
                 .call([fromAddress!.appLatLong, toAddress!.appLatLong]))!
             .first;
@@ -330,7 +333,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         firstAddressController.text = fromAddress!.addressName;
       } else {
         toAddress = event.selectedAddress;
-        secondAddressController.text = fromAddress!.addressName;
+        secondAddressController.text = toAddress!.addressName;
       }
       setGetAddressFromMap(false);
       if (fromAddress != null && toAddress != null) {

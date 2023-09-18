@@ -6,6 +6,7 @@ import 'package:sober_driver_analog/presentation/features/home/menu/bloc/state.d
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/ui/widgets/menu_app_bar.dart';
+import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_pop_button.dart';
 
@@ -18,7 +19,9 @@ class OrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    final isUser = AppOperationMode.mode == AppOperationModeEnum.user;
+
+  return WillPopScope(
       onWillPop: () async {
         context.read<MenuBloc>().add(GoMenuEvent(newState: InitialMenuState()));
         return false;
@@ -39,7 +42,7 @@ class OrdersPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: AppPopButton(context,
                             onTap: () => context.read<MenuBloc>().add(GoMenuEvent(newState: InitialMenuState())),
-                            text: 'История заказов', color: Colors.white),
+                            text: isUser ? 'История заказов' : 'Заказы', color: Colors.white),
                       ),
                     ),
                     Padding(
@@ -53,15 +56,16 @@ class OrdersPage extends StatelessWidget {
                         child: TabBar(
                           indicatorWeight: 0,
                           indicatorSize: TabBarIndicatorSize.tab,
-                            tabs: const [
+                            tabs: [
+
                               Tab(
+                                text: isUser ? 'Отменённые' : 'Активные',
+                                height: 42,
+                              ),
+                              const Tab(
                                 text: 'Завершённые',
                                 height: 42,
                               ),
-                              Tab(
-                                text: 'Отменённые',
-                                height: 42,
-                              )
                             ],
                             labelStyle: AppStyle.black16,
                             unselectedLabelColor: AppColor.textTabColor,
@@ -82,31 +86,32 @@ class OrdersPage extends StatelessWidget {
                     width: size.width,
                     child: TabBarView(
                       children: [
+
                         SizedBox(
                           height: size.height - 250,
                           width: size.width,
-                          child: state.completedOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
+                          child:state.otherOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
                             children: List.generate(
-                                state.completedOrders.length,
+                                state.otherOrders.length,
                                 (index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: FullOrderCardWidget(
-                                      state.completedOrders[index],
-                                      driver: state.completedOrderDrivers[index]),
+                                      state.otherOrders[index],
+                                      driver: state.otherOrderDrivers[index]),
                                 )),
                           ),
                         ),
                         SizedBox(
                           height: size.height - 250,
                           width: size.width,
-                          child:state.cancelledOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
+                          child: state.completedOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
                             children: List.generate(
-                                state.cancelledOrders.length,
-                                (index) => Padding(
+                                state.completedOrders.length,
+                                    (index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: FullOrderCardWidget(
-                                      state.cancelledOrders[index],
-                                      driver: state.cancelledOrderDrivers[index]),
+                                      state.completedOrders[index],
+                                      driver: state.completedOrderDrivers[index]),
                                 )),
                           ),
                         ),

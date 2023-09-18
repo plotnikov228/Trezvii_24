@@ -29,7 +29,8 @@ class DBRepositoryImpl extends DBRepository {
       lat INTEGER NOT NULL,
       long INTEGER NOT NULL
       entrance STRING NULL,
-      comment STRING NULL
+      comment STRING NULL,
+      locality STRING NULL,
     );
   ''')
       ..execute('''

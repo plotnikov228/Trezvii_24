@@ -216,7 +216,6 @@ class AuthRepositoryImpl extends AuthRepository {
       } catch (_) {
 
       }
-      rethrow;
       return AuthResult(successful: false,
           exception: 'Возникла непредвиденная ошибка, проверьте подключение к интернету или попробуйте позднее');
     }

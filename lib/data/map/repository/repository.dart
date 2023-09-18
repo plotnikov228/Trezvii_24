@@ -83,6 +83,7 @@ class MapRepositoryImpl extends MapRepository {
     final list = ((await result.result).items ?? [])
         .map((e) => AddressModel(
             addressName: e.name,
+            locality: e.toponymMetadata?.address.addressComponents[SearchComponentKind.locality],
             appLatLong: AppLatLong(
                 lat: e.geometry.first.point!.latitude,
                 long: e.geometry.first.point!.longitude)))
