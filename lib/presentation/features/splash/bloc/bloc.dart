@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sober_driver_analog/presentation/routes/router.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc(super.initialState) {
@@ -16,6 +17,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<InitializeAppInSplashEvent>((event, emit) async {
       //initialize
       await Firebase.initializeApp();
+      await FirebaseAppCheck.instance.activate();
       await AppOperationMode.initMode();
       try {
         late StreamSubscription<User?> listener;

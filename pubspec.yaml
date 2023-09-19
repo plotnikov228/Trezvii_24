@@ -45,6 +45,7 @@ dependencies:
   firebase_storage: ^11.2.6
   firebase_remote_config: ^4.2.5
   firebase_messaging: ^14.4.1
+  firebase_app_check: ^0.1.5+2
 
   # router
   go_router: ^10.0.0
@@ -72,13 +73,17 @@ dependencies:
 
   # other
   flutter_contacts: ^1.1.7+1
-  url_launcher: ^6.1.14 
+  url_launcher: ^6.1.14
+
+  # security
+  flutter_secure_storage: ^9.0.0
 
   # l10n
   flutter_localizations:
     sdk: flutter
   provider:
   intl: ^0.18.0
+
 
 dev_dependencies:
   flutter_test:

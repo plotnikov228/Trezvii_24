@@ -41,7 +41,7 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isUser = AppOperationMode == AppOperationModeEnum.user;
+    final isUser = AppOperationMode.mode == AppOperationModeEnum.user;
     return MultiBlocProvider(
       providers: [
         BlocProvider<OrdersBloc>(create: (_) => OrdersBloc(OrdersState())..add(InitOrdersEvent())),

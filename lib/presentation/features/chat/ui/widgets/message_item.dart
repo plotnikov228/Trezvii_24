@@ -21,8 +21,8 @@ class MessageItem extends StatelessWidget {
   });
 
 
-  final left = TringularClipper(false);
-  final right = TringularClipper(true);
+  final leftClipper = TringularClipper(false);
+  final rightClipper = TringularClipper(true);
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class MessageItem extends StatelessWidget {
                     right: 0,
                     bottom: -10,
                     child: ClipPath(
-                      clipper: !isCurrentUser ? left : right,
+                      clipper: !isCurrentUser ? leftClipper : rightClipper,
                       child: Container(
                         width: 20,
                         height: 20,
