@@ -33,52 +33,55 @@ class OrdersPage extends StatelessWidget {
             child: Column(
               children: [
                 menuAppBar(
-                    child: Column(
+                  padding: EdgeInsets.zero,
+                    child: SafeArea(
+                      child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: AppPopButton(context,
-                            onTap: () => context.read<MenuBloc>().add(GoMenuEvent(newState: InitialMenuState())),
-                            text: isUser ? 'История заказов' : 'Заказы', color: Colors.white),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: AppPopButton(context,
+                              onTap: () => context.read<MenuBloc>().add(GoMenuEvent(newState: InitialMenuState())),
+                              text: isUser ? 'История заказов' : 'Заказы', color: Colors.white, textStyle: AppStyle.black16.copyWith(color: Colors.white)),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Container(
-                        height: 42,
-                        width: size.width - 20,
-                        decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(50)),
-                        child: TabBar(
-                          indicatorWeight: 0,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                            tabs: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          height: 42,
+                          width: size.width - 20,
+                          decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(50)),
+                          child: TabBar(
+                            indicatorWeight: 0,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                              tabs: [
 
-                              Tab(
-                                text: isUser ? 'Отменённые' : 'Активные',
-                                height: 42,
-                              ),
-                              const Tab(
-                                text: 'Завершённые',
-                                height: 42,
-                              ),
-                            ],
-                            labelStyle: AppStyle.black16,
-                            unselectedLabelColor: AppColor.textTabColor,
-                            dividerColor: Colors.transparent,
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              border: null,
-                              color: Colors.white,
-                            )),
-                      ),
-                    )
+                                Tab(
+                                  text: isUser ? 'Отменённые' : 'Активные',
+                                  height: 42,
+                                ),
+                                const Tab(
+                                  text: 'Завершённые',
+                                  height: 42,
+                                ),
+                              ],
+                              labelStyle: AppStyle.black16,
+                              unselectedLabelColor: AppColor.textTabColor,
+                              dividerColor: Colors.transparent,
+                              indicator: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                border: null,
+                                color: Colors.white,
+                              )),
+                        ),
+                      )
                   ],
-                )),
+                ),
+                    )),
                 Padding(
                   padding: const EdgeInsets.only(top: 50),
                   child: SizedBox(

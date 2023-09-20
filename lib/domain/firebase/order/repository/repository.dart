@@ -8,6 +8,8 @@ abstract class OrderRepository {
 
   Future<String> createOrder (Order order);
 
+  Stream<List<OrderWithId>> getListOfOrders (String locality);
+
   Future<Status> deleteOrderById (String id);
 
   Future<List<OrderWithId>> getYourOrders ();

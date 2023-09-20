@@ -11,7 +11,7 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/cancelled_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/check_bonuses_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/create_order_widget.dart';
-import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/initial_map_widget.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/initial_map/initial_map_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/promo_code_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_address_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_payment_method_page.dart';
@@ -48,6 +48,7 @@ class MapPage extends StatelessWidget {
           return Stack(
             children: [
               MapWidget(
+                getCurrentAddress:  (_) => bloc.setCurrentAddress(_),
                 drivingRoute: bloc.currentRoute,
                 size: Size(
                     size.width,
@@ -112,7 +113,7 @@ class MapPage extends StatelessWidget {
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: SelectAddressWidget(bloc: bloc, state: state)),
-              if (state is CreateOrderMapState)
+              if (state is StartOrderMapState)
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: CreateOrderWidget(

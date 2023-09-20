@@ -59,7 +59,7 @@ class Driver extends UserModel {
   Map<String, dynamic> toDB() => {
     'userId': userId,
     'number': number,
-    'notification': email,
+    'email': email,
     'name': name,
     'registrationDate': registrationDate.toIso8601String(),
     'bonuses': null

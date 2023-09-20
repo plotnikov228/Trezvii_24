@@ -29,6 +29,7 @@ class MapWidget extends StatefulWidget {
   final Function(AddressModel)? getAddress;
   final Function(CameraPosition)? getCameraPosition;
   final CameraPosition? initialCameraPosition;
+  final Function(AddressModel)? getCurrentAddress;
 
   final bool follow;
 
@@ -41,7 +42,7 @@ class MapWidget extends StatefulWidget {
       this.drivingRoute,
       this.firstPlacemark,
       this.secondPlacemark,
-      this.follow = false});
+      this.follow = false, this.getCurrentAddress});
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -83,12 +84,23 @@ class _MapWidgetState extends State<MapWidget> {
     try {
       final result = await YandexSearch.searchByPoint(
           point: location.toPoint(), searchOptions: const SearchOptions());
-      final locally = (await result.result)
+      final address = (await result.result)
           .items
-          ?.first
-          .toponymMetadata
+          ?.first;
+      final locally = address
+          ?.toponymMetadata
           ?.address
           .addressComponents[SearchComponentKind.locality];
+      if(widget.getCurrentAddress != null) {
+        print('get address');
+          widget.getCurrentAddress!(AddressModel(addressName: address!.name,
+              appLatLong: location,
+              entrance: address.toponymMetadata
+                  ?.address
+                  .addressComponents[SearchComponentKind.locality],
+              locality: locally));
+
+      }
       final savedLocally = await GetLocally(repo).call();
       if (locally != null && (savedLocally != locally)) {
         SetLocally(repo).call(locally);

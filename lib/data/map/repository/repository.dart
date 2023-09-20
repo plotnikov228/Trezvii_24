@@ -63,12 +63,20 @@ class MapRepositoryImpl extends MapRepository {
     final p = point.toPoint();
     final result = YandexSearch.searchByPoint(
         point: p, searchOptions: const SearchOptions());
-    final addressName = (await result.result).items?.first.name;
+    final address = (await result.result).items?.first;
 
-    if (addressName != null) {
+    if (address != null) {
       return AddressModel(
-          addressName: addressName,
-          appLatLong: AppLatLong(lat: p.latitude, long: p.longitude));
+          addressName: address.name,
+          appLatLong: AppLatLong(lat: p.latitude, long: p.longitude,
+          ),
+        entrance: address.toponymMetadata
+            ?.address
+            .addressComponents[SearchComponentKind.locality],
+        locality: address.toponymMetadata
+            ?.address
+            .addressComponents[SearchComponentKind.locality]
+      );
     }
     return null;
   }
@@ -84,7 +92,12 @@ class MapRepositoryImpl extends MapRepository {
         .map((e) => AddressModel(
             addressName: e.name,
             locality: e.toponymMetadata?.address.addressComponents[SearchComponentKind.locality],
-            appLatLong: e.geometry.first.point!.toAppLatLong()))
+            appLatLong: e.geometry.first.point!.toAppLatLong()
+        ,
+        entrance: e.toponymMetadata
+            ?.address
+            .addressComponents[SearchComponentKind.locality],
+    ))
         .toList();
     return list;
   }

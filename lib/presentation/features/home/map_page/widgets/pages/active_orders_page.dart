@@ -93,7 +93,7 @@ class ActiveOrdersPage extends StatelessWidget {
                       padding: EdgeInsets.only(top: 10),
                       child: AppElevatedButton(text: 'Создать новый заказ', width: size.width - 70, height: 38,
                       onTap: () {
-                        bloc.add(GoMapEvent(CreateOrderMapState()));
+                        bloc.add(GoMapEvent(StartOrderMapState()));
                       }
                       ),
                     ),

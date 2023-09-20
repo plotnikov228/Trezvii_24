@@ -20,7 +20,7 @@ class SelectPaymentMethodWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        bloc.add(GoMapEvent(CreateOrderMapState()));
+        bloc.add(GoMapEvent(StartOrderMapState()));
         return false;
       },
       child: Container(

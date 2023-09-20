@@ -33,71 +33,76 @@ class MenuScreen extends StatelessWidget {
               menuAppBar(
                 child: SizedBox(
                   height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      userPhotoWithBorder(
-                        url: state.userUrl,),
-                      SizedBox(
-                        height: 100,
-                        width: 140,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              state.userModel?.name ?? '',
-                              style: AppStyle.black20
-                                  .copyWith(color: Colors.white),
-                              overflow: TextOverflow.visible,
-                            ),
-                            Container(
-                              height: 36,
-                              width: 90,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  color: Colors.white),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 8),
-                              alignment: Alignment.centerLeft,
-                              child: SizedBox(
-                                height: 36,
-                                width: 90,
-                                child: Wrap(
-                                  children: [
-                                    SvgPicture.asset(
-                                      AppImages.giftCard,
-                                      color: AppColor.firstColor,
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      '${state.bonuses}',
-                                      style: AppStyle.black17,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
+                  child: SafeArea(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          userPhotoWithBorder(
+                            url: state.userUrl, size:  85),
+                          SizedBox(
+                            height: 85,
+                            width: 140,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  state.userModel?.name ?? '',
+                                  style: AppStyle.black20
+                                      .copyWith(color: Colors.white),
+                                  overflow: TextOverflow.visible,
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
+                                Container(
+                                  height: 36,
+                                  width: 90,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      color: Colors.white),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 8),
+                                  alignment: Alignment.centerLeft,
+                                  child: SizedBox(
+                                    height: 36,
+                                    width: 90,
+                                    child: Wrap(
+                                      children: [
+                                        SvgPicture.asset(
+                                          AppImages.giftCard,
+                                          color: AppColor.firstColor,
+                                          width: 24,
+                                          height: 24,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          '${state.bonuses}',
+                                          style: AppStyle.black17,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: SvgPicture.asset(
+                              AppImages.pencil,
+                              width: 24,
+                              height: 24,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              bloc.add(GoToProfileMenuEvent(context));
+                            },
+                          )
+                        ],
                       ),
-                      IconButton(
-                        icon: SvgPicture.asset(
-                          AppImages.pencil,
-                          width: 24,
-                          height: 24,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          bloc.add(GoToProfileMenuEvent(context));
-                        },
-                      )
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -193,10 +198,22 @@ class MenuScreen extends StatelessWidget {
 
                           title: 'О приложении',
                           onTap: () => bloc.add(GoMenuEvent(newState: AboutAppMenuState())),
-                          prefixWidget: SvgPicture.asset(
-                            AppImages.aboutApp,
+                          prefixWidget: SizedBox(
                             width: 25,
                             height: 25,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                width: 20,
+                                height: 25,
+                                child: SvgPicture.asset(
+                                  AppImages.aboutApp,
+                                  fit: BoxFit.fill,
+                                  width: 20,
+                                  height: 25,
+                                ),
+                              ),
+                            ),
                           )),
                     ],
                   ),

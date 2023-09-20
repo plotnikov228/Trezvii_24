@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../data/firebase/auth/models/driver.dart';
 import '../../../../../../domain/firebase/order/model/order.dart';
+import '../../../../../../domain/firebase/order/model/order_with_id.dart';
 import '../../../../../../domain/map/models/address_model.dart';
 import '../../../../../../domain/payment/models/payment_ui_model.dart';
 import '../../../../../../domain/payment/models/tariff.dart';
@@ -15,7 +16,7 @@ abstract class MapState {
 
   MapState({this.message, this.exception, required this.status});
 
-  MapState copyWith({Status? status});
+  MapState copyWith({Status? status, String? exception});
 }
 
 class InitialMapState extends MapState {
@@ -41,12 +42,12 @@ class InitialMapState extends MapState {
   }
 }
 
-class CreateOrderMapState extends MapState {
+class StartOrderMapState extends MapState {
   final int currentIndexTariff;
   final List<Tariff>? tariffList;
   final PaymentUiModel? currentPaymentUiModel;
 
-  CreateOrderMapState({
+  StartOrderMapState({
     this.tariffList,
     this.currentIndexTariff = 0,
     this.currentPaymentUiModel,
@@ -64,7 +65,7 @@ class CreateOrderMapState extends MapState {
     String? exception,
     String? message,
   }) {
-    return CreateOrderMapState(
+    return StartOrderMapState(
       currentIndexTariff: currentIndexTariff ?? this.currentIndexTariff,
       tariffList: tariffList ?? this.tariffList,
       currentPaymentUiModel: currentPaymentUiModel ?? this.currentPaymentUiModel,
@@ -104,6 +105,18 @@ class SelectAddressesMapState extends MapState {
       status: status ?? this.status,
     );
   }
+}
+
+class SelectOrderMapState extends MapState {
+  final List<OrderWithId> orders;
+
+  SelectOrderMapState({super.status = Status.Success, super.exception, this.orders = const []});
+
+  @override
+  SelectOrderMapState copyWith({Status? status, String? exception, List<OrderWithId>? orders}) {
+    return SelectOrderMapState(status: status ?? this.status, exception: exception ?? this.exception, orders: orders ?? this.orders);
+  }
+
 }
 
 class WaitingForOrderAcceptanceMapState extends MapState {
@@ -179,10 +192,10 @@ class OrderCompleteMapState extends MapState {
       : super(exception: exception, status: status);
 
   @override
-  OrderCompleteMapState copyWith({Driver? driver, Status? status}) {
+  OrderCompleteMapState copyWith({Driver? driver, Status? status, String? exception}) {
     return OrderCompleteMapState(
       driver: driver ?? this.driver,
-      exception: super.exception,
+      exception:exception??  super.exception,
       status: status?? super.status,
     );
   }
@@ -195,10 +208,10 @@ class OrderCancelledByDriverMapState extends MapState {
       : super(exception: exception, status: status);
 
   @override
-  OrderCancelledByDriverMapState copyWith({ Status? status,Driver? driver}) {
+  OrderCancelledByDriverMapState copyWith({ Status? status,Driver? driver, String? exception}) {
     return OrderCancelledByDriverMapState(
       driver: driver ?? this.driver,
-      exception: super.exception,
+      exception: exception?? super.exception,
       status:status?? super.status,
     );
   }
@@ -213,12 +226,12 @@ class OrderAcceptedMapState extends MapState {
       : super(exception: exception, status: status);
 
   @override
-  OrderAcceptedMapState copyWith({ Status? status,Driver? driver, Duration? waitingTime, String? distance}) {
+  OrderAcceptedMapState copyWith({ Status? status,Driver? driver, Duration? waitingTime, String? distance, String? exception}) {
     return OrderAcceptedMapState(
       driver: driver ?? this.driver,
       waitingTime: waitingTime ?? this.waitingTime,
       distance: distance ?? this.distance,
-      exception: super.exception,
+      exception: exception?? super.exception,
       status:status?? super.status,
     );
   }
@@ -231,10 +244,10 @@ class SelectPaymentMethodMapState extends MapState {
       : super(exception: exception, status: status);
 
   @override
-  SelectPaymentMethodMapState copyWith({ Status? status,List? methods}) {
+  SelectPaymentMethodMapState copyWith({ Status? status,List? methods, String? exception}) {
     return SelectPaymentMethodMapState(
       methods: methods ?? this.methods,
-      exception: super.exception,
+      exception:exception??  super.exception,
       status:status?? super.status,
     );
   }
@@ -247,11 +260,11 @@ class CheckBonusesMapState extends MapState {
       : super(message: message, exception: exception, status: status);
 
   @override
-  CheckBonusesMapState copyWith({ Status? status,int? balance}) {
+  CheckBonusesMapState copyWith({ Status? status,int? balance, String? exception}) {
     return CheckBonusesMapState(
       balance: balance ?? this.balance,
       message: super.message,
-      exception: super.exception,
+      exception: exception ?? super.exception,
       status:status?? super.status,
     );
   }
@@ -264,10 +277,10 @@ class PromoCodeMapState extends MapState {
       : super(exception: exception, status: status, message: message);
 
   @override
-  PromoCodeMapState copyWith({ Status? status,TextEditingController? controller}) {
+  PromoCodeMapState copyWith({ Status? status,TextEditingController? controller, String? exception}) {
     return PromoCodeMapState(
       controller: controller ?? this.controller,
-      exception: super.exception,
+      exception: exception ??  super.exception,
       status:status?? super.status,
       message: super.message,
     );
@@ -279,10 +292,10 @@ class AddCardMapState extends MapState {
 
   @override
   AddCardMapState copyWith({
-    Status? status,
+    Status? status, String? exception
   }) {
     return AddCardMapState(
-      exception: super.exception,
+      exception: exception ?? super.exception,
       status:status?? super.status,
     );
   }
@@ -297,12 +310,12 @@ class AddWishesMapState extends MapState {
       : super(exception: exception, status: status);
 
   @override
-  MapState copyWith({ Status? status,TextEditingController? wish, TextEditingController? otherName, TextEditingController? otherNumber}) {
+  MapState copyWith({ Status? status,TextEditingController? wish, TextEditingController? otherName, TextEditingController? otherNumber, String? exception}) {
     return AddWishesMapState(
       wish: wish ?? this.wish,
       otherName: otherName ?? this.otherName,
       otherNumber: otherNumber ?? this.otherNumber,
-      exception: super.exception,
+      exception: exception ?? super.exception,
       status:status?? super.status,
     );
   }
@@ -317,7 +330,7 @@ class ActiveOrdersMapState extends MapState {
       : super(status: status);
 
   @override
-  MapState copyWith({ Status? status,List? orders, List<Driver?>? drivers, Order? currentOrder}) {
+  MapState copyWith({ Status? status,List? orders, List<Driver?>? drivers, Order? currentOrder, String? exception}) {
     return ActiveOrdersMapState(
       orders: orders ?? this.orders,
       drivers: drivers ?? this.drivers,
@@ -334,7 +347,7 @@ class AddPriceMapState extends MapState {
 
 
   @override
-  MapState copyWith({Status? status, Order? order}) {
+  MapState copyWith({Status? status, Order? order, String? exception}) {
     // TODO: implement copyWith
     throw UnimplementedError();
   }

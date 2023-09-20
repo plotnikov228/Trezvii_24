@@ -91,6 +91,7 @@ class _CanceledOrderWidgetState extends State<CanceledOrderWidget> {
                   child: AppTextFormField(widget.state.otherReason!,
                       width: size.width - 40,
                       height: 160,
+                      keyboardType: TextInputType.multiline,
                       hintText: 'Другая причина',
                       textInputAction: TextInputAction.newline,
                       maxLength: 200,

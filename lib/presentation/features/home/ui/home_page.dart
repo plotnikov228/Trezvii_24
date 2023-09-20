@@ -22,6 +22,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller=  PageController(initialPage: 1,);
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: MultiBlocProvider(
         providers: [
           BlocProvider<HomeBloc>(create: (_) => HomeBloc(HomeState(controller, 1), controller)),

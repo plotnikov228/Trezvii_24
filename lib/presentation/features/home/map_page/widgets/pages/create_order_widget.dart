@@ -18,7 +18,7 @@ import '../../../ui/widgets/address_button.dart';
 import '../../bloc/event/event.dart';
 
 class CreateOrderWidget extends StatefulWidget {
-  final CreateOrderMapState state;
+  final StartOrderMapState state;
   final MapBloc bloc;
 
   const CreateOrderWidget({super.key, required this.state, required this.bloc});
@@ -171,7 +171,7 @@ class _CreateOrderWidgetState extends State<CreateOrderWidget>
                                               widget.state.currentIndexTariff,
                                           onTap: () => widget.bloc.add(
                                               GoMapEvent(
-                                                  CreateOrderMapState(
+                                                  StartOrderMapState(
                                                       currentIndexTariff:
                                                           index)))),
                                     );

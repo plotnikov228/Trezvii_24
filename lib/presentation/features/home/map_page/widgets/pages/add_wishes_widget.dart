@@ -23,76 +23,78 @@ class AddWishesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        bloc.add(GoMapEvent(CreateOrderMapState()));
+        bloc.add(GoMapEvent(StartOrderMapState()));
         return false;
       },
-      child: Center(
-        child: Container(
-          height: size.height,
-          width: size.width,
-          color: Colors.white,
-          child: Stack(
-            children: [
-              DefaultTabController(
-                length: 2,
-                child: Column(
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.only(top: 100),
-                        child: TabBar(
-                          dividerColor: Colors.transparent,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            unselectedLabelStyle: AppStyle.black16,
-                            indicatorColor: AppColor.firstColor,
-                            indicator: UnderlineTabIndicator(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: AppColor.firstColor, width: 3)
-                            ),
-                            labelStyle: AppStyle.black16,
-                            tabs: const [
-                              Tab(
-                                text: 'Пожелания',
+      child: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            height: size.height,
+            width: size.width,
+            color: Colors.white,
+            child: Stack(
+              children: [
+                DefaultTabController(
+                  length: 2,
+                  child: Column(
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.only(top: 100),
+                          child: TabBar(
+                            dividerColor: Colors.transparent,
+                              indicatorSize: TabBarIndicatorSize.label,
+                              unselectedLabelStyle: AppStyle.black16,
+                              indicatorColor: AppColor.firstColor,
+                              indicator: UnderlineTabIndicator(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: AppColor.firstColor, width: 3)
                               ),
-                              Tab(
-                                text: 'Время',
+                              labelStyle: AppStyle.black16,
+                              tabs: const [
+                                Tab(
+                                  text: 'Пожелания',
+                                ),
+                                Tab(
+                                  text: 'Время',
+                                )
+                              ])),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 48),
+                          child: SizedBox(
+                            height: size.height - 180,
+                            width: size.width,
+                            child: TabBarView(children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20, right: 20),
+                                child: wishesTab(context, bloc, state),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20, right: 20),
+                                child: SelectTimeTab(bloc: bloc, state: state),
                               )
-                            ])),
-                    Padding(
-                        padding: const EdgeInsets.only(top: 48),
-                        child: SizedBox(
-                          height: size.height - 180,
-                          width: size.width,
-                          child: TabBarView(children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, right: 20),
-                              child: wishesTab(context, bloc, state),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20, right: 20),
-                              child: SelectTimeTab(bloc: bloc, state: state),
-                            )
-                          ]),
-                        )),
-                  ],
+                            ]),
+                          )),
+                    ],
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: MapBottomBar(
-                  bloc: bloc,
-                  onMainButtonTap: () {
-                    if (bloc.fromAddress == null || bloc.toAddress == null) {
-                      AppSnackBar.showSnackBar(context,
-                          content: 'Выберите маршрут поездки');
-                    } else {
-                      bloc.add(CreateOrderMapEvent());
-                    }
-                  },
-                  onPaymentMethodTap: () =>
-                      bloc.add(GoMapEvent(SelectPaymentMethodMapState())),
-                ),
-              )
-            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: MapBottomBar(
+                    bloc: bloc,
+                    onMainButtonTap: () {
+                      if (bloc.fromAddress == null || bloc.toAddress == null) {
+                        AppSnackBar.showSnackBar(context,
+                            content: 'Выберите маршрут поездки');
+                      } else {
+                        bloc.add(CreateOrderMapEvent());
+                      }
+                    },
+                    onPaymentMethodTap: () =>
+                        bloc.add(GoMapEvent(SelectPaymentMethodMapState())),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

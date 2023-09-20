@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../utils/app_color_util.dart';
 import '../../../../../utils/size_util.dart';
 
-Widget menuAppBar ({required Widget child}) {
+Widget menuAppBar ({required Widget child, EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 25)}) {
   return Container(
     height: 162,
     width: size.width,
@@ -15,7 +15,7 @@ Widget menuAppBar ({required Widget child}) {
           Colors.white10
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
+      padding: padding,
       child: child
     ),
   );
