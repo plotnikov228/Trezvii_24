@@ -84,9 +84,7 @@ class MapRepositoryImpl extends MapRepository {
         .map((e) => AddressModel(
             addressName: e.name,
             locality: e.toponymMetadata?.address.addressComponents[SearchComponentKind.locality],
-            appLatLong: AppLatLong(
-                lat: e.geometry.first.point!.latitude,
-                long: e.geometry.first.point!.longitude)))
+            appLatLong: e.geometry.first.point!.toAppLatLong()))
         .toList();
     return list;
   }

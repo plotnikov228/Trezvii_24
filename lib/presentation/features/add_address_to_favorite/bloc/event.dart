@@ -32,9 +32,11 @@ class ConfirmAddAddressEvent extends AddAddressToFavoriteEvent {
   final String name;
   final String addressName;
   final String entrance;
+  final String? locality;
+
   final String comment;
 
-  ConfirmAddAddressEvent(this.context, {required this.name, required this.addressName, required this.entrance, required this.comment});
+  ConfirmAddAddressEvent(this.context, {this.locality, required this.name, required this.addressName, required this.entrance, required this.comment});
 
 }
 

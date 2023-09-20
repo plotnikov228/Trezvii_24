@@ -17,6 +17,7 @@ class AddressesButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(from?.addressName);
     return Stack(
       alignment: Alignment.centerLeft,
       children: [

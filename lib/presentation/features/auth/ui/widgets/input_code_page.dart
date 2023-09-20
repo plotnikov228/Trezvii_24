@@ -42,7 +42,7 @@ class InputCodePage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 15, left: 16),
                 child: InkWell(
                   onTap: () {
-                    bloc.add(ChangeAuthStateEvent(bloc.previousState!));
+                    bloc.add(ChangeAuthStateEvent(bloc.previousState ?? bloc.currentState!));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,

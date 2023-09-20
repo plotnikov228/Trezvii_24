@@ -14,6 +14,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
 
   static const _usersCollection = 'Users';
   static const _driversCollection = 'Drivers';
+  static const _existedUsersCollection = 'ExistedUsers';
 
   @override
   Future<UserModel?> createUser(User userModel) async {
@@ -23,6 +24,14 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     } else {
       await doc.set(userModel.toJson());
       return userModel;
+    }
+  }
+
+  Future addUserToExisted(UserModel userModel) async {
+    final doc = _instance.collection(_existedUsersCollection).doc(userModel.number);
+    if(!(await doc.get()).exists) {
+      await doc.set({
+      });
     }
   }
 
@@ -89,6 +98,11 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(ratings != null) mapForUpdate['ratings'] = ratings;
     final doc = _instance.collection(_driversCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
 
+  }
+
+  Future<bool> userIsExist(String number) async {
+    final doc = _instance.collection(_existedUsersCollection).doc(number);
+    return (await doc.get()).exists;
   }
 
 }

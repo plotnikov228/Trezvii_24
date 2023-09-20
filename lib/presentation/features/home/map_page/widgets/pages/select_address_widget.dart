@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
+import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/address_card.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dart';
 import 'package:sober_driver_analog/presentation/widgets/point_widget.dart';
@@ -197,7 +198,9 @@ class _SelectAddressWidgetState extends State<SelectAddressWidget>
                                                     whichAddressShouldReplace:
                                                     lastChangedTextField));
                                           });
-                                        });
+                                        },
+                                    width: size.width - 60
+                                    );
                                   }),
                             ),
                           )

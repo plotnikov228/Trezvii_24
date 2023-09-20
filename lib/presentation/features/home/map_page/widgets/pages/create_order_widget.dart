@@ -50,6 +50,7 @@ class _CreateOrderWidgetState extends State<CreateOrderWidget>
 
   @override
   Widget build(BuildContext context) {
+    print(widget.bloc.fromAddress?.addressName);
     return Align(
       alignment: Alignment.bottomCenter,
       child: GestureDetector(

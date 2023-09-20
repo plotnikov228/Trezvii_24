@@ -9,7 +9,7 @@ Database? _db;
 
 class DBRepositoryImpl extends DBRepository {
   Future<Database> _getDb() async {
-    String _path = await getDatabasesPath() + 'db';
+    String _path = ('${await getDatabasesPath()}/database.db');
     _db = await openDatabase(_path, version: 1, onCreate: onCreate);
     return _db!;
   }
@@ -24,24 +24,24 @@ class DBRepositoryImpl extends DBRepository {
       ..execute('''
     CREATE TABLE ${DBConstants.favoriteAddressesTable} (
       id INTEGER PRIMARY KEY NOT NULL,
-      name STRING NOT NULL,
-      addressName STRING NOT NULL,
+      name TEXT NOT NULL,
+      addressName TEXT NOT NULL,
       lat INTEGER NOT NULL,
-      long INTEGER NOT NULL
-      entrance STRING NULL,
-      comment STRING NULL,
-      locality STRING NULL,
+      long INTEGER NOT NULL,
+      entrance TEXT, 
+      comment TEXT,
+      locality TEXT
     );
   ''')
       ..execute('''
     CREATE TABLE ${DBConstants.userTable} (
       id INTEGER NOT NULL PRIMARY KEY,
-      userId STRING NOT NULL,
-      number STRING NOT NULL,
-      email STRING NOT NULL,
-      name STRING NOT NULL,
-      registrationDate STRING NOT NULL,
-      bonuses INTEGER NULL
+      userId TEXT NOT NULL,
+      number TEXT NOT NULL,
+      email TEXT NOT NULL,
+      name TEXT NOT NULL,
+      registrationDate TEXT NOT NULL,
+      bonuses INTEGER
       );
   ''');
   }

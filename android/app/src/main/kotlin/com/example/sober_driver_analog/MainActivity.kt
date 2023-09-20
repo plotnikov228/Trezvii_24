@@ -1,4 +1,4 @@
-package com.example.sober_driver_analog
+package com.trezvii24.app
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity

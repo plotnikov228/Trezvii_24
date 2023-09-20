@@ -21,6 +21,7 @@ import 'package:sober_driver_analog/presentation/widgets/map/map_widget.dart';
 import '../../../utils/app_color_util.dart';
 import '../../../utils/size_util.dart';
 import '../../../utils/status_enum.dart';
+import '../../../widgets/app_progress_container.dart';
 import '../../../widgets/app_snack_bar.dart';
 import '../bloc/event.dart';
 import '../ui/widgets/menu_button.dart';
@@ -35,38 +36,13 @@ class MapPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<MapBloc, MapState>(
         listener: (context, cur) {
-            context.pop();
-          if (cur.exception != null && cur.message != null) {
+          if (cur.status == Status.Failed || cur.message != null) {
             AppSnackBar.showSnackBar(context,
                 content: cur.exception ?? cur.message!);
           }
-          else if (cur.status == Status.Loading) {
-            showDialog(
-              barrierDismissible: false,
-                barrierColor: Colors.transparent,
-                context: context,
-                builder: (context) {
-                  return Center(
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.7),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8))),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColor.firstColor,
-                        ),
-                      ),
-                    ),
-                  );
-                });
-          }
         },
         listenWhen: (prev, cur) =>
-            (cur.message != null || cur.status != Status.Success) || (prev.message != null || prev.status != Status.Success),
+            (cur.message != null || cur.status == Status.Failed),
         builder: (context, state) {
           final bloc = context.read<MapBloc>();
           return Stack(
@@ -77,7 +53,9 @@ class MapPage extends StatelessWidget {
                     size.width,
                     state is ActiveOrderMapState
                         ? size.height
-                        : state is WaitingForOrderAcceptanceMapState ? size.height - 146 : size.height - 160),
+                        : state is WaitingForOrderAcceptanceMapState
+                            ? size.height - 146
+                            : size.height - 160),
                 getCameraPosition: (_) {
                   bloc.setCameraPosition(_);
                 },
@@ -92,39 +70,36 @@ class MapPage extends StatelessWidget {
                 },
                 initialCameraPosition: bloc.cameraPosition,
               ),
-
               IgnorePointer(
                 child: Align(
                   alignment: Alignment.topCenter,
-                  child: Container(height: 100,
-                  width: size.width,
+                  child: Container(
+                    height: 100,
+                    width: size.width,
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.white, Colors.white, Colors.white12]
-                      )
-                    ),
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                          Colors.white,
+                          Colors.white,
+                          Colors.white12
+                        ])),
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 48,left: 8),
-                  child: MenuButton(() => context.read<HomeBloc>().add(GoToMenuHomeEvent())),
-                ),
-              ),
-
               Visibility(
                 visible: bloc.activeOrders.isNotEmpty,
-                child: Align(alignment: Alignment.topRight,
-                child: Padding(padding: const EdgeInsets.only(top: 48,right: 20),
-                    child: OrdersCountWidget(ordersQuantity: bloc.activeOrders.length,                      onTap: () => bloc.add(GoMapEvent(ActiveOrdersMapState())),
-
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 48, right: 20),
+                    child: OrdersCountWidget(
+                      ordersQuantity: bloc.activeOrders.length,
+                      onTap: () => bloc.add(GoMapEvent(ActiveOrdersMapState())),
                     ),
-                    ),),
-
+                  ),
+                ),
               ),
               if (state is InitialMapState)
                 Align(
@@ -175,7 +150,8 @@ class MapPage extends StatelessWidget {
               if (state is WaitingForOrderAcceptanceMapState)
                 Align(
                     alignment: Alignment.bottomCenter,
-                    child: WaitingForOrderAcceptanceWidget(state: state, bloc: bloc)),
+                    child: WaitingForOrderAcceptanceWidget(
+                        state: state, bloc: bloc)),
               if (state is OrderAcceptedMapState)
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -184,12 +160,29 @@ class MapPage extends StatelessWidget {
                     bloc: bloc,
                   ),
                 ),
-              if(state is AddCardMapState)
+              if (state is AddCardMapState)
                 AddCardWidget(bloc: bloc, state: state),
-              if(state is ActiveOrdersMapState)
-                ActiveOrdersPage(bloc: bloc, state: state),
-              if(state is AddPriceMapState)
+              if (state is AddPriceMapState)
                 AddPricePage(bloc: bloc, state: state),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 48, left: 8),
+                  child: MenuButton(
+                      () => context.read<HomeBloc>().add(GoToMenuHomeEvent())),
+                ),
+              ),
+              if (state is ActiveOrdersMapState)
+                ActiveOrdersPage(bloc: bloc, state: state),
+
+              if(state.status == Status.Loading) Container(
+                width: size.width,
+                height: size.height,
+                color: Colors.grey.withOpacity(0.3),
+                child: Center(
+                  child: AppProgressContainer(),
+                ),
+              )
             ],
           );
         });

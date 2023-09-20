@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
@@ -43,7 +44,10 @@ class CheckBonusesWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 48),
                   child: IgnorePointer(child: Center(child: AppTextFormField(TextEditingController(text: '${state.balance}'),
-                      prefixWidget: Image.asset(AppImages.giftCard)
+                      prefixWidget: Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: SvgPicture.asset(AppImages.giftCard, width: 30, height: 30,),
+                      )
 
                   )))
                 )

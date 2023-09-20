@@ -18,7 +18,7 @@ class FavoriteAddressesBloc extends Bloc<FavoriteAddressesEvent, FavoriteAddress
   FavoriteAddressesBloc(super.initialState) {
 
     on<InitFavoriteAddressesEvent>((event, emit) async {
-      _addresses = (await DBQuery(_dbRepo).call(DBConstants.favoriteAddressesTable)).map((e) => AddressModel.fromJson(e)).toList();
+      _addresses = (await DBQuery(_dbRepo).call(DBConstants.favoriteAddressesTable)).map((e) => AddressModel.fromDB(e)).toList();
       emit(FavoriteAddressesState(_addresses));
     });
 

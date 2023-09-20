@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sober_driver_analog/data/db/repository/repository.dart';
+import 'package:sober_driver_analog/domain/db/repository/repository.dart';
+import 'package:sober_driver_analog/domain/db/usecases/init_db.dart';
 import 'package:sober_driver_analog/presentation/features/splash/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/splash/bloc/state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +22,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       await Firebase.initializeApp();
       await FirebaseAppCheck.instance.activate();
       await AppOperationMode.initMode();
+      await InitDB(DBRepositoryImpl()).call();
       try {
         late StreamSubscription<User?> listener;
         listener = FirebaseAuth.instance.authStateChanges().listen((user) {

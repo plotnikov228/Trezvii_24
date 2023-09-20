@@ -43,7 +43,7 @@ class _SelectTimeTabState extends State<SelectTimeTab> {
     }
     for (var i = 0; i < minutes.length; i++) {
       if ((now.minute - minutes[i]).abs() <= 5) {
-        currentMinutesIndex = i;
+        currentMinutesIndex = i == minutes.length - 1 ? i : i + 1;
         break;
       }
     }

@@ -11,6 +11,10 @@ abstract class FirebaseAuthRepository {
 
   Future<UserModel?> getUserById(String userId);
 
+  Future<bool> userIsExist(String number);
+
+  Future addUserToExisted(UserModel userModel);
+
   Future updateUser(
       {String? number, String? email, String? name, int? bonuses});
 

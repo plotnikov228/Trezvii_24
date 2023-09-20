@@ -12,10 +12,15 @@ Widget AddressCard(AddressModel addressModel, Function(AddressModel) onTap, {dou
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.favorite_border,
-            color: AppColor.firstColor,
-            size: 20,
+          SizedBox(
+            height: 30,
+            child: Align(alignment: Alignment.centerLeft,
+              child: Icon(
+                Icons.favorite_border,
+                color: AppColor.firstColor,
+                size: 20,
+              ),
+            ),
           ),
           SizedBox(
             width: 10,

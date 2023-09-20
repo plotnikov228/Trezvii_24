@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
@@ -36,14 +37,17 @@ class PromoCodeWidget extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(top: 100),
                   child: Text(
-                    'Бонусы',
+                    'Промокоды',
                     style: AppStyle.black17,
                   ),
                 ),
                 Padding(
                     padding: const EdgeInsets.only(top: 48),
                     child: Center(child: AppTextFormField(state.controller!,
-                    prefixWidget: Image.asset(AppImages.discount)
+                    prefixWidget:  Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: SvgPicture.asset(AppImages.discount, width: 30, height: 30,),
+                    )
                     ))
                 )
               ],

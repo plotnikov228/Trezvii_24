@@ -25,4 +25,14 @@ class AddressModel {
         'locality': locality,
 
       };
+
+  factory AddressModel.fromDB(Map<String, dynamic> json) => AddressModel(
+    name: json['name'] as String?,
+    comment: json['comment'] as String?,
+    addressName: json['addressName'] as String,
+    entrance: json['entrance'] as String?,
+    locality: json['locality'],
+    appLatLong:
+    AppLatLong(lat: json['lat'], long: json['long']),
+  );
 }

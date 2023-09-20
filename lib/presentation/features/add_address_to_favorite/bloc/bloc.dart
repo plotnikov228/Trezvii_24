@@ -32,6 +32,7 @@ class AddAddressToFavoriteBloc
             name: event.name,
             addressName: event.addressName,
             entrance: event.entrance,
+            locality: addressModel?.locality,
             comment: event.comment));
       }
     });
@@ -41,6 +42,7 @@ class AddAddressToFavoriteBloc
           addressName: addressModel!.addressName,
           appLatLong: addressModel!.appLatLong,
           comment: event.comment,
+          locality: event.locality,
           name: event.name,
           entrance: event.entrance);
       event.context.pop(newAddress);
@@ -48,6 +50,7 @@ class AddAddressToFavoriteBloc
 
     on<SelectAddressEvent>((event, emit) async {
       addressModel = event.addressModel;
+      print(addressModel!.appLatLong.toJson());
     });
   }
 }

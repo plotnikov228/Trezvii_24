@@ -19,7 +19,11 @@ abstract class MapState {
 }
 
 class InitialMapState extends MapState {
+
+  final AddressModel? lastFavoriteAddress;
+
   InitialMapState({
+    this.lastFavoriteAddress,
     String? exception,
     Status status = Status.Success,
   }) : super(exception: exception, status: status);
@@ -47,6 +51,7 @@ class CreateOrderMapState extends MapState {
     this.currentIndexTariff = 0,
     this.currentPaymentUiModel,
     String? exception,
+    String? message,
     Status status = Status.Success,
   }) : super(exception: exception, status: status);
 

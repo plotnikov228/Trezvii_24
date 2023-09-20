@@ -59,4 +59,42 @@ class Order {
       wishes: wishes ?? this.wishes,
     );
   }
+
+  bool isActive () {
+    return status.toString() != OrderCancelledByDriverOrderStatus().toString() &&
+        status.toString() != CancelledOrderStatus().toString() &&
+        status.toString() != SuccessfullyCompletedOrderStatus().toString();
+
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Order &&
+              runtimeType == other.runtimeType &&
+              from == other.from &&
+              to == other.to &&
+              employerId == other.employerId &&
+              driverId == other.driverId &&
+              distance == other.distance &&
+              startTime == other.startTime &&
+              status == other.status &&
+              orderForAnother == other.orderForAnother &&
+              costInRub == other.costInRub &&
+              wishes == other.wishes &&
+              cancelReason == other.cancelReason;
+
+  @override
+  int get hashCode =>
+      from.hashCode ^
+      to.hashCode ^
+      employerId.hashCode ^
+      driverId.hashCode ^
+      distance.hashCode ^
+      startTime.hashCode ^
+      status.hashCode ^
+      orderForAnother.hashCode ^
+      costInRub.hashCode ^
+      wishes.hashCode ^
+      cancelReason.hashCode;
 }

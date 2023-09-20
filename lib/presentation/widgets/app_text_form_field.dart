@@ -45,6 +45,8 @@ Widget AppTextFormField(
       autofocus: autoFocus,
 
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 5),
+
         hintText: hintText,
         hintStyle: AppStyle.hintText16.copyWith(fontSize: 12),
         prefixIcon: prefixWidget,

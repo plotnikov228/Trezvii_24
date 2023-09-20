@@ -181,6 +181,7 @@ class _InitialMapWidgetState extends State<InitialMapWidget>
                           Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: AddressButton(
+                              addressModel: widget.state.lastFavoriteAddress,
                                 onTap: () {
                                   height = initialEndHeight;
 
@@ -198,9 +199,9 @@ class _InitialMapWidgetState extends State<InitialMapWidget>
                                 },
                                 width: size.width - 80,
                                 hintText: 'Избранные адреса',
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.favorite,
-                                  color: Colors.deepPurple,
+                                  color: AppColor.firstColor,
                                   size: 24,
                                 )),
                           )

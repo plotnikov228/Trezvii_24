@@ -59,6 +59,7 @@ dependencies:
   # save data, db
   shared_preferences: ^2.2.0
   sqflite: ^2.3.0
+  sqfentity: ^1.2.3+9
 
   # ui
   pinput: ^3.0.0

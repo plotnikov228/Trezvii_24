@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:960187355480:android:274293a6a6b5263cbc552d",
+        "mobilesdk_app_id": "1:960187355480:android:15a31ffba8e57f3dbc552d",
         "android_client_info": {
-          "package_name": "com.example.sober_driver_analog"
+          "package_name": "com.trezvii24.app"
         }
       },
       "oauth_client": [
@@ -29,6 +29,13 @@
             {
               "client_id": "960187355480-la76ibgvmmj1dt6djf8o1ntj6u6kleq1.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "960187355480-5kon8lb36ftu3rlobtikjn8l4dobkuit.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.trezvii24.app"
+              }
             }
           ]
         }

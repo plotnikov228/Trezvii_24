@@ -10,7 +10,7 @@ Widget OrdersCountWidget ({required int ordersQuantity, Function? onTap}) {
       print('tap');
     },
     child: Container(
-      width: 120,
+      width: 130,
       height: 45,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -18,6 +18,7 @@ Widget OrdersCountWidget ({required int ordersQuantity, Function? onTap}) {
       ),
       child: Center(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [Text('Мои заказы', style: AppStyle.black14,),
           SizedBox(width: 4,),
             Container(
