@@ -8,7 +8,6 @@ import 'package:json_annotation/json_annotation.dart';
 part 'driver.g.dart';
 
 class Driver extends UserModel {
-  final List<double> ratings;
   final AppLatLong? currentPosition;
   final bool confirmed;
   final PersonalDataOfTheDriver personalDataOfTheDriver;
@@ -17,7 +16,7 @@ class Driver extends UserModel {
   Driver({
     required this.confirmed,
     this.currentPosition,
-    required this.ratings,
+    required super.ratings,
     required super.userId,
     required super.number,
     required super.email,

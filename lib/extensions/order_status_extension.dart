@@ -15,4 +15,19 @@ extension OrderStatusExtension on OrderStatus {
         return 'Заказ принят';
     }
   }
+
+  String descriptionForDriver () {
+    switch (this) {
+      case ActiveOrderStatus():
+        return 'Активный заказ';
+      case WaitingForOrderAcceptanceOrderStatus():
+        return 'Ожидает водителя';
+      case CancelledOrderStatus():
+        return 'Заказ отменён';
+      case SuccessfullyCompletedOrderStatus():
+        return 'Поездка завершена';
+      default:
+        return 'Заказ принят';
+    }
+  }
 }

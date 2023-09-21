@@ -13,6 +13,7 @@ import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 
 import '../../../../../../../data/map/repository/repository.dart';
 import '../../../../../utils/size_util.dart';
+import '../../../../../widgets/rating_widget.dart';
 import '../../bloc/bloc/bloc.dart';
 
 
@@ -76,15 +77,7 @@ class _OrderAcceptedWidgetState extends State<OrderAcceptedWidget> {
                             ),
                             Row(
                               children: [
-                                SvgPicture.asset(AppImages.star),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  widget.state.driver!.getRating(),
-                                  style: AppStyle.black14
-                                      .copyWith(fontWeight: FontWeight.w400),
-                                ),
+                                ratingWidget(widget.state.driver!.getRating()),
                                 const SizedBox(
                                   width: 5,
                                 ),

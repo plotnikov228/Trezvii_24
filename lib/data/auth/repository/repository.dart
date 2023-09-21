@@ -134,6 +134,7 @@ class AuthRepositoryImpl extends AuthRepository {
               userId: credential.user!.uid,
               number: '+7${authResult.number!}',
               email: authResult!.mail!,
+              ratings: [],
               name: 'Пользователь',
               registrationDate: DateTime.now()));
           if (userModel == null) {

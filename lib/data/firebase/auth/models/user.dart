@@ -21,6 +21,7 @@ class User extends UserModel {
         required this.bonuses,
         required this.userId,
         required this.number,
+        required super.ratings,
         required this.email,
         required this.name,
         required this.registrationDate}) : super(userId: userId, number: number, email: email, name: name, registrationDate: registrationDate);

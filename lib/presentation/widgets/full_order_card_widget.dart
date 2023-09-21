@@ -8,6 +8,7 @@ import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/adresses_buttons.dart';
+import 'package:sober_driver_analog/presentation/widgets/user_photo_with_border.dart';
 
 import '../../data/firebase/auth/models/driver.dart';
 import '../utils/size_util.dart';
@@ -72,9 +73,7 @@ Widget FullOrderCardWidget(OrderWithId order, {String? submissionTime, Driver? d
               if(driver != null)
               FittedBox(
                   fit: BoxFit.scaleDown,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image.network(driver.personalDataOfTheDriver.driverPhotoUrl, width: 85, height: 85,)))
+                  child: userPhotoWithBorder(url: driver.personalDataOfTheDriver.driverPhotoUrl))
             ],)
           ],
         ),

@@ -10,7 +10,7 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/add_wishes_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/cancelled_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/check_bonuses_widget.dart';
-import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/create_order_widget.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/start_order/start_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/initial_map/initial_map_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/promo_code_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_address_widget.dart';
@@ -116,7 +116,7 @@ class MapPage extends StatelessWidget {
               if (state is StartOrderMapState)
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: CreateOrderWidget(
+                  child: StartOrderWidget(
                     bloc: bloc,
                     state: state,
                   ),

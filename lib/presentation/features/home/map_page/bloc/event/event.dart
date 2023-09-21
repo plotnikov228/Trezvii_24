@@ -6,6 +6,7 @@ import '../../../../../../../domain/map/models/address_model.dart';
 import '../../../../../../../domain/map/models/app_lat_long.dart';
 import '../../../../../../../domain/payment/models/card.dart';
 import '../../../../../../../domain/payment/models/payment_ui_model.dart';
+import '../../../../../../domain/firebase/order/model/order_with_id.dart';
 
 abstract class MapEvent {}
 
@@ -99,4 +100,10 @@ class GoToChatMapEvent extends MapEvent {
   final BuildContext context;
 
   GoToChatMapEvent(this.context);
+}
+
+class SelectOrderMapEvent extends MapEvent {
+  final OrderWithId order;
+
+  SelectOrderMapEvent(this.order);
 }

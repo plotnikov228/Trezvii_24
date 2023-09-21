@@ -12,4 +12,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'notification': instance.email,
       'name': instance.name,
       'registrationDate': instance.registrationDate.toIso8601String(),
+      'ratings': instance.ratings
     };

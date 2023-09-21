@@ -12,6 +12,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       number: json['number'] as String,
       email: json['email'] as String,
       name: json['name'] as String,
+      ratings: json['ratings'],
       registrationDate: DateTime.parse(json['registrationDate'] as String),
     );
 
@@ -20,6 +21,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'number': instance.number,
       'email': instance.email,
       'name': instance.name,
+      'ratings': instance.ratings,
       'registrationDate': instance.registrationDate.toIso8601String(),
       'bonuses': instance.bonuses,
     };

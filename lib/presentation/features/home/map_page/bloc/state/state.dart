@@ -43,14 +43,7 @@ class InitialMapState extends MapState {
 }
 
 class StartOrderMapState extends MapState {
-  final int currentIndexTariff;
-  final List<Tariff>? tariffList;
-  final PaymentUiModel? currentPaymentUiModel;
-
   StartOrderMapState({
-    this.tariffList,
-    this.currentIndexTariff = 0,
-    this.currentPaymentUiModel,
     String? exception,
     String? message,
     Status status = Status.Success,
@@ -58,18 +51,12 @@ class StartOrderMapState extends MapState {
 
   @override
   MapState copyWith({
-    int? currentIndexTariff,
-    List<Tariff>? tariffList,
-    PaymentUiModel? currentPaymentUiModel,
     Status? status,
     String? exception,
     String? message,
   }) {
     return StartOrderMapState(
-      currentIndexTariff: currentIndexTariff ?? this.currentIndexTariff,
-      tariffList: tariffList ?? this.tariffList,
-      currentPaymentUiModel: currentPaymentUiModel ?? this.currentPaymentUiModel,
-      exception: exception ?? this.exception,
+     exception: exception ?? this.exception,
       status: status ?? this.status,
     );
   }
@@ -108,13 +95,15 @@ class SelectAddressesMapState extends MapState {
 }
 
 class SelectOrderMapState extends MapState {
-  final List<OrderWithId> orders;
-
-  SelectOrderMapState({super.status = Status.Success, super.exception, this.orders = const []});
+  final Stream<List<OrderWithId>>? orders;
+  final String locality;
+  SelectOrderMapState( {this.locality = '',super.status = Status.Success, super.exception, this.orders});
 
   @override
-  SelectOrderMapState copyWith({Status? status, String? exception, List<OrderWithId>? orders}) {
-    return SelectOrderMapState(status: status ?? this.status, exception: exception ?? this.exception, orders: orders ?? this.orders);
+  SelectOrderMapState copyWith({Status? status, String? exception, Stream<List<OrderWithId>>? orders, String? locality}) {
+    return SelectOrderMapState(
+        locality: locality ?? this.locality,
+        status: status ?? this.status, exception: exception ?? this.exception, orders: orders ?? this.orders);
   }
 
 }
