@@ -43,7 +43,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     }
   }
 
-  Future updateUser(
+  Future updateUser(String id,
       {String? number,
       String? email,
       String? name,
@@ -53,7 +53,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(email != null) mapForUpdate['email'] = email;
     if(name != null) mapForUpdate['name'] = name;
     if(bonuses != null) mapForUpdate['bonuses'] = bonuses;
-      await _instance.collection( _usersCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
+      await _instance.collection( _usersCollection).doc(id).update(mapForUpdate);
       print('updated');
 
   }
@@ -80,13 +80,14 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
   }
 
   Future updateDriver(
+      String id,
       {String? number,
         String? email,
         String? name,
         AppLatLong? currentPosition,
         Car? car,
         PersonalDataOfTheDriver? personalDataOfTheDriver,
-        List<int>? ratings,
+        List<double>? ratings,
         }) async {
     Map<String, dynamic> mapForUpdate = {};
     if(number != null) mapForUpdate['number'] = number;
@@ -96,7 +97,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(car != null) mapForUpdate['car'] = car.toJson();
     if(personalDataOfTheDriver != null) mapForUpdate['personalDataOfTheDriver'] = personalDataOfTheDriver.toJson();
     if(ratings != null) mapForUpdate['ratings'] = ratings;
-    final doc = _instance.collection(_driversCollection).doc(_authInstance.currentUser!.uid).update(mapForUpdate);
+    final doc = _instance.collection(_driversCollection).doc(id).update(mapForUpdate);
 
   }
 

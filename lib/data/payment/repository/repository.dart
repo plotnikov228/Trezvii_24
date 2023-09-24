@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -148,7 +149,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
     final balance = prefs.getInt(_bonusesBalancePrefsKey) ?? 0;
     final newBalance = balance + quantity;
     prefs.setInt(_bonusesBalancePrefsKey, newBalance);
-    await UpdateUser(_fbAuthRepo).call(bonuses: newBalance);
+    await UpdateUser(_fbAuthRepo).call(auth.FirebaseAuth.instance.currentUser!.uid ,bonuses: newBalance);
     return newBalance;
   }
 
@@ -204,7 +205,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
     // some func
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt(_bonusesBalancePrefsKey, 0);
-    await UpdateUser(_fbAuthRepo).call(bonuses: 0);
+    await UpdateUser(_fbAuthRepo).call(auth.FirebaseAuth.instance.currentUser!.uid, bonuses: 0);
   }
 
   @override

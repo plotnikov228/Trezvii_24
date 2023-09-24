@@ -1,14 +1,19 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sober_driver_analog/data/auth/repository/repository.dart';
 import 'package:sober_driver_analog/data/firebase/auth/repository.dart';
 import 'package:sober_driver_analog/data/firebase/order/repository.dart';
 import 'package:sober_driver_analog/data/map/repository/repository.dart';
+import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_user_by_id.dart';
+import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_driver.dart';
+import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_user.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/get_list_of_orders.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_locally.dart';
 import 'package:sober_driver_analog/domain/payment/models/tariff.dart';
 import 'package:sober_driver_analog/extensions/double_extension.dart';
 import 'package:sober_driver_analog/extensions/order_extension.dart';
+import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 
 import '../../../../../../data/firebase/auth/models/driver.dart';
@@ -28,20 +33,23 @@ import '../../../../../../domain/firebase/order/usecases/set_changes_order_liste
 import '../../../../../../domain/firebase/order/usecases/update_order_by_id.dart';
 import '../../../../../../domain/map/usecases/get_cost_in_rub.dart';
 import '../../../../../../domain/map/usecases/get_routes.dart';
+import '../../../../../utils/app_operation_mode.dart';
 import '../../../../../utils/status_enum.dart';
 import '../event/event.dart';
+import '../functions.dart';
 import '../state/state.dart';
 
 class OrderChangesFunctions {
   final MapBloc bloc;
+  final MapBlocFunctions mapBlocFunctions;
 
-  OrderChangesFunctions(this.bloc);
+  OrderChangesFunctions(this.bloc, this.mapBlocFunctions);
 
   List<OrderWithId> activeOrders = [];
   StreamSubscription? _orderStateChangesListener;
 
   String? _locality;
-
+  String? get locality => _locality;
 
   bool _orderIsPreliminary = false;
   DateTime? _orderStartTime;
@@ -54,6 +62,7 @@ class OrderChangesFunctions {
 
   final _orderRepo = OrderRepositoryImpl();
   final _mapRepo = MapRepositoryImpl();
+  final _fbAuthRepo = FirebaseAuthRepositoryImpl();
   Order? currentOrder;
   String? currentOrderId;
 
@@ -120,8 +129,10 @@ class OrderChangesFunctions {
       bloc.add(RecheckOrderMapEvent());
     }
     _locality = await GetLocally(_mapRepo).call();
+    print('locality -  $_locality');
     if(_locality == null) {
-      bloc.emit(bloc.state.copyWith(status: Status.Failed));
+
+      bloc.emit(bloc.state.copyWith(status: Status.Failed, exception: 'Не смогли определить ваш город'));
     }
   }
 
@@ -141,6 +152,9 @@ class OrderChangesFunctions {
           driverId: currentOrder!.driverId!,
           employerId: currentOrder!.employerId);
     }
+    currentOrder = null;
+    currentOrderId = null;
+    bloc.add(RecheckOrderMapEvent());
   }
 
 
@@ -176,19 +190,26 @@ class OrderChangesFunctions {
         final nearest = activeOrders.nearestOrder();
         currentOrder = nearest.order;
         currentOrderId = nearest.id;
+        if(_orderStateChangesListener == null) setOrderListeners();
       } else {
+        if(_orderStateChangesListener != null) disposeOrderListener();
         bloc.add(GoMapEvent(StartOrderMapState()));
       }
     } if(currentOrder != null) {
+      print(currentOrder!.status);
       switch (currentOrder!.status) {
         case WaitingForOrderAcceptanceOrderStatus():
           bloc.add(GoMapEvent(WaitingForOrderAcceptanceMapState()));
         case CancelledOrderStatus():
           bloc.add(GoMapEvent(CancelledOrderMapState()));
+          mapBlocFunctions.mapFunctions.disposePositionStream();
           activeOrders.removeWhere(
                   (element) =>
               element.id ==
                   currentOrderId!);
+          currentOrder = null;
+          currentOrderId = null;
+          bloc.add(RecheckOrderMapEvent());
         case OrderCancelledByDriverOrderStatus():
           bloc.add(GoMapEvent(OrderCancelledByDriverMapState()));
         case OrderAcceptedOrderStatus():
@@ -203,14 +224,22 @@ class OrderChangesFunctions {
                 message:
                 'Водитель принял вашу заявку, за 30 минут до назначенного времени вы вернётесь в окно ожидания водителя')));
           } else {
+            if(AppOperationMode.driverMode()) {
+              mapBlocFunctions.mapFunctions.initPositionStream(driverMode: AppOperationMode.driverMode(), to: bloc.fromAddress?.appLatLong, whenComplete: () {
+              if(AppOperationMode.driverMode()) {
+                UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: SuccessfullyCompletedOrderStatus()));
+              }
+            });
+            }
             bloc.setDriver(await GetDriverById(FirebaseAuthRepositoryImpl()).call(currentOrder!.driverId!) as Driver);
             bloc.add(GoMapEvent(OrderAcceptedMapState()));
           }
         case SuccessfullyCompletedOrderStatus():
-          disposeOrderListener();
-          bloc.setDriver(null);
+
+
           bloc.add(GoMapEvent(OrderCompleteMapState()));
         case ActiveOrderStatus():
+          mapBlocFunctions.mapFunctions.initPositionStream(driverMode: AppOperationMode.driverMode(), to: bloc.toAddress!.appLatLong);
           bloc.add(GoMapEvent(ActiveOrderMapState()));
       }
     }
@@ -236,7 +265,6 @@ class OrderChangesFunctions {
               : null,
           startTime: orderStartTime,
           costInRub: cost);
-      print(currentOrder);
       await CreateOrder(_orderRepo)
           .call(currentOrder!)
           .then((value) {
@@ -245,21 +273,49 @@ class OrderChangesFunctions {
             currentOrder!,
             currentOrderId!));
         setOrderListeners();
-        bloc.add(GoMapEvent(WaitingForOrderAcceptanceMapState()));
+        bloc.add(RecheckOrderMapEvent());
       });
     }
 
-    Stream availableOrders () => GetListOfOrders(_orderRepo).call(_locality ?? '');
+    Stream<List<OrderWithId>> availableOrders () => GetListOfOrders(_orderRepo).call(_locality ?? '');
 
   Future cancelSearch () async {
     if (currentOrder!.status
     is WaitingForOrderAcceptanceOrderStatus) {
-      DeleteOrderById(_orderRepo)
+      await DeleteOrderById(_orderRepo)
           .call(currentOrderId!);
-      activeOrders.removeLast();
+      currentOrder = null;
+      currentOrderId = null;
       disposeOrderListener();
       bloc.add(RecheckOrderMapEvent());
     }
+  }
+
+  Future completeOrder ({double? rating}) async {
+    if(rating != null) {
+      if(AppOperationMode.userMode()) {
+        bloc.driver!.ratings.add(rating);
+        await UpdateDriver(_fbAuthRepo).call(
+            bloc.driver!.userId, ratings: bloc.driver!.ratings);
+      } else {
+        final user = await GetUserById(_fbAuthRepo).call(currentOrder!.employerId);
+        if(user != null) {
+          user!.ratings.add(rating);
+          await UpdateUser(_fbAuthRepo).call(user.userId);
+        }
+      }
+    }
+    currentOrder = null;
+    currentOrderId = null;
+    bloc.setDriver(null);
+    bloc.add(RecheckOrderMapEvent());
+
+  }
+
+  void proceedOrder () {
+    UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(driverId: FirebaseAuth.instance.currentUser!.uid, status: OrderAcceptedOrderStatus())).then((value) {
+      setOrderListeners();
+      bloc.add(RecheckOrderMapEvent());});
   }
 
 }

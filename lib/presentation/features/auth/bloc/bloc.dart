@@ -18,6 +18,7 @@ import '../../../../data/firebase/auth/models/driver.dart';
 import '../../../../domain/auth/models/auth_type.dart';
 import '../../../../domain/auth/usecases/verify_code.dart';
 import '../../../../domain/firebase/auth/models/car.dart';
+import '../../../utils/status_enum.dart';
 import 'event.dart';
 import 'state.dart';
 import 'package:image_picker/image_picker.dart';
@@ -184,6 +185,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SignUpEvent>((event, emit) async {
+      add(ChangeAuthStateEvent(SignUpState(status: AuthStatus.Loading)));
       if(event.updatedCheckBoxValue  != null) {
         _checkBoxValue = event.updatedCheckBoxValue!;
         add(ChangeAuthStateEvent(SignUpState(checkBoxIsAccepted: event.updatedCheckBoxValue)));
@@ -201,6 +203,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<SignInEvent>((event, emit) async {
+      add(ChangeAuthStateEvent(SignInState(status: AuthStatus.Loading)));
+
       if (!event.textFieldHasError) {
         SignIn(_repo).call(signInNumber.text, (result) {
           add(ChangeAuthStateEvent(
@@ -214,6 +218,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<InputCodeAuthEvent>((event, emit) async {
+      add(ChangeAuthStateEvent(InputCodeState(status: AuthStatus.Loading)));
+
       final result = await VerifyCode(_repo).call(code.text, _authResult!,
           whenComplete: (userNotCreated) {
         if (userNotCreated && currentState is SignInState) {

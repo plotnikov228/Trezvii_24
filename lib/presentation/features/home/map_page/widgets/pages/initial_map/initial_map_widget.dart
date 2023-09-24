@@ -21,8 +21,7 @@ class InitialMapWidget extends StatefulWidget {
   State<InitialMapWidget> createState() => _InitialMapWidgetState();
 }
 
-class _InitialMapWidgetState extends State<InitialMapWidget>
-    with TickerProviderStateMixin {
+class _InitialMapWidgetState extends State<InitialMapWidget>{
   bool showContent = true;
 
   final double initialHeight = 160;
@@ -64,7 +63,7 @@ class _InitialMapWidgetState extends State<InitialMapWidget>
 
             Future.delayed(const Duration(milliseconds: 500), () {
               widget.bloc
-                  .add(GoMapEvent(SelectAddressesMapState()));
+                  .add(GoMapEvent(AppOperationMode.userMode() ? SelectAddressesMapState() : SelectOrderMapState()));
             });
           }
         },
@@ -82,7 +81,7 @@ class _InitialMapWidgetState extends State<InitialMapWidget>
           if ((initialHeight - height).abs() > 100) {
             Future.delayed(const Duration(milliseconds: 500), () {
               widget.bloc
-                  .add(GoMapEvent(SelectAddressesMapState()));
+                  .add(GoMapEvent(AppOperationMode.userMode() ? SelectAddressesMapState() : SelectOrderMapState()));
             });
           }
         },
@@ -118,9 +117,8 @@ class _InitialMapWidgetState extends State<InitialMapWidget>
                     duration: const Duration(milliseconds: 500),
                     opacity: showContent ? 1 : 0,
                     child: Padding(
-                        padding: const EdgeInsets.only(left: 35, right: 12),
-                        child: AppOperationMode.mode ==
-                            AppOperationModeEnum.user ? InitialMapUserContent(
+                        padding: const EdgeInsets.only(left: 35, right: 35),
+                        child: AppOperationMode.userMode() ? InitialMapUserContent(
                           state: widget.state,
                           onAddressButtonTap: () {
                             height = initialEndHeight;

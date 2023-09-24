@@ -18,8 +18,6 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final _firebaseAuthRepo = FirebaseAuthRepositoryImpl();
   late final List<OrderWithId> _otherOrders;
   late final List<OrderWithId> _completedOrders;
-  final List<Driver?> _otherDrivers = [];
-  final List<Driver?> _completedOrderDrivers = [];
   OrdersBloc(super.initialState) {
     final isUser = AppOperationMode.mode == AppOperationModeEnum.user;
 
@@ -43,19 +41,9 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
               element.order.status.toString() ==
               SuccessfullyCompletedOrderStatus().toString())
           .toList();
-      for (var e in _otherOrders) {
-        _otherDrivers.add((await GetDriverById(_firebaseAuthRepo)
-            .call(e.order.driverId!) as Driver?));
-      }
-      for (var e in _completedOrders) {
-        _completedOrderDrivers.add((await GetDriverById(_firebaseAuthRepo)
-            .call(e.order.driverId!) as Driver?));
-      }
       emit(OrdersState(
           otherOrders: _otherOrders,
-          completedOrders: _completedOrders,
-          otherOrderDrivers: _otherDrivers,
-          completedOrderDrivers: _completedOrderDrivers));
+          completedOrders: _completedOrders,));
     });
   }
 }

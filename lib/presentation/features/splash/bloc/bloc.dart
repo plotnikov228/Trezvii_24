@@ -20,7 +20,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<InitializeAppInSplashEvent>((event, emit) async {
       //initialize
       await Firebase.initializeApp();
-      await FirebaseAppCheck.instance.activate();
+      //await FirebaseAppCheck.instance.activate();
       await AppOperationMode.initMode();
       await InitDB(DBRepositoryImpl()).call();
       try {

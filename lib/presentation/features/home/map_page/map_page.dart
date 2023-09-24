@@ -10,12 +10,15 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/add_wishes_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/cancelled_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/check_bonuses_widget.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/order_completed_page.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/start_order/start_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/initial_map/initial_map_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/promo_code_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_address_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_payment_method_page.dart';
-import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/waiting_for_order_acceptence.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/waiting_for_order_acceptance/waiting_for_order_acceptence.dart';
+import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/widgets/map/map_widget.dart';
 
 import '../../../utils/app_color_util.dart';
@@ -48,8 +51,9 @@ class MapPage extends StatelessWidget {
           return Stack(
             children: [
               MapWidget(
-                getCurrentAddress:  (_) => bloc.setCurrentAddress(_),
+                follow: state is ActiveOrderMapState || state is OrderAcceptedMapState,
                 drivingRoute: bloc.currentRoute,
+                routeStream: bloc.routeStream,
                 size: Size(
                     size.width,
                     state is ActiveOrderMapState
@@ -63,10 +67,12 @@ class MapPage extends StatelessWidget {
                 firstPlacemark: bloc.fromAddress?.appLatLong,
                 secondPlacemark: bloc.toAddress?.appLatLong,
                 getAddress: (_) {
-                  if (bloc.getAddressFromMap) {
-                    bloc.fromAddress = _;
-                    bloc.firstAddressController.text = _.addressName;
-                    bloc.add(GoMapEvent(bloc.state));
+                  if(AppOperationMode.userMode()) {
+                    if (bloc.getAddressFromMap) {
+                      bloc.fromAddress = _;
+                      bloc.firstAddressController.text = _.addressName;
+                      bloc.add(GoMapEvent(bloc.state));
+                    }
                   }
                 },
                 initialCameraPosition: bloc.cameraPosition,
@@ -113,6 +119,10 @@ class MapPage extends StatelessWidget {
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: SelectAddressWidget(bloc: bloc, state: state)),
+              if (state is SelectOrderMapState)
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SelectOrderWidget(bloc: bloc, state: state)),
               if (state is StartOrderMapState)
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -160,6 +170,11 @@ class MapPage extends StatelessWidget {
                     state: state,
                     bloc: bloc,
                   ),
+                ),
+              if (state is OrderCompleteMapState)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: OrderCompletedPage(),
                 ),
               if (state is AddCardMapState)
                 AddCardWidget(bloc: bloc, state: state),

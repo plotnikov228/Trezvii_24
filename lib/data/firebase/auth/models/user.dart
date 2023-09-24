@@ -33,5 +33,23 @@ class User extends UserModel {
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   @override
-  Map<String, dynamic> toDB() => _$UserToJson(this);
+  Map<String, dynamic> toDB() => <String, dynamic>{
+    'userId': userId,
+    'number': number,
+    'email': email,
+    'name': name,
+    'ratings': ratings.join(',') ,
+    'registrationDate': registrationDate.toIso8601String(),
+    'bonuses': bonuses,
+  };
+
+  factory User.fromDB(Map<String, dynamic> json) {
+    return User(bonuses: json['bonuses'] as int,
+    userId: json['userId'] as String,
+    number: json['number'] as String,
+    email: json['email'] as String,
+    name: json['name'] as String,
+    ratings: (json['ratings'] as String).split(',').map((e) => double.parse(e)).toList(),
+    registrationDate: DateTime.parse(json['registrationDate'] as String));
+  }
 }

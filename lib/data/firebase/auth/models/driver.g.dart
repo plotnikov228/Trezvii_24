@@ -36,6 +36,6 @@ Map<String, dynamic> _$DriverToJson(Driver instance) => <String, dynamic>{
       'ratings': instance.ratings,
       'currentPosition': instance.currentPosition?.toJson(),
       'confirmed': instance.confirmed,
-      'personalDataOfTheDriver': instance.personalDataOfTheDriver.toJson(),
+      'personalDataOfTheDriver': instance.personalDataOfTheDriver?.toJson(),
       'car': instance.car?.toJson(),
     };

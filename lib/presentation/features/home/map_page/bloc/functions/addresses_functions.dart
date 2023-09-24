@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:sober_driver_analog/data/db/repository/repository.dart';
 import 'package:sober_driver_analog/data/map/repository/repository.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
+import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/extensions/point_extension.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
@@ -29,6 +32,8 @@ class AddressesFunctions {
     }
   }
 
+
+
   Future<List<AddressModel>> searchAddresses(
       String address, CameraPosition cameraPosition) async {
     late final List<AddressModel> result;
@@ -46,4 +51,6 @@ class AddressesFunctions {
         .map((e) => AddressModel.fromDB(e))
         .toList();
   }
+
+
 }

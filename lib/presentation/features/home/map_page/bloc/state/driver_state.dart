@@ -8,5 +8,5 @@ class StartOrderDriverMapState extends StartOrderMapState {
   final UserModel? userModel;
   final String? photoUrl;
 
-  StartOrderDriverMapState({this.orderWithId, this.userModel, this.photoUrl});
+  StartOrderDriverMapState({this.orderWithId, this.userModel, this.photoUrl, super.message, super.exception, super.status});
 }

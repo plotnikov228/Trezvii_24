@@ -99,8 +99,7 @@ class OrdersPage extends StatelessWidget {
                                 (index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: FullOrderCardWidget(
-                                      state.otherOrders[index],
-                                      driver: state.otherOrderDrivers[index]),
+                                     order: state.otherOrders[index],),
                                 )),
                           ),
                         ),
@@ -113,8 +112,8 @@ class OrdersPage extends StatelessWidget {
                                     (index) => Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
                                   child: FullOrderCardWidget(
-                                      state.completedOrders[index],
-                                      driver: state.completedOrderDrivers[index]),
+                                      order:state.completedOrders[index],
+                                  ),
                                 )),
                           ),
                         ),

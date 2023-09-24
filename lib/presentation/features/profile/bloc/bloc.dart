@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (isDriver && _userPhotoUrl == null) {
         _user = (await GetDriverById(_firebaseAuthRepo).call(id));
         _userPhotoUrl =
-            (_user as Driver?)?.personalDataOfTheDriver.driverPhotoUrl;
+            (_user as Driver?)?.personalDataOfTheDriver?.driverPhotoUrl;
       }
 
       print('username ${_user!.name}');
@@ -99,7 +100,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           status: Status.Loading));
       try {
         await UpdateUser(_firebaseAuthRepo)
-            .call(email: _emailController.text, name: _nameController.text);
+            .call(FirebaseAuth.instance.currentUser!.uid ,email: _emailController.text, name: _nameController.text);
         emit(ProfileState(
             imageFile: _file,
             imageUrl: _userPhotoUrl,

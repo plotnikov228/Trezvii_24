@@ -159,31 +159,31 @@ class AuthRepositoryImpl extends AuthRepository {
             final usecase =
                 UploadFileToCloudStorage(FirebaseStorageRepositoryImpl());
             final pass = await usecase.call(
-                authResult.driver!.personalDataOfTheDriver.passPhoto!,
+                authResult.driver!.personalDataOfTheDriver!.passPhoto!,
                 'паспорт',
                 credential.user!.uid);
             final registration = await usecase.call(
-                authResult.driver!.personalDataOfTheDriver.registrationPhoto!,
+                authResult.driver!.personalDataOfTheDriver!.registrationPhoto!,
                 'прописка',
                 credential.user!.uid);
             final front = await usecase.call(
                 authResult
-                    .driver!.personalDataOfTheDriver.driverLicenseFrontPhoto!,
+                    .driver!.personalDataOfTheDriver!.driverLicenseFrontPhoto!,
                 'передняя сторона удостоверения',
                 credential.user!.uid);
             final back = await usecase.call(
                 authResult
-                    .driver!.personalDataOfTheDriver.driverLicenseBackPhoto!,
+                    .driver!.personalDataOfTheDriver!.driverLicenseBackPhoto!,
                 'задняя сторона удостоверения',
                 credential.user!.uid);
             final driver = await usecase.call(
-                authResult.driver!.personalDataOfTheDriver.driverPhoto!,
-                'фото водителя',
+                authResult.driver!.personalDataOfTheDriver!.driverPhoto!,
+                'photo',
                 credential.user!.uid);
             final _driver = await authResult.driver!.copyWith(
                 userId: credential.user!.uid,
                 personalDataOfTheDriver:
-                    authResult.driver!.personalDataOfTheDriver.fillUrls(
+                    authResult.driver!.personalDataOfTheDriver!.fillUrls(
                         passPhotoUrl: pass.imageUrl,
                         registrationPhotoUrl: registration.imageUrl,
                         driverLicenceFrontUrl: front.imageUrl,

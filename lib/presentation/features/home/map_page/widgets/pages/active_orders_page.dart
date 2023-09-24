@@ -66,8 +66,7 @@ class ActiveOrdersPage extends StatelessWidget {
                                   return Padding(
                                     padding: EdgeInsets.only(top: index == 0 ? 50 : 10),
                                     child: FullOrderCardWidget(
-                                      state.orders![index],
-                                      driver: state.drivers![index]
+                                      order:state.orders![index],
                                     ),
                                   );
                                 }))

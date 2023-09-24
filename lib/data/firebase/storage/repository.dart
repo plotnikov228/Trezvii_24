@@ -22,4 +22,14 @@ class FirebaseStorageRepositoryImpl extends FirebaseStorageRepository {
     );
   }
 
+  @override
+  Future<String?> getPhotoById({required String id}) async {
+    try {
+      return await FirebaseStorage.instance.ref(
+          '$id/photo')
+          .getDownloadURL();
+    } catch (_) {
+    }
+  }
+
 }

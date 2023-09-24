@@ -29,6 +29,7 @@ class _CanceledOrderWidgetState extends State<CanceledOrderWidget> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        print(widget.bloc.previousState);
         widget.bloc.add(GoMapEvent(widget.bloc.previousState!));
         return false;
       },

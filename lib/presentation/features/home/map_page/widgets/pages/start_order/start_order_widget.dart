@@ -32,16 +32,16 @@ class StartOrderWidget extends StatefulWidget {
   State<StartOrderWidget> createState() => _StartOrderWidgetState();
 }
 
-class _StartOrderWidgetState extends State<StartOrderWidget>
-    with TickerProviderStateMixin {
+class _StartOrderWidgetState extends State<StartOrderWidget>{
   bool showContent = true;
 
-  final double initialHeight = 313;
-  double height = 313;
+  final double initialHeight = AppOperationMode.userMode() ? 340 : size.height - 200;
+  double height = AppOperationMode.userMode() ? 340 : size.height - 200;
   final double initialEndHeight = size.height - 100;
 
   @override
   void initState() {
+    super.initState();
     height = initialHeight;
   }
 
@@ -55,7 +55,8 @@ class _StartOrderWidgetState extends State<StartOrderWidget>
 
   @override
   Widget build(BuildContext context) {
-    print(widget.bloc.fromAddress?.addressName);
+    final isUser = AppOperationMode.userMode();
+    print('a');
     return Align(
       alignment: Alignment.bottomCenter,
       child: GestureDetector(
@@ -73,31 +74,33 @@ class _StartOrderWidgetState extends State<StartOrderWidget>
             });
 
             Future.delayed(const Duration(milliseconds: 500), () {
-              widget.bloc.add(GoMapEvent(SelectAddressesMapState()));
+
+              widget.bloc.add(GoMapEvent(isUser ? SelectAddressesMapState() : SelectOrderMapState()));
             });
           }
         },
         onPanEnd: (_) async {
-          setState(() {
-            if ((initialHeight - height).abs() > 100) {
-              height = initialEndHeight;
-
-              showContent = false;
-            } else {
-              height = initialHeight;
-            }
-          });
-
-          if ((initialHeight - height).abs() > 100) {
-            Future.delayed(const Duration(milliseconds: 500), () {
-              widget.bloc.add(GoMapEvent(SelectAddressesMapState()));
-            });
+          if(height <= 160) {
+            height = 160;
           }
+          else if ((initialHeight - height).abs() > 100) {
+            height = initialEndHeight;
+
+            showContent = false;
+
+            Future.delayed(const Duration(milliseconds: 500), () {
+              widget.bloc.add(GoMapEvent(isUser ? SelectAddressesMapState() : SelectOrderMapState()));
+            });
+          } else {
+            height = initialHeight;
+          }setState(() {
+
+          });
         },
         child: AnimatedSize(
           duration: const Duration(milliseconds: 400),
           child: Container(
-              height: height < initialHeight ? initialHeight : height,
+              height: height < initialHeight ? AppOperationMode.userMode() ? initialHeight : height < 160 ? 160 : height : height,
               width: size.width,
               decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -123,7 +126,7 @@ class _StartOrderWidgetState extends State<StartOrderWidget>
                 AnimatedOpacity(
                     duration: const Duration(milliseconds: 500),
                     opacity: showContent ? 1 : 0,
-                    child: widget.state is StartOrderUserMapState ? StartOrderUserContent(state: widget.state as StartOrderUserMapState, onToTap: () {
+                    child: AppOperationMode.userMode() ? StartOrderUserContent(state: widget.state as StartOrderUserMapState, onToTap: () {
                       height = initialEndHeight;
                       setState(() {
                         showContent = false;
@@ -145,7 +148,18 @@ class _StartOrderWidgetState extends State<StartOrderWidget>
                             GoMapEvent(SelectAddressesMapState(autoFocusedIndex: 0)));
                       });
                     },
-                    ) : StartOrderDriverContent(state: widget.state as StartOrderDriverMapState,)
+                    ) : StartOrderDriverContent(state: widget.state as StartOrderDriverMapState, onSelectOrderTap: () {
+                      height = initialEndHeight;
+
+                      setState(() {
+                        showContent = false;
+                      });
+
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        widget.bloc.add(
+                            GoMapEvent(SelectOrderMapState()));
+                      });
+                    },)
               )]),
         ),
       ),

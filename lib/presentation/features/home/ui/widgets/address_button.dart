@@ -7,7 +7,7 @@ Widget AddressButton ({AddressModel? addressModel,required double width, Functio
   return InkWell(
     onTap: onTap,
     child: SizedBox(
-      height: 24,
+      height: 45,
       width: width,
       child: Row(
         children: [
@@ -15,9 +15,8 @@ Widget AddressButton ({AddressModel? addressModel,required double width, Functio
           prefixIcon,
           SizedBox(width: 10,),
           Flexible(
-            fit: FlexFit.loose,
-            child: Text(showAddressName ? addressModel?.name ?? text : text, style: addressModel == null ? AppStyle.hintText16 : AppStyle.black16, overflow: TextOverflow.ellipsis,),
-          ),
+              fit: FlexFit.loose,
+              child: Text(showAddressName ? addressModel?.name ?? text : text, style: addressModel == null ? AppStyle.hintText16 : AppStyle.black16, overflow: TextOverflow.ellipsis, maxLines: 2,)),
         ],
       )
     ),

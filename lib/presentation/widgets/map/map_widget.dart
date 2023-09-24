@@ -10,6 +10,7 @@ import 'package:sober_driver_analog/domain/map/usecases/get_locally.dart';
 import 'package:sober_driver_analog/domain/map/usecases/set_locally.dart';
 import 'package:sober_driver_analog/extensions/point_extension.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
+import 'package:sober_driver_analog/presentation/widgets/map/map_by_stream.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../../domain/map/models/address_model.dart';
@@ -20,6 +21,7 @@ import '../../../domain/map/usecases/get_routes.dart';
 import '../../../domain/map/usecases/request_permission.dart';
 import '../../../domain/map/usecases/set_last_point.dart';
 import '../../utils/app_color_util.dart';
+import '../../utils/app_operation_mode.dart';
 
 class MapWidget extends StatefulWidget {
   final Size size;
@@ -29,7 +31,7 @@ class MapWidget extends StatefulWidget {
   final Function(AddressModel)? getAddress;
   final Function(CameraPosition)? getCameraPosition;
   final CameraPosition? initialCameraPosition;
-  final Function(AddressModel)? getCurrentAddress;
+  final Stream<DrivingRoute>? routeStream;
 
   final bool follow;
 
@@ -42,7 +44,7 @@ class MapWidget extends StatefulWidget {
       this.drivingRoute,
       this.firstPlacemark,
       this.secondPlacemark,
-      this.follow = false, this.getCurrentAddress});
+      this.follow = false, this.routeStream,});
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -91,16 +93,6 @@ class _MapWidgetState extends State<MapWidget> {
           ?.toponymMetadata
           ?.address
           .addressComponents[SearchComponentKind.locality];
-      if(widget.getCurrentAddress != null) {
-        print('get address');
-          widget.getCurrentAddress!(AddressModel(addressName: address!.name,
-              appLatLong: location,
-              entrance: address.toponymMetadata
-                  ?.address
-                  .addressComponents[SearchComponentKind.locality],
-              locality: locally));
-
-      }
       final savedLocally = await GetLocally(repo).call();
       if (locally != null && (savedLocally != locally)) {
         SetLocally(repo).call(locally);
@@ -125,6 +117,7 @@ class _MapWidgetState extends State<MapWidget> {
       widget.getCameraPosition!(cameraPos);
     }
   }
+
 
   PolylineMapObject? _polylineMapObject;
 
@@ -159,7 +152,7 @@ class _MapWidgetState extends State<MapWidget> {
             const MapAnimation(type: MapAnimationType.linear, duration: 1)));
   }
 
-  StreamSubscription<Position>? _listener;
+  StreamSubscription<DrivingRoute>? _listener;
   DrivingRoute? _currentRoute;
 
   var lastChanges = DateTime.now();
@@ -167,79 +160,9 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _mapObjects.removeRange(0, _mapObjects.length);
-    if (_listener != null && !widget.follow) {
-      _listener?.cancel();
-      _listener = null;
-    }
-    if (_listener == null && widget.follow) {
-      _listener = Geolocator.getPositionStream().listen((event) async {
-        _currentPoint =
-            Point(latitude: event.latitude, longitude: event.longitude);
+    updateMapObjects ();
 
-        _currentRoute = (await GetRoutes(repo)
-                .call([_currentPoint.toAppLatLong(), widget.secondPlacemark!]))!
-            .first;
-        _polylineMapObject = PolylineMapObject(
-          mapId: const MapObjectId('0'),
-          polyline: Polyline(
-            points: _currentRoute!.geometry,
-          ),
-          strokeWidth: 3,
-          strokeColor: AppColor.routeColor,
-        );
-        final cameraPos = CameraPosition(
-          target: _currentPoint,
-          zoom: zoom,
-        );
-        (await mapControllerCompleter.future).moveCamera(
-          animation:
-              const MapAnimation(type: MapAnimationType.linear, duration: 0),
-          CameraUpdate.newCameraPosition(cameraPos),
-        );
-        setState(() {});
-      });
-    }
-    if (widget.drivingRoute != null && !widget.follow) {
-      if (_currentRoute != widget.drivingRoute) {
-        getBounds([
-          widget.drivingRoute!.geometry.first,
-          widget.drivingRoute!.geometry.last
-        ]);
-        _currentRoute = widget.drivingRoute;
-      }
-      _polylineMapObject = PolylineMapObject(
-        mapId: const MapObjectId('0'),
-        polyline: Polyline(
-          points: _currentRoute!.geometry,
-        ),
-        strokeWidth: 3,
-        strokeColor: AppColor.routeColor,
-      );
-      _mapObjects.add(_polylineMapObject!);
-      setState(() {});
-    }
-    if (widget.firstPlacemark != null && !widget.follow) {
-      _mapObjects.add(PlacemarkMapObject(
-          opacity: 1,
-          mapId: const MapObjectId('1'),
-          point: widget.firstPlacemark!.toPoint(),
-          icon: PlacemarkIcon.single(
-            PlacemarkIconStyle(
-                image:
-                    BitmapDescriptor.fromAssetImage(AppImages.startPointPNG)),
-          )));
-    }
-    if (widget.secondPlacemark != null) {
-      _mapObjects.add(PlacemarkMapObject(
-          opacity: 1,
-          mapId: const MapObjectId('2'),
-          point: widget.secondPlacemark!.toPoint(),
-          icon: PlacemarkIcon.single(
-            PlacemarkIconStyle(
-                image: BitmapDescriptor.fromAssetImage(AppImages.geoMarkPNG)),
-          )));
-    }
+
     return SizedBox(
       height: widget.size.height,
       width: widget.size.width,
@@ -247,6 +170,12 @@ class _MapWidgetState extends State<MapWidget> {
         children: [
           YandexMap(
             onCameraPositionChanged: (_, __, ___) async {
+              if(AppOperationMode.userMode()) {
+
+
+
+
+
               zoom = _.zoom;
               final p = _.target;
               setState(() {
@@ -260,7 +189,8 @@ class _MapWidgetState extends State<MapWidget> {
                   }
                 });
               }
-              Future.delayed(const Duration(seconds: 2), () async {
+
+                Future.delayed(const Duration(seconds: 2), () async {
                 if (!widget.follow &&
                     (lastChanges.second - DateTime.now().second).abs() >= 2) {
                   final address = await GetAddressFromPoint(repo)
@@ -273,6 +203,7 @@ class _MapWidgetState extends State<MapWidget> {
                   });
                 }
               });
+              }
 
               if (widget.getCameraPosition != null) {
                 widget.getCameraPosition!(_);
@@ -335,9 +266,89 @@ class _MapWidgetState extends State<MapWidget> {
                       ],
                     )),
               ),
-            )
+            ),
         ],
       ),
     );
+  }
+
+  void updateMapObjects () {
+    _mapObjects.removeRange(0, _mapObjects.length);
+    if (_listener != null && !widget.follow) {
+      _listener?.cancel();
+      _listener = null;
+    }
+    if (_listener == null && widget.routeStream != null) {
+      print('init stream');
+      _listener = widget.routeStream!.listen((event) async {
+        print(event.geometry.length);
+        _currentPoint =
+            event.geometry.first;
+
+        _polylineMapObject = PolylineMapObject(
+          mapId: const MapObjectId('0'),
+          polyline: Polyline(
+            points: event.geometry,
+          ),
+          strokeWidth: 3,
+          strokeColor: AppColor.routeColor,
+        );
+        if(_mapObjects.isEmpty) {
+          _mapObjects.add(_polylineMapObject!);
+        } else {
+          _mapObjects[0] = _polylineMapObject!;
+        }
+        final cameraPos = CameraPosition(
+          target: _currentPoint,
+          zoom: zoom,
+        );
+        (await mapControllerCompleter.future).moveCamera(
+          animation:
+          const MapAnimation(type: MapAnimationType.linear, duration: 0),
+          CameraUpdate.newCameraPosition(cameraPos),
+        );
+        setState(() {});
+      });
+    }
+    if (widget.drivingRoute != null && !widget.follow) {
+      if (_currentRoute != widget.drivingRoute) {
+        getBounds([
+          widget.drivingRoute!.geometry.first,
+          widget.drivingRoute!.geometry.last
+        ]);
+        _currentRoute = widget.drivingRoute;
+      }
+      _polylineMapObject = PolylineMapObject(
+        mapId: const MapObjectId('0'),
+        polyline: Polyline(
+          points: _currentRoute!.geometry,
+        ),
+        strokeWidth: 3,
+        strokeColor: AppColor.routeColor,
+      );
+      _mapObjects.add(_polylineMapObject!);
+      setState(() {});
+    }
+    if (widget.firstPlacemark != null && !widget.follow) {
+      _mapObjects.add(PlacemarkMapObject(
+          opacity: 1,
+          mapId: const MapObjectId('1'),
+          point: widget.firstPlacemark!.toPoint(),
+          icon: PlacemarkIcon.single(
+            PlacemarkIconStyle(
+                image:
+                BitmapDescriptor.fromAssetImage(AppImages.startPointPNG)),
+          )));
+    }
+    if (widget.secondPlacemark != null) {
+      _mapObjects.add(PlacemarkMapObject(
+          opacity: 1,
+          mapId: const MapObjectId('2'),
+          point: widget.secondPlacemark!.toPoint(),
+          icon: PlacemarkIcon.single(
+            PlacemarkIconStyle(
+                image: BitmapDescriptor.fromAssetImage(AppImages.geoMarkPNG)),
+          )));
+    }
   }
 }

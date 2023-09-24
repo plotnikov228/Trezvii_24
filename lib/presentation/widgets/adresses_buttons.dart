@@ -33,48 +33,54 @@ class AddressesButtons extends StatelessWidget {
                 width: 3,
               ),
               Center(
-                child: Padding(
-                  padding:
-                  const EdgeInsets.only(left: 16),
-                  child: Container(
-                    width: width != null ? width! - 30 : size.width - 100,
-                    height: 1,
-                    decoration: BoxDecoration(
-                        color: AppColor.lightGray
-                            .withOpacity(0.5),
-                        borderRadius:
-                        const BorderRadius.all(
-                            Radius.circular(8))),
-                  ),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  height: 1,
+                  decoration: BoxDecoration(
+                      color: AppColor.lightGray
+                          .withOpacity(0.5),
+                      borderRadius:
+                      const BorderRadius.all(
+                          Radius.circular(8))),
                 ),
               )
             ],
           ),
         ),
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AddressButton(
-                addressModel:from,
+        SizedBox(
+          height: 100,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AddressButton(
+                  addressModel:from,
 
-                prefixIcon: PointWidget(),
-                width: width ??  size.width - 70,
-                onTap: onFromTap
-              ),
-              const SizedBox(
-                height: 27,
-              ),
-              AddressButton(
-                addressModel: to,
-                prefixIcon: const Icon(
-                  Icons.location_pin,
-                  color: Colors.black87,
-                  size: 24,
+                  prefixIcon: PointWidget(),
+                  width: width ??  size.width - 70,
+                  onTap: onFromTap
                 ),
-                width: width ??size.width - 70,
-                onTap: onToTap
-              )
-            ]),
+                Divider(
+                  indent: 16,
+                  endIndent: 0,
+                  color: AppColor.lightGray
+                      .withOpacity(0.5),
+                  thickness: 1,
+                  height: 1,
+                ),
+
+                AddressButton(
+                  addressModel: to,
+                  prefixIcon: const Icon(
+                    Icons.location_pin,
+                    color: Colors.black87,
+                    size: 24,
+                  ),
+                  width: width ??size.width - 70,
+                  onTap: onToTap
+                )
+              ]),
+        ),
       ],
     );
   }

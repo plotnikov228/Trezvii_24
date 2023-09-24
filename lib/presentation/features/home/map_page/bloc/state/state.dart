@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../data/firebase/auth/models/driver.dart';
+import '../../../../../../domain/firebase/auth/models/user_model.dart';
 import '../../../../../../domain/firebase/order/model/order.dart';
 import '../../../../../../domain/firebase/order/model/order_with_id.dart';
 import '../../../../../../domain/map/models/address_model.dart';
-import '../../../../../../domain/payment/models/payment_ui_model.dart';
-import '../../../../../../domain/payment/models/tariff.dart';
-import '../../../../../../domain/tutorial/models/tariff_model.dart';
 import '../../../../../utils/status_enum.dart';
 
 abstract class MapState {
@@ -312,17 +310,17 @@ class AddWishesMapState extends MapState {
 
 class ActiveOrdersMapState extends MapState {
   final List? orders;
-  final List<Driver?>? drivers;
+  final List<UserModel?>? users;
   final Order? currentOrder;
 
-  ActiveOrdersMapState({this.orders, this.drivers, this.currentOrder, status = Status.Success})
+  ActiveOrdersMapState({this.orders, this.users, this.currentOrder, status = Status.Success})
       : super(status: status);
 
   @override
-  MapState copyWith({ Status? status,List? orders, List<Driver?>? drivers, Order? currentOrder, String? exception}) {
+  MapState copyWith({ Status? status,List? orders, List<UserModel?>? drivers, Order? currentOrder, String? exception}) {
     return ActiveOrdersMapState(
       orders: orders ?? this.orders,
-      drivers: drivers ?? this.drivers,
+      users: drivers ?? this.users,
       currentOrder: currentOrder ?? this.currentOrder,
       status:status?? super.status,
     );

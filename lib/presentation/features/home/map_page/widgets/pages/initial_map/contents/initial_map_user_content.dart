@@ -23,23 +23,26 @@ class InitialMapUserContent extends StatelessWidget {
           children: [
             AddressButton(
                 onTap: onAddressButtonTap,
-                width: size.width - 80,
+                width: size.width - 100,
                 prefixIcon: const Icon(
                   Icons.location_pin,
                   color: Colors.black87,
                   size: 24,
                 )),
-            GestureDetector(
-                onTap: onArrowTap,
-                child: SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: Center(
-                        child: Image.asset(
-                          AppImages.rightArrow,
-                          height: 22,
-                          width: 12,
-                        ))))
+            Align(
+              alignment: Alignment.centerRight,
+              child: GestureDetector(
+                  onTap: onArrowTap,
+                  child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: Center(
+                          child: Image.asset(
+                            AppImages.rightArrow,
+                            height: 22,
+                            width: 12,
+                          )))),
+            )
           ],
         ),
         Padding(

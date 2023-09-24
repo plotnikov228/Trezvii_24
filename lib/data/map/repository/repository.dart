@@ -25,6 +25,11 @@ class MapRepositoryImpl extends MapRepository {
         .catchError((_) => false);
   }
 
+  Stream<AppLatLong> positionStream () {
+    return Geolocator.getPositionStream(locationSettings:  const LocationSettings(
+    )).map((value) => AppLatLong(lat: value.latitude, long: value.longitude));
+  }
+
   @override
   Future<AppLatLong> getCurrentLocation() {
     return Geolocator.getCurrentPosition().then((value) {

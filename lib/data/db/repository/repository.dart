@@ -41,7 +41,8 @@ class DBRepositoryImpl extends DBRepository {
       email TEXT NOT NULL,
       name TEXT NOT NULL,
       registrationDate TEXT NOT NULL,
-      bonuses INTEGER
+      bonuses INTEGER,
+      ratings 
       );
   ''');
   }

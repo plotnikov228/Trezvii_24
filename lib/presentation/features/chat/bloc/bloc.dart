@@ -58,7 +58,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
                 .getDownloadURL();
           } catch (_) {
             talkerPhotoUrl =
-                (talker as Driver?)?.personalDataOfTheDriver.driverPhotoUrl;
+                (talker as Driver?)?.personalDataOfTheDriver?.driverPhotoUrl;
           }
         }
         _chat = chat;

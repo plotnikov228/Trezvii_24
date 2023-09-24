@@ -1,7 +1,9 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sober_driver_analog/data/firebase/storage/repository.dart';
 import 'package:sober_driver_analog/data/payment/repository/repository.dart';
+import 'package:sober_driver_analog/domain/firebase/storage/usecases/get_photo_by_id.dart';
 import 'package:sober_driver_analog/domain/payment/repository/repostitory.dart';
 import 'package:sober_driver_analog/domain/payment/usecases/get_bonuses_balance.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/bloc/event.dart';
@@ -41,15 +43,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         _user = userFromDb;
         _paymentUiModel = await GetCurrentPaymentModel(_paymentRepo).call();
         try {
-          _userPhotoUrl = await FirebaseStorage.instance
-              .ref('${_user?.userId}/photo')
-              .getDownloadURL();
+          _userPhotoUrl = await GetPhotoById(FirebaseStorageRepositoryImpl()).call(_user!.userId);
         } catch (_) {}
 
         if (isDriver && _userPhotoUrl == null) {
           _user = (await GetDriverById(_firebaseAuthRepo).call(id));
           _userPhotoUrl =
-              (_user as Driver?)?.personalDataOfTheDriver.driverPhotoUrl;
+              (_user as Driver?)?.personalDataOfTheDriver?.driverPhotoUrl;
         }
 
         balance = await GetBonusesBalance(PaymentRepositoryImpl()).call();

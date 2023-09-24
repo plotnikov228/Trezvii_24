@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -7,15 +8,18 @@ import 'package:sober_driver_analog/data/db/repository/repository.dart';
 import 'package:sober_driver_analog/data/firebase/chat/repository.dart';
 import 'package:sober_driver_analog/data/firebase/firestore/repository.dart';
 import 'package:sober_driver_analog/data/firebase/order/repository.dart';
+import 'package:sober_driver_analog/data/firebase/storage/repository.dart';
 import 'package:sober_driver_analog/data/map/repository/repository.dart';
 import 'package:sober_driver_analog/data/payment/repository/repository.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_driver_by_id.dart';
+import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_user_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/chat/usecases/create_chat.dart';
 import 'package:sober_driver_analog/domain/firebase/chat/usecases/find_chat.dart';
 import 'package:sober_driver_analog/domain/firebase/firestore/usecases/get_collection_data.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_status.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/delete_order_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/update_order_by_id.dart';
+import 'package:sober_driver_analog/domain/firebase/storage/usecases/get_photo_by_id.dart';
 import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_routes.dart';
 import 'package:sober_driver_analog/domain/payment/enums/payment_types.dart';
@@ -24,6 +28,7 @@ import 'package:sober_driver_analog/domain/payment/usecases/activate_bonuses.dar
 import 'package:sober_driver_analog/domain/payment/usecases/activate_promo.dart';
 import 'package:sober_driver_analog/domain/payment/usecases/set_current_payment_ui_model.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/functions.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/driver_state.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/select_contact_bottom_sheet.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
@@ -35,11 +40,13 @@ import '../../../../../../../domain/firebase/order/model/order_with_id.dart';
 import '../../../../../../../domain/map/models/address_model.dart';
 import '../../../../../../domain/db/constants.dart';
 import '../../../../../../domain/db/usecases/db_query.dart';
+import '../../../../../../domain/firebase/auth/models/user_model.dart';
 import '../../../../../../domain/payment/models/tariff.dart';
 import '../../../../../utils/status_enum.dart';
 import '../state/state.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import '../event/event.dart';
+import '../state/user_state.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
   final firstAddressController = TextEditingController();
@@ -53,7 +60,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   bool get getAddressFromMap => _getAddressFromMap;
 
-  AddressModel? get currentAddress => _currentAddress;
+  Future<AddressModel?>? get currentAddress => _mapBlocFunctions?.mapFunctions.getCurrentAddress();
 
   CameraPosition? _cameraPosition;
 
@@ -63,7 +70,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   void setCameraPosition(CameraPosition _) => _cameraPosition = _;
 
-  void setCurrentAddress(AddressModel _) => _currentAddress = _;
+
+  Stream<DrivingRoute>? get routeStream => _mapBlocFunctions?.mapFunctions.positionStream;
 
   final _paymentRepo = PaymentRepositoryImpl();
   final _orderRepo = OrderRepositoryImpl();
@@ -71,16 +79,18 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final _fbAuthRepo = FirebaseAuthRepositoryImpl();
   final _authRepo = AuthRepositoryImpl();
   final _dbRepo = DBRepositoryImpl();
-  late MapBlocFunctions _mapBlocFunctions;
+  MapBlocFunctions? _mapBlocFunctions;
 
-  PaymentUiModel get currentPaymentModel => _mapBlocFunctions.paymentsFunctions.currentPaymentModel;
+  PaymentUiModel get currentPaymentModel => _mapBlocFunctions!.paymentsFunctions.currentPaymentModel;
+
+  UserModel? _user;
+  String? _userPhotoUrl;
 
   List<OrderWithId> get activeOrders =>
       _mapBlocFunctions?.orderFunctions.activeOrders ?? [];
 
   AddressModel? fromAddress;
   AddressModel? toAddress;
-  AddressModel? _currentAddress;
 
   MapState? previousState;
   MapState? currentState;
@@ -97,22 +107,28 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   int _currentTariffIndex = 0;
 
   MapBloc(super.initialState) {
+    bool isUser = AppOperationMode.userMode();
     on<InitMapBloc>((event, emit) async {
       _mapBlocFunctions = MapBlocFunctions(this);
-      if (AppOperationMode.mode == AppOperationModeEnum.user) {
-        _mapBlocFunctions.userInit();
-      } else {}
+      if (isUser) {
+        await _mapBlocFunctions!.userInit();
+      } else {
+        await _mapBlocFunctions!.driverInit();
+      }
     });
 
     on<GoMapEvent>((event, emit) async {
-      if (currentState != null && currentState != previousState) {
+      if (currentState != null && currentState.toString() != event.newState.toString() ) {
         previousState = currentState;
       }
       currentState = event.newState;
       if (event.newState is InitialMapState) {
         emit(InitialMapState(
             lastFavoriteAddress:
-                _mapBlocFunctions.addressesFunctions.lastFavoriteAddress));
+                _mapBlocFunctions!.addressesFunctions.lastFavoriteAddress));
+      }
+      if(event.newState is SelectOrderMapState) {
+        emit(SelectOrderMapState(locality: _mapBlocFunctions!.orderFunctions.locality ?? '', orders: _mapBlocFunctions!.orderFunctions.availableOrders()));
       }
       if (event.newState is SelectAddressesMapState) {
         event.newState as SelectAddressesMapState;
@@ -129,29 +145,40 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ));
       }
       if (event.newState is StartOrderMapState) {
-        if (_tariffs.isEmpty) {
-          _tariffs = (await GetCollectionData(FirebaseFirestoreRepositoryImpl())
-                  .call('Tariffs'))
-              .map((e) => Tariff.fromJson(e))
-              .toList();
+
+        if(isUser) {
+          if (_tariffs.isEmpty) {
+            _tariffs = (await GetCollectionData(FirebaseFirestoreRepositoryImpl())
+                .call('Tariffs'))
+                .map((e) => Tariff.fromJson(e))
+                .toList();
+          }
+
+          if (event.newState is StartOrderUserMapState && (event.newState as StartOrderUserMapState).currentIndexTariff !=
+              _currentTariffIndex) {
+            _currentTariffIndex =
+                (event.newState as StartOrderUserMapState).currentIndexTariff;
+          }
+          emit(StartOrderUserMapState(
+            status: event.newState.status,
+            currentPaymentUiModel: _mapBlocFunctions!.paymentsFunctions.currentPaymentModel,
+            currentIndexTariff: _currentTariffIndex,
+            tariffList: _tariffs,
+          ));
+        } else {
+          emit(StartOrderDriverMapState(
+            userModel: _user,
+            photoUrl: _userPhotoUrl,
+            orderWithId: _mapBlocFunctions!.orderFunctions.currentOrder != null ? OrderWithId(_mapBlocFunctions!.orderFunctions.currentOrder!, _mapBlocFunctions!.orderFunctions.currentOrderId!) : null,
+            status: event.newState.status,
+          ));
         }
 
-        if ((event.newState as StartOrderMapState).currentIndexTariff !=
-            _currentTariffIndex) {
-          _currentTariffIndex =
-              (event.newState as StartOrderMapState).currentIndexTariff;
-        }
-        emit(StartOrderMapState(
-          status: event.newState.status,
-          currentPaymentUiModel: _mapBlocFunctions.paymentsFunctions.currentPaymentModel,
-          currentIndexTariff: _currentTariffIndex,
-          tariffList: _tariffs,
-        ));
       }
       if (event.newState is SelectPaymentMethodMapState) {
         emit(SelectPaymentMethodMapState(
           status: event.newState.status,
-          methods: _mapBlocFunctions.paymentsFunctions.methodsList,
+          methods: _mapBlocFunctions!.paymentsFunctions.methodsList,
         ));
       }
       if (event.newState is WaitingForOrderAcceptanceMapState) {
@@ -196,8 +223,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             status: event.newState.status,
             distance: route.metadata.weight.distance.text,
             driver: _driver,
-            waitingTime: _mapBlocFunctions.orderFunctions.orderIsPreliminary
-                ? _mapBlocFunctions.orderFunctions.currentOrder!.startTime
+            waitingTime: _mapBlocFunctions!.orderFunctions.orderIsPreliminary
+                ? _mapBlocFunctions!.orderFunctions.currentOrder!.startTime
                     .difference(DateTime.now())
                 : _driver!.currentPosition != null
                     ? Duration(
@@ -207,7 +234,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
       if (event.newState is CheckBonusesMapState) {
         emit(CheckBonusesMapState(
-            status: event.newState.status, balance:  _mapBlocFunctions.paymentsFunctions.bonusesBalance));
+            status: event.newState.status, balance:  _mapBlocFunctions!.paymentsFunctions.bonusesBalance));
       }
       if (event.newState is PromoCodeMapState) {
         emit(PromoCodeMapState(
@@ -227,26 +254,37 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
       if (event.newState is ActiveOrdersMapState) {
         final drivers = <Driver?>[];
-        for (var item in _mapBlocFunctions.orderFunctions.activeOrders) {
+        for (var item in _mapBlocFunctions!.orderFunctions.activeOrders) {
           final driver = (await GetDriverById(_fbAuthRepo)
               .call(item.order.driverId ?? ''));
           drivers.add(driver as Driver?);
         }
         emit(ActiveOrdersMapState(
             status: event.newState.status,
-            orders: _mapBlocFunctions.orderFunctions.activeOrders,
-            drivers: drivers as List<Driver?>,
-            currentOrder: _mapBlocFunctions.orderFunctions.currentOrder));
+            orders: _mapBlocFunctions!.orderFunctions.activeOrders,
+            users: drivers as List<Driver?>,
+            currentOrder: _mapBlocFunctions!.orderFunctions.currentOrder));
       }
       if (event.newState is AddPriceMapState) {
         emit(AddPriceMapState(
-            order: _mapBlocFunctions.orderFunctions.currentOrder));
+            order: _mapBlocFunctions!.orderFunctions.currentOrder));
       }
+    });
+
+    on<SelectOrderMapEvent>((event, emit) async {
+      _mapBlocFunctions!.orderFunctions.currentOrderId = event.order.id;
+      _mapBlocFunctions!.orderFunctions.currentOrder = event.order.order;
+      fromAddress = _mapBlocFunctions!.orderFunctions.currentOrder!.from;
+      toAddress = _mapBlocFunctions!.orderFunctions.currentOrder!.to;
+      print(fromAddress?.appLatLong);
+      _user = await GetUserById(_fbAuthRepo).call(_mapBlocFunctions!.orderFunctions.currentOrder!.employerId);
+      _userPhotoUrl = await GetPhotoById(FirebaseStorageRepositoryImpl()).call(_mapBlocFunctions!.orderFunctions.currentOrder!.employerId);
+      add(GoMapEvent(StartOrderMapState()));
     });
 
     on<SearchAddressMapEvent>((event, emit) async {
       add(GoMapEvent(SelectAddressesMapState(
-          addresses: await _mapBlocFunctions.addressesFunctions
+          addresses: await _mapBlocFunctions!.addressesFunctions
               .searchAddresses(event.address, _cameraPosition!))));
     });
 
@@ -270,9 +308,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       add(GoMapEvent(StartOrderMapState()));
     });
 
+    on<ProceedOrderMapEvent>((event, emit) async {
+      _mapBlocFunctions!.orderFunctions.proceedOrder();
+    });
+
     on<CreateOrderMapEvent>((event, emit) async {
-      emit(state.copyWith(status: Status.Loading));
-      await _mapBlocFunctions.orderFunctions.createOrder(
+      add(GoMapEvent(StartOrderMapState(status: Status.Loading)));
+      await _mapBlocFunctions!.orderFunctions.createOrder(
           _tariffs[_currentTariffIndex],
           wishes: _wishesController.text,
           otherName: _otherNameController.text,
@@ -280,7 +322,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
 
     on<RecheckOrderMapEvent>((event, emit) async {
-      await _mapBlocFunctions.orderFunctions.recheckOrderStatus();
+      await _mapBlocFunctions!.orderFunctions.recheckOrderStatus();
     });
 
     on<OnPaymentTapMapEvent>((event, emit) async {
@@ -288,7 +330,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         case PaymentTypes.promo:
           add(GoMapEvent(PromoCodeMapState()));
         case PaymentTypes.card:
-          _mapBlocFunctions.paymentsFunctions.setPaymentModel(event.paymentUiModel);
+          _mapBlocFunctions!.paymentsFunctions.setPaymentModel(event.paymentUiModel);
           SetCurrentPaymentModel(_paymentRepo).call(event.paymentUiModel);
           add(GoMapEvent(StartOrderMapState()));
         case PaymentTypes.bonus:
@@ -296,7 +338,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         case PaymentTypes.cardAdd:
           add(GoMapEvent(AddCardMapState()));
         case PaymentTypes.cash:
-          _mapBlocFunctions.paymentsFunctions.setPaymentModel( event.paymentUiModel);
+          _mapBlocFunctions!.paymentsFunctions.setPaymentModel( event.paymentUiModel);
           SetCurrentPaymentModel(_paymentRepo).call(event.paymentUiModel);
           add(GoMapEvent(StartOrderMapState()));
       }
@@ -306,20 +348,20 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       try {
         ActivateBonuses(_paymentRepo).call().then((value) => emit(
             CheckBonusesMapState(
-                balance:  _mapBlocFunctions.paymentsFunctions.bonusesBalance,
+                balance:  _mapBlocFunctions!.paymentsFunctions.bonusesBalance,
                 message: 'Вы активировали ваши бонусы')));
       } catch (_) {
         emit(CheckBonusesMapState(
           status: Status.Failed,
           exception: 'Ошибка, не получилось активировать бонусы',
-          balance:  _mapBlocFunctions.paymentsFunctions.bonusesBalance,
+          balance:  _mapBlocFunctions!.paymentsFunctions.bonusesBalance,
         ));
       }
     });
 
     on<AddPreliminaryTimeMapEvent>((event, emit) {
-      _mapBlocFunctions.orderFunctions.setPreliminary(event.preliminary);
-      _mapBlocFunctions.orderFunctions.setStartTime(event.preliminaryTime);
+      _mapBlocFunctions!.orderFunctions.setPreliminary(event.preliminary);
+      _mapBlocFunctions!.orderFunctions.setStartTime(event.preliminaryTime);
     });
 
     on<CheckPromoMapEvent>((event, emit) async {
@@ -329,9 +371,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           await ActivatePromo(_paymentRepo).call(_promoController.text);
 
       if (promo != null) {
-        _mapBlocFunctions.paymentsFunctions.activePromo = promo;
+        _mapBlocFunctions!.paymentsFunctions.activePromo = promo;
         message =
-            'Промокод был активирован, скидка на следующую оплату по карте составляет ${_mapBlocFunctions.paymentsFunctions.activePromo!.discount} %';
+            'Промокод был активирован, скидка на следующую оплату по карте составляет ${_mapBlocFunctions!.paymentsFunctions.activePromo!.discount} %';
       } else {
         message = 'Промокод не существует, либо был активирован';
       }
@@ -339,12 +381,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     });
 
     on<CancelSearchMapEvent>((event, emit) async {
-      print(_mapBlocFunctions.orderFunctions.currentOrder);
-      await _mapBlocFunctions.orderFunctions.cancelSearch ();
+      print(_mapBlocFunctions!.orderFunctions.currentOrder);
+      await _mapBlocFunctions!.orderFunctions.cancelSearch ();
     });
 
     on<CancelOrderMapEvent>((event, emit) async {
-      await _mapBlocFunctions.orderFunctions.cancelCurrentOrder(event.reason);
+      await _mapBlocFunctions!.orderFunctions.cancelCurrentOrder(event.reason);
       add(RecheckOrderMapEvent());
     });
 
@@ -375,29 +417,35 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
     on<ChangeCostMapEvent>((event, emit) async {
-      _mapBlocFunctions.orderFunctions.currentOrder = _mapBlocFunctions
+      _mapBlocFunctions!.orderFunctions.currentOrder = _mapBlocFunctions!
           .orderFunctions.currentOrder!
           .copyWith(costInRub: event.changedCost);
       await UpdateOrderById(_orderRepo).call(
-          _mapBlocFunctions.orderFunctions.currentOrderId!,
-          _mapBlocFunctions.orderFunctions.currentOrder!);
+          _mapBlocFunctions!.orderFunctions.currentOrderId!,
+          _mapBlocFunctions!.orderFunctions.currentOrder!);
       add(GoMapEvent(WaitingForOrderAcceptanceMapState()));
     });
+
+
 
     on<GoToChatMapEvent>((event, emit) async {
       final chatRepo = ChatRepositoryImpl();
       var chat = await FindChat(chatRepo).call(
-          driverId: _mapBlocFunctions.orderFunctions.currentOrder!.driverId!,
+          driverId: _mapBlocFunctions!.orderFunctions.currentOrder!.driverId!,
           employerId:
-              _mapBlocFunctions.orderFunctions.currentOrder!.employerId);
+              _mapBlocFunctions!.orderFunctions.currentOrder!.employerId);
       chat ??= await CreateChat(chatRepo).call(
-          driverId: _mapBlocFunctions.orderFunctions.currentOrder!.driverId!,
+          driverId: _mapBlocFunctions!.orderFunctions.currentOrder!.driverId!,
           employerId:
-              _mapBlocFunctions.orderFunctions.currentOrder!.employerId);
+              _mapBlocFunctions!.orderFunctions.currentOrder!.employerId);
       if (chat.id != null) {
         event.context
             .pushNamed(AppRoutes.chat, pathParameters: {'chatId': chat.id!});
       }
+    });
+
+    on<CompleteOrderMapEvent>((event, emit)  async {
+      _mapBlocFunctions!.orderFunctions.completeOrder(rating: event.rating);
     });
   }
 }

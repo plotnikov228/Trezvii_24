@@ -4,6 +4,7 @@ import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/address_card.dart';
+import 'package:sober_driver_analog/presentation/widgets/app_snack_bar.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dart';
 import 'package:sober_driver_analog/presentation/widgets/point_widget.dart';
 
@@ -24,8 +25,7 @@ class SelectAddressWidget extends StatefulWidget {
   State<SelectAddressWidget> createState() => _SelectAddressWidgetState();
 }
 
-class _SelectAddressWidgetState extends State<SelectAddressWidget>
-    with TickerProviderStateMixin {
+class _SelectAddressWidgetState extends State<SelectAddressWidget>{
   final double initialHeight = size.height - 100;
   double height = size.height - 100;
   final double initialEndHeight = 313;
@@ -143,11 +143,19 @@ class _SelectAddressWidgetState extends State<SelectAddressWidget>
                                             });
                                             Future.delayed(
                                                 const Duration(
-                                                    milliseconds: 500), () {
-                                                    widget.bloc.add(GetAddressMapEvent(
-                                                  widget.bloc.currentAddress,
-                                                  whichAddressShouldReplace:
-                                                  0));
+                                                    milliseconds: 500), () async {
+                                                  if(widget.bloc.currentAddress != null ) {
+                                                    final curAddress = await widget.bloc.currentAddress;
+                                                    if(curAddress != null) {
+                                                      widget.bloc.add(
+                                                        GetAddressMapEvent(
+                                                            curAddress,
+                                                            whichAddressShouldReplace:
+                                                            0));
+                                                    } else {
+                                                      AppSnackBar.showSnackBar(context, content: 'Ваше текущее местоположение не было определено');
+                                                    }
+                                                  }
                                             });
 
                                           },

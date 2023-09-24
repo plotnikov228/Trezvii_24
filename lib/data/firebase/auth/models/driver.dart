@@ -10,7 +10,7 @@ part 'driver.g.dart';
 class Driver extends UserModel {
   final AppLatLong? currentPosition;
   final bool confirmed;
-  final PersonalDataOfTheDriver personalDataOfTheDriver;
+  final PersonalDataOfTheDriver? personalDataOfTheDriver;
   final Car? car;
 
   Driver({
@@ -22,7 +22,7 @@ class Driver extends UserModel {
     required super.email,
     required super.name,
     required super.registrationDate,
-    required this.personalDataOfTheDriver,
+     this.personalDataOfTheDriver,
     this.car,
   });
 
@@ -61,12 +61,23 @@ class Driver extends UserModel {
     'email': email,
     'name': name,
     'registrationDate': registrationDate.toIso8601String(),
-    'bonuses': null
+    'bonuses': null,
+    'ratings': ratings.join(',')
   };
+
+  factory Driver.fromDB(Map<String, dynamic> json) {
+    return Driver(
+        userId: json['userId'] as String,
+        number: json['number'] as String,
+        email: json['email'] as String,
+        name: json['name'] as String,
+        ratings: (json['ratings'] as String).split(',').map((e) => double.parse(e)).toList(),
+        registrationDate: DateTime.parse(json['registrationDate'] as String), confirmed: true, );
+  }
 
   String getRating () {
     if (ratings.isEmpty) {
-      return '0.0'; // Учтем случай, когда список пустой
+      return '0.0';
     }
     else {
       double total = ratings.reduce((a, b) => a + b);

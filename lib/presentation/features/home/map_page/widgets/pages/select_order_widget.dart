@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
+import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/address_card.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dart';
@@ -24,11 +26,10 @@ class SelectOrderWidget extends StatefulWidget {
   State<SelectOrderWidget> createState() => _SelectOrderWidgetState();
 }
 
-class _SelectOrderWidgetState extends State<SelectOrderWidget>
-    with TickerProviderStateMixin {
+class _SelectOrderWidgetState extends State<SelectOrderWidget>{
   final double initialHeight = size.height - 100;
   double height = size.height - 100;
-  final double initialEndHeight = 313;
+  final double initialEndHeight = AppOperationMode.userMode() ? 313 : size.height - 200;
 
   @override
   void initState() {
@@ -49,6 +50,8 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<MapBloc>();
+    print('o');
     return GestureDetector(
       onPanStart: (_) {
         startPosition = _.globalPosition;
@@ -64,13 +67,13 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
           });
 
           Future.delayed(const Duration(milliseconds: 500), () {
-            widget.bloc.add(GoMapEvent(StartOrderMapState()));
+            bloc.add(GoMapEvent(StartOrderMapState()));
           });
         }
       },
       onPanEnd: (_) async {
         setState(() {
-          if ((initialHeight - height).abs() > 100) {
+          if ((initialHeight - height).abs() > 60) {
             height = initialEndHeight;
 
             showContent = false;
@@ -79,9 +82,10 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
           }
         });
 
-        if ((initialHeight - height).abs() > 100) {
+        if ((initialHeight - height).abs() > 60) {
           Future.delayed(const Duration(milliseconds: 500), () {
-            widget.bloc.add(GoMapEvent(StartOrderMapState()));
+            print('a');
+            bloc.add(GoMapEvent(StartOrderMapState()));
           });
         }
       },
@@ -114,14 +118,16 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
                                     padding: EdgeInsets.symmetric(vertical: 35),
                                     child: Center(
                                       child: RichText(
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.visible,
                                         text: TextSpan(children: [
                                           const TextSpan(
                                               text:
-                                                  'Достпуные заказы из города ',
-                                              style: AppStyle.black20),
+                                                  'Доступные заказы из города ',
+                                              style: AppStyle.black16),
                                           TextSpan(
                                               text: widget.state.locality,
-                                              style: AppStyle.black20.copyWith(
+                                              style: AppStyle.black16.copyWith(
                                                   color: AppColor.firstColor))
                                         ]),
                                       ),
@@ -154,6 +160,7 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
                                                 ),
                                               );
                                             }
+                                            if((snapshot.data?.length ?? 0) == 0) return Center(child: Text('Нету доступных заказов', style: AppStyle.black16.copyWith(color: AppColor.firstColor),),);
                                             return SizedBox(
                                               height: size.height - 100 - 201,
                                               child: ListView.builder(
@@ -162,7 +169,6 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
                                                           0,
                                                   itemBuilder:
                                                       (context, index) {
-                                                    if((snapshot.data?.length ?? 0) == 0) return Center(child: Text('Нету доступных заказов', style: AppStyle.black16.copyWith(color: AppColor.firstColor),),);
                                                      return InkWell(
                                                          onTap: () {
                                                            setState(() {
@@ -172,10 +178,10 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>
                                                            Future.delayed(
                                                                const Duration(
                                                                    milliseconds: 500), () {
-                                                             widget.bloc.add(SelectOrderMapEvent(snapshot.data![index]));
+                                                             bloc.add(SelectOrderMapEvent(snapshot.data![index]));
                                                            });
                                                          },
-                                                         child: OrderCardForDriver(snapshot.data![index]));
+                                                         child: OrderCardForDriver(order:snapshot.data![index]));
 
                                                       }),
                                             );

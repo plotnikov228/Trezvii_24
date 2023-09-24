@@ -22,4 +22,8 @@ class AppOperationMode {
         ? AppOperationModeEnum.user
         : AppOperationModeEnum.driver);
   }
+
+  static bool userMode () => mode == AppOperationModeEnum.user;
+  static bool driverMode () => mode == AppOperationModeEnum.driver;
+
 }

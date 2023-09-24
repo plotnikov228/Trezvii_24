@@ -107,3 +107,13 @@ class SelectOrderMapEvent extends MapEvent {
 
   SelectOrderMapEvent(this.order);
 }
+
+class ProceedOrderMapEvent extends MapEvent {
+
+}
+
+class CompleteOrderMapEvent extends MapEvent {
+  final double? rating;
+
+  CompleteOrderMapEvent({ this.rating});
+}

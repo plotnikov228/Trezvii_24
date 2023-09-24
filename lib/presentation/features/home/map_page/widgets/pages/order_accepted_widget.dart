@@ -95,7 +95,7 @@ class _OrderAcceptedWidgetState extends State<OrderAcceptedWidget> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Image.network(
-                            widget.state.driver!.personalDataOfTheDriver.driverPhotoUrl,
+                            widget.state.driver!.personalDataOfTheDriver!.driverPhotoUrl,
                             fit: BoxFit.scaleDown,
                           ),
                         ))

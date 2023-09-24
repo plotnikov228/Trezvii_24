@@ -13,6 +13,8 @@ abstract class MapRepository {
 
   Future<AppLatLong> getLastPoint();
 
+  Stream<AppLatLong> positionStream ();
+
   Future<AddressModel?> getAddressFromPoint (AppLatLong point);
 
   Future<List<AddressModel>> getAddressesFromText (String address, AppLatLong point);
