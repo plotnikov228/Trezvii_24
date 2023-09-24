@@ -227,7 +227,7 @@ class OrderChangesFunctions {
             if(AppOperationMode.driverMode()) {
               mapBlocFunctions.mapFunctions.initPositionStream(driverMode: AppOperationMode.driverMode(), to: bloc.fromAddress?.appLatLong, whenComplete: () {
               if(AppOperationMode.driverMode()) {
-                UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: SuccessfullyCompletedOrderStatus()));
+ // это в актив ордер статус                UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: SuccessfullyCompletedOrderStatus()));
               }
             });
             }
