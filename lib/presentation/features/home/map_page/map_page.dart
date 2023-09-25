@@ -5,6 +5,7 @@ import 'package:sober_driver_analog/presentation/features/home/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/event/event.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/active_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/active_orders_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/add_card_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/add_wishes_widget.dart';
@@ -30,7 +31,7 @@ import '../bloc/event.dart';
 import '../ui/widgets/menu_button.dart';
 import 'widgets/orders_count_widget.dart';
 import 'widgets/pages/add_price_page.dart';
-import 'widgets/pages/order_accepted_widget.dart';
+import 'widgets/pages/order_accepted/order_accepted_widget.dart';
 
 class MapPage extends StatelessWidget {
   const MapPage({super.key});
@@ -51,23 +52,22 @@ class MapPage extends StatelessWidget {
           return Stack(
             children: [
               MapWidget(
-                follow: state is ActiveOrderMapState || state is OrderAcceptedMapState,
+                follow: state is ActiveOrderMapState ||
+                    state is OrderAcceptedMapState,
                 drivingRoute: bloc.currentRoute,
                 routeStream: bloc.routeStream,
                 size: Size(
                     size.width,
-                    state is ActiveOrderMapState
-                        ? size.height
-                        : state is WaitingForOrderAcceptanceMapState
-                            ? size.height - 146
-                            : size.height - 160),
+                    state is WaitingForOrderAcceptanceMapState
+                        ? size.height - 146
+                        : size.height - 160),
                 getCameraPosition: (_) {
                   bloc.setCameraPosition(_);
                 },
                 firstPlacemark: bloc.fromAddress?.appLatLong,
                 secondPlacemark: bloc.toAddress?.appLatLong,
                 getAddress: (_) {
-                  if(AppOperationMode.userMode()) {
+                  if (AppOperationMode.userMode()) {
                     if (bloc.getAddressFromMap) {
                       bloc.fromAddress = _;
                       bloc.firstAddressController.text = _.addressName;
@@ -168,8 +168,12 @@ class MapPage extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   child: OrderAcceptedWidget(
                     state: state,
-                    bloc: bloc,
                   ),
+                ),
+              if (state is ActiveOrderMapState)
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ActiveOrderWidget(),
                 ),
               if (state is OrderCompleteMapState)
                 Align(
@@ -190,15 +194,15 @@ class MapPage extends StatelessWidget {
               ),
               if (state is ActiveOrdersMapState)
                 ActiveOrdersPage(bloc: bloc, state: state),
-
-              if(state.status == Status.Loading) Container(
-                width: size.width,
-                height: size.height,
-                color: Colors.grey.withOpacity(0.3),
-                child: Center(
-                  child: AppProgressContainer(),
-                ),
-              )
+              if (state.status == Status.Loading)
+                Container(
+                  width: size.width,
+                  height: size.height,
+                  color: Colors.grey.withOpacity(0.3),
+                  child: Center(
+                    child: AppProgressContainer(),
+                  ),
+                )
             ],
           );
         });

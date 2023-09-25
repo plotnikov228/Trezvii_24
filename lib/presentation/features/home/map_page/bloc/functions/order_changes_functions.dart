@@ -9,6 +9,7 @@ import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_user_by_id
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_driver.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_user.dart';
 import 'package:sober_driver_analog/domain/firebase/order/usecases/get_list_of_orders.dart';
+import 'package:sober_driver_analog/domain/firebase/order/usecases/get_order_by_id.dart';
 import 'package:sober_driver_analog/domain/map/usecases/get_locally.dart';
 import 'package:sober_driver_analog/domain/payment/models/tariff.dart';
 import 'package:sober_driver_analog/extensions/double_extension.dart';
@@ -317,9 +318,31 @@ class OrderChangesFunctions {
   }
 
   void proceedOrder () {
-    UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(driverId: FirebaseAuth.instance.currentUser!.uid, status: OrderAcceptedOrderStatus())).then((value) {
-      setOrderListeners();
-      bloc.add(RecheckOrderMapEvent());});
+    GetOrderById(_orderRepo).call(currentOrderId!).then((val) {
+      if(val != null) {
+        if(val.status != WaitingForOrderAcceptanceOrderStatus() && (val.driverId != null && val.driverId != FirebaseAuth.instance.currentUser!.uid)) {
+          currentOrder = null;
+          currentOrderId = null;
+          bloc.add(GoMapEvent(bloc.state.copyWith(exception: 'Заказ был взят другим водителем', status: Status.Failed)));
+        } else {
+          UpdateOrderById(_orderRepo)
+              .call(
+              currentOrderId!,
+              currentOrder!.copyWith(
+                  driverId: FirebaseAuth.instance.currentUser!.uid,
+                  status: OrderAcceptedOrderStatus()))
+              .then((value) {
+            setOrderListeners();
+            bloc.add(RecheckOrderMapEvent());
+          });
+        }
+      } else {
+        currentOrder = null;
+        currentOrderId = null;
+        bloc.add(GoMapEvent(bloc.state.copyWith(exception: 'Данный заказ был отменён пользователем', status: Status.Failed)));
+      }
+    });
+
   }
 
 }

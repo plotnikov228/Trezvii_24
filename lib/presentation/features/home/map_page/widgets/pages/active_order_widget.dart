@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/event/event.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/route_card_widget.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
@@ -10,16 +12,15 @@ import '../../bloc/bloc/bloc.dart';
 import '../../bloc/state/state.dart';
 
 class ActiveOrderWidget extends StatelessWidget {
-  final ActiveOrderMapState state;
-  final MapBloc bloc;
-  const ActiveOrderWidget({super.key, required this.state, required this.bloc});
+  const ActiveOrderWidget({super.key,});
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<MapBloc>();
     return Container(
-      height: 146,
+      height: 165,
       width: size.width,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(topRight: Radius.circular(16), topLeft: Radius.circular(16)),
 
@@ -29,26 +30,17 @@ class ActiveOrderWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              margin: EdgeInsets.only(top: 0),
-              child: Text('Заказ принят, идёт поиск водителя', style: AppStyle.black16,),
-
-            ),
+            routeCardWidget(bloc.routeStream!, from: bloc.fromAddress, to: bloc.toAddress),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(onPressed: () {
-                  bloc.add(CancelSearchMapEvent());
-
+                  // списывание какой то суммы за ложный вызов
                 }, icon: SvgPicture.asset(AppImages.close)),
                 IconButton(onPressed: () {
                   //some func
 
                 }, icon: SvgPicture.asset(AppImages.call)),
-                IconButton(onPressed: () {
-                  //some func
-
-                }, icon: SvgPicture.asset(AppImages.wait))
               ],
             )
           ],
