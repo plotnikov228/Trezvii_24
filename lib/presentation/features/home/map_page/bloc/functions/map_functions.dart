@@ -30,7 +30,7 @@ class MapFunctions {
   final _repo = MapRepositoryImpl();
   final _fbRepo = FirebaseAuthRepositoryImpl();
   void initPositionStream ({bool driverMode = false, AppLatLong? to, Function()? whenComplete}) {
-   _currentPosition ??= PositionStream(_repo).call().listen((event) async {
+   _currentPosition = PositionStream(_repo).call().listen((event) async {
      print('changed position');
      if(to != null) {
        _routeStream ??= StreamController();

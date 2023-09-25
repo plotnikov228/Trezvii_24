@@ -227,7 +227,7 @@ class OrderChangesFunctions {
             if(AppOperationMode.driverMode()) {
               mapBlocFunctions.mapFunctions.initPositionStream(driverMode: AppOperationMode.driverMode(), to: bloc.fromAddress?.appLatLong, whenComplete: () {
               if(AppOperationMode.driverMode()) {
- // это в актив ордер статус                UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: SuccessfullyCompletedOrderStatus()));
+  UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: ActiveOrderStatus()));
               }
             });
             }
@@ -239,7 +239,11 @@ class OrderChangesFunctions {
 
           bloc.add(GoMapEvent(OrderCompleteMapState()));
         case ActiveOrderStatus():
-          mapBlocFunctions.mapFunctions.initPositionStream(driverMode: AppOperationMode.driverMode(), to: bloc.toAddress!.appLatLong);
+          mapBlocFunctions.mapFunctions.initPositionStream(driverMode: AppOperationMode.driverMode(), to: bloc.toAddress!.appLatLong, whenComplete: () {
+      if(AppOperationMode.driverMode()) {
+      UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: SuccessfullyCompletedOrderStatus()));
+      }
+      });
           bloc.add(GoMapEvent(ActiveOrderMapState()));
       }
     }
