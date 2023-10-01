@@ -1,9 +1,14 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sober_driver_analog/data/firebase/auth/repository.dart';
+import 'package:sober_driver_analog/data/map/repository/repository.dart';
+import 'package:sober_driver_analog/domain/map/usecases/position_stream.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/functions/addresses_functions.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/functions/driver_position_functions.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/functions/map_functions.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/functions/order_changes_functions.dart';
 
+import '../../../../../domain/firebase/auth/usecases/update_driver.dart';
 import 'bloc/bloc.dart';
 import 'functions/payments_functions.dart';
 
@@ -25,13 +30,19 @@ class MapBlocFunctions {
 
   Future userInit () async {
     await addressesFunctions.init();
+    await addressesFunctions.initLocalities();
+    print(' localities - ${addressesFunctions.localities}');
     await paymentsFunctions.init();
     await orderFunctions.initForUser();
     }
 
     Future driverInit () async {
+      await addressesFunctions.initLocalities();
+      print(' localities - ${addressesFunctions.localities}');
       await orderFunctions.initForDriver();
-      mapFunctions.initPositionStream(driverMode: true,);
+      PositionStream(MapRepositoryImpl()).call().listen((event) {
+        UpdateDriver(FirebaseAuthRepositoryImpl()).call(FirebaseAuth.instance.currentUser!.uid, currentPosition: event);
+      });
     }
 }
 

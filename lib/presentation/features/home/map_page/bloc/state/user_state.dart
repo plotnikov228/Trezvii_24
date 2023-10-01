@@ -7,9 +7,10 @@ class StartOrderUserMapState extends StartOrderMapState {
   final int currentIndexTariff;
   final List<Tariff>? tariffList;
   final PaymentUiModel? currentPaymentUiModel;
+  final bool canCreateOrder;
 
 
   StartOrderUserMapState(
-      {this.currentIndexTariff = 0, this.tariffList, this.currentPaymentUiModel, super.status, super.exception, super.message});
+      {this.canCreateOrder = true, this.currentIndexTariff = 0, this.tariffList, this.currentPaymentUiModel, super.status, super.exception, super.message});
 
 }

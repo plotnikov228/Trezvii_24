@@ -15,6 +15,7 @@ import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 
 import '../../../../../../../../data/map/repository/repository.dart';
 import '../../../../../../utils/size_util.dart';
+import '../../../../../../widgets/map/location_button.dart';
 import '../../../../../../widgets/rating_widget.dart';
 import '../../../bloc/bloc/bloc.dart';
 import 'contents/driver_content.dart';
@@ -33,18 +34,28 @@ class OrderAcceptedWidget extends StatelessWidget {
         bloc.add(GoMapEvent(OrderAcceptedMapState()));
       }
     });
-    return Container(
-      height: 292,
-      width: size.width,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-            topRight: Radius.circular(16), topLeft: Radius.circular(16)),
-      ),
-      child: Padding(
-          padding: const EdgeInsets.only(top: 20, left: 40, right: 40),
-          child: AppOperationMode.userMode() ? OrderAcceptedUserContent(state: state,) : const OrderAcceptedDriverContent()
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Align(alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: LocationButton(onTap: () => bloc.add(GoToCurrentPositionMapEvent())),
+          ),),
+        Container(
+          height: 292,
+          width: size.width,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(16), topLeft: Radius.circular(16)),
+          ),
+          child: Padding(
+              padding: const EdgeInsets.only(top: 20, left: 40, right: 40),
+              child: AppOperationMode.userMode() ? OrderAcceptedUserContent(state: state,) : const OrderAcceptedDriverContent()
+          ),
+        ),
+      ],
     );
   }
 }

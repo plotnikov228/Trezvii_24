@@ -30,4 +30,6 @@ abstract class MapRepository {
   Future<String?> getLocally ();
 
   Future<String> setLocally (String locally);
+
+
 }

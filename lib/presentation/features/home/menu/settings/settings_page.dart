@@ -53,7 +53,7 @@ class SettingsPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CompositeTextWidget(title: 'Push - уведомления', subTitle: 'Отключение уведомлений', width: size.width - 120,),
+                          CompositeTextWidget(title: 'Push - уведомления', subTitle: state.pushNotificationDisabled ? 'Отключение уведомлений' : 'Включение уведомлений', width: size.width - 120,),
                           AppSwitch(value: state.pushNotificationDisabled, onChange: (val) {
                             bloc.add(ChangeNotifyDisabledSettingsEvent(push: val, email: state.emailNotificationDisabled));
 
@@ -63,7 +63,7 @@ class SettingsPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CompositeTextWidget(title: 'Email - уведомления', subTitle: 'Отключение уведомлений', width: size.width - 120,),
+                          CompositeTextWidget(title: 'Email - уведомления', subTitle: state.emailNotificationDisabled ? 'Отключение рассылки' : 'Включение рассылки', width: size.width - 120,),
                           AppSwitch(value: state.emailNotificationDisabled, onChange: (val) {
                             bloc.add(ChangeNotifyDisabledSettingsEvent(push: state.pushNotificationDisabled, email: val));
                           }),

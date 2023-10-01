@@ -67,6 +67,15 @@ class ActiveOrdersPage extends StatelessWidget {
                                     padding: EdgeInsets.only(top: index == 0 ? 50 : 10),
                                     child: FullOrderCardWidget(
                                       order:state.orders![index],
+                                      onCancel: state.orders![index].order.isActive() && state.orders![index].order.status is! ActiveOrderStatus ? () {
+                                        final status = state.orders![index].order.status;
+                                        print(status);
+                                        if(status is WaitingForOrderAcceptanceOrderStatus) {
+                                          bloc.add(CancelSearchMapEvent(id: state.orders![index].id));
+                                        } else if(status is OrderAcceptedOrderStatus) {
+                                          bloc.add(GoMapEvent(CancelledOrderMapState(orderId: state.orders![index].id)));
+                                        }
+                                      } : null,
                                     ),
                                   );
                                 }))
@@ -75,11 +84,6 @@ class ActiveOrdersPage extends StatelessWidget {
                   ],
                 ),
               ),
-              if(state.currentOrder == null || (state.currentOrder!.status ==
-                          OrderCancelledByDriverOrderStatus() ||
-                      state.currentOrder!.status == CancelledOrderStatus() ||
-                      state.currentOrder!.status ==
-                          SuccessfullyCompletedOrderStatus()))
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(

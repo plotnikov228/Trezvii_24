@@ -14,6 +14,7 @@ import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/adresses_buttons.dart';
+import 'package:sober_driver_analog/presentation/widgets/app_elevated_button.dart';
 import 'package:sober_driver_analog/presentation/widgets/user_photo_with_border.dart';
 
 import '../../data/auth/repository/repository.dart';
@@ -25,7 +26,8 @@ import '../utils/size_util.dart';
 class FullOrderCardWidget extends StatefulWidget {
   final OrderWithId order;
   final String? submissionTime;
-  const FullOrderCardWidget({Key? key, required this.order, this.submissionTime}) : super(key: key);
+  final Function()?onCancel;
+  const FullOrderCardWidget({Key? key, required this.order, this.submissionTime, this.onCancel}) : super(key: key);
 
   @override
   State<FullOrderCardWidget> createState() => _FullOrderCardWidgetState();
@@ -77,7 +79,7 @@ class _FullOrderCardWidgetState extends State<FullOrderCardWidget> {
             borderRadius: BorderRadius.circular(25)),
         child: Padding(
           padding:
-          const EdgeInsets.only(left: 18, right: 18, top: 14, bottom: 14),
+          const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 14),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -130,7 +132,15 @@ class _FullOrderCardWidgetState extends State<FullOrderCardWidget> {
                   if(photoUrl != null)
                     FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: userPhotoWithBorder(url: photoUrl))
+                        child: userPhotoWithBorder(url: photoUrl)),
+                  if(widget.onCancel != null)
+                    Align(alignment: Alignment.bottomRight,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: AppElevatedButton(height: 30,
+                      text: 'Отменить',onTap: widget.onCancel
+                      ),
+                    ),)
                 ],)
             ],
           ),

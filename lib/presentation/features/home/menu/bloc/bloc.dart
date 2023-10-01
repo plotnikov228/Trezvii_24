@@ -38,13 +38,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
     on<InitMenuEvent>((event, emit) async {
       final id = await GetUserId(_authRepo).call();
-      final userFromDb = (await GetUserById(_firebaseAuthRepo).call(id));
+
+      final userFromDb = AppOperationMode.userMode() ? (await GetUserById(_firebaseAuthRepo).call(id)) : (await GetDriverById(_firebaseAuthRepo).call(id));
         if(_user == null || (_user != null && _user!.name != userFromDb!.name || _user!.email != userFromDb!.email)) {
         _user = userFromDb;
         _paymentUiModel = await GetCurrentPaymentModel(_paymentRepo).call();
-        try {
           _userPhotoUrl = await GetPhotoById(FirebaseStorageRepositoryImpl()).call(_user!.userId);
-        } catch (_) {}
+
 
         if (isDriver && _userPhotoUrl == null) {
           _user = (await GetDriverById(_firebaseAuthRepo).call(id));

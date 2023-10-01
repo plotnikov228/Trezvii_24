@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_driver.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_user.dart';
+import 'package:sober_driver_analog/domain/firebase/storage/usecases/get_photo_by_id.dart';
 import 'package:sober_driver_analog/presentation/features/profile/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/profile/bloc/state.dart';
 
@@ -39,16 +41,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     bool isDriver = AppOperationMode.mode == AppOperationModeEnum.driver;
 
     on<InitProfileEvent>((event, emit) async {
-      final id = await GetUserId(_authRepo).call();
+      final id = FirebaseAuth.instance.currentUser!.uid;
 
-      _user = (await GetUserById(_firebaseAuthRepo).call(id));
-      try {
-        _userPhotoUrl = await FirebaseStorage.instance
-            .ref('${_user?.userId}/photo')
-            .getDownloadURL();
-      } catch (_) {}
+      _user =  !isDriver ? (await GetUserById(_firebaseAuthRepo).call(id)) : (await GetDriverById(_firebaseAuthRepo).call(id));
+        _userPhotoUrl =await GetPhotoById(FirebaseStorageRepositoryImpl()).call(id);
       if (isDriver && _userPhotoUrl == null) {
-        _user = (await GetDriverById(_firebaseAuthRepo).call(id));
         _userPhotoUrl =
             (_user as Driver?)?.personalDataOfTheDriver?.driverPhotoUrl;
       }
@@ -99,8 +96,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           email: _emailController,
           status: Status.Loading));
       try {
-        await UpdateUser(_firebaseAuthRepo)
+        if(isDriver) {
+          await UpdateDriver(_firebaseAuthRepo)
+              .call(FirebaseAuth.instance.currentUser!.uid ,email: _emailController.text, name: _nameController.text);
+        } else {
+          await UpdateUser(_firebaseAuthRepo)
             .call(FirebaseAuth.instance.currentUser!.uid ,email: _emailController.text, name: _nameController.text);
+        }
         emit(ProfileState(
             imageFile: _file,
             imageUrl: _userPhotoUrl,

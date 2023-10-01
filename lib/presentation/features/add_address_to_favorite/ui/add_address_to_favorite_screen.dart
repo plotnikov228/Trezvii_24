@@ -5,7 +5,7 @@ import 'package:sober_driver_analog/domain/map/models/address_model.dart';
 import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/bloc/state.dart';
-import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/ui/widgets/search_bottom_sheet.dart';
+import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/search_bottom_sheet/search_bottom_sheet.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_snack_bar.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dart';
 
@@ -104,6 +104,7 @@ class AddAddressToFavoriteScreen extends StatelessWidget {
                               bloc.add(ConfirmAddAddressEvent(context, name: _name.text,
                                   addressName: _address.text,
                                   entrance: _entrance.text,
+                                  locality: bloc.addressModel!.locality,
                                   comment: _comment.text));
                             } else {
                               bloc.add(CheckAddressForExistence(

@@ -81,14 +81,21 @@ class AddWishesWidget extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   child: MapBottomBar(
                     bloc: bloc,
+                    mainButtonActive: bloc.orderInCompanyRange,
+                    mainButtonText: bloc.orderInCompanyRange ? 'Заказать' : 'Неверный маршрут',
+                    suffixWidget: bloc.orderInCompanyRange ? null : IconButton(onPressed: () {
+                      AppSnackBar.showSnackBar(context, content: 'Выбранный маршрут вне зоны покрытия компании: ${bloc.localities}');
+                    }, icon: const Icon(Icons.info, color: Colors.white,)),
                     onMainButtonTap: () {
+                    if(bloc.orderInCompanyRange) {
                       if (bloc.fromAddress == null || bloc.toAddress == null) {
-                        AppSnackBar.showSnackBar(context,
-                            content: 'Выберите маршрут поездки');
+                        AppSnackBar.showSnackBar(
+                            context, content: 'Выберите маршрут поездки');
                       } else {
                         bloc.add(CreateOrderMapEvent());
                       }
-                    },
+                    }
+                  },
                     onPaymentMethodTap: () =>
                         bloc.add(GoMapEvent(SelectPaymentMethodMapState())),
                   ),

@@ -8,9 +8,11 @@ import 'package:sober_driver_analog/presentation/widgets/app_elevated_button.dar
 
 import '../../../../../utils/app_style_util.dart';
 import '../../../../../utils/size_util.dart';
+import '../../bloc/state/state.dart';
 
 class OrderCompletedPage extends StatelessWidget {
-   OrderCompletedPage({Key? key}) : super(key: key);
+  final OrderCompleteMapState state;
+   OrderCompletedPage({Key? key, required this.state}) : super(key: key);
    bool changed = false;
    double rating = 0;
   @override
@@ -38,23 +40,26 @@ class OrderCompletedPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(20),
-              child: RatingBar.builder(
-                initialRating: rating,
-                itemBuilder: (context, index) => const Icon(
-                  Icons.star,
-                  color: Colors.amber,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: RatingBar.builder(
+                  initialRating: rating,
+                  itemBuilder: (context, index) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  onRatingUpdate: (_) {
+                    rating = _;
+                    changed = true;
+                  },
+                  itemCount: 5,
+                  itemSize: 50.0,
+                  unratedColor: Colors.amber.withAlpha(50),
                 ),
-                onRatingUpdate: (_) {
-                  rating = _;
-                  changed = true;
-                },
-                itemCount: 5,
-                itemSize: 50.0,
-                unratedColor: Colors.amber.withAlpha(50),
               ),
             ),
             AppElevatedButton(width: size.width - 80, text: 'Продолжить', onTap: () {
-                context.read<MapBloc>().add(CompleteOrderMapEvent(rating: changed ? rating : null));
+                context.read<MapBloc>().add(CompleteOrderMapEvent(rating: changed ? rating : null, id: state.id, orderId: state.orderId));
             })
           ],
         ),

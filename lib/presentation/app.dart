@@ -25,6 +25,7 @@ class App extends StatelessWidget {
       title: 'Трезвый 24',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.firstColor),
         useMaterial3: true,
       ),

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:sober_driver_analog/data/db/repository/repository.dart';
+import 'package:sober_driver_analog/data/firebase/localities/repository.dart';
 import 'package:sober_driver_analog/data/map/repository/repository.dart';
+import 'package:sober_driver_analog/domain/firebase/localities/usecases/get_available_localities.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
 import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/extensions/point_extension.dart';
@@ -22,6 +24,14 @@ class AddressesFunctions {
   final _mapRepo = MapRepositoryImpl();
   final _dbRepo = DBRepositoryImpl();
   AddressModel? lastFavoriteAddress;
+
+  late final List<String> _localities;
+  List<String> get localities => _localities;
+
+
+  Future initLocalities() async {
+   _localities = await GetAvailableLocalities(LocalitiesRepositoryImpl()).call();
+  }
 
   Future init() async {
     final favoriteAddresses = await getFavoriteAddresses();

@@ -52,6 +52,7 @@ class MapPage extends StatelessWidget {
           return Stack(
             children: [
               MapWidget(
+                mapCompleter: bloc.mapCompleter,
                 follow: state is ActiveOrderMapState ||
                     state is OrderAcceptedMapState,
                 drivingRoute: bloc.currentRoute,
@@ -178,7 +179,7 @@ class MapPage extends StatelessWidget {
               if (state is OrderCompleteMapState)
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: OrderCompletedPage(),
+                  child: OrderCompletedPage(state: state,),
                 ),
               if (state is AddCardMapState)
                 AddCardWidget(bloc: bloc, state: state),

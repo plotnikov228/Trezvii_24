@@ -30,7 +30,7 @@ Widget AppElevatedButton(
                   BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       blurRadius: 10,
-                      offset: Offset(0, 4),
+                      offset: const Offset(0, 4),
                       spreadRadius: 2)
                 ]
               : null),

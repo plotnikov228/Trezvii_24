@@ -16,8 +16,8 @@ class AppImages {
   static const camera = 'assets/icons/camera.svg';
   static const startPoint = 'assets/icons/start point.svg';
   static const geoMark = 'assets/icons/geo mark.svg';
-  static const startPointPNG = 'assets/icons/start point.png';
-  static const geoMarkPNG = 'assets/icons/geo mark.png';
+  static const startPointPNG = 'assets/images/startpoint.png';
+  static const geoMarkPNG = 'assets/images/geomark.png';
   static const wishes = 'assets/icons/wishes.svg';
   static const contacts = 'assets/icons/contacts.svg';
   static const close = 'assets/icons/close.svg';
@@ -38,6 +38,7 @@ class AppImages {
   static const facebook = 'assets/icons/facebook.svg';
   static const support = 'assets/icons/support.svg';
   static const operator = 'assets/icons/operator.svg';
+  static const location = 'assets/icons/location.svg';
 
 
   static const logo = 'assets/images/logo.PNG';

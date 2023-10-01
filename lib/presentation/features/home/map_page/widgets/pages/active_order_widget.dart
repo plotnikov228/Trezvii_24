@@ -18,7 +18,7 @@ class ActiveOrderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<MapBloc>();
     return Container(
-      height: 165,
+      height: 260,
       width: size.width,
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -28,21 +28,10 @@ class ActiveOrderWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 20,left: 40, right:  40),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            const Text('Поездка началась', style: AppStyle.black17,),
+            const SizedBox(height: 10,),
             routeCardWidget(bloc.routeStream!, from: bloc.fromAddress, to: bloc.toAddress),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(onPressed: () {
-                  // списывание какой то суммы за ложный вызов
-                }, icon: SvgPicture.asset(AppImages.close)),
-                IconButton(onPressed: () {
-                  //some func
-
-                }, icon: SvgPicture.asset(AppImages.call)),
-              ],
-            )
           ],
         ),
       ),

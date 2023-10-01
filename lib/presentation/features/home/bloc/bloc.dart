@@ -12,6 +12,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   PaymentUiModel? paymentUiModel;
 
+
   HomeBloc(super.initialState, this.pageController) {
 
 

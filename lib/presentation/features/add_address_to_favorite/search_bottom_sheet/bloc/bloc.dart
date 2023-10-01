@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/search_bottom_sheet/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/search_bottom_sheet/bloc/state.dart';
-import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/ui/widgets/search_bottom_sheet.dart';
+import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/search_bottom_sheet/search_bottom_sheet.dart';
 
 import '../../../../../data/map/repository/repository.dart';
 import '../../../../../domain/map/models/app_lat_long.dart';

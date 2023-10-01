@@ -90,7 +90,7 @@ class OrderRepositoryImpl extends OrderRepository {
         .map((event) => event.docs
             .map((e) => OrderWithId(Order.fromJson(e.data()), e.id))
             .toList()
-            .where((element) => element.order.from.locality == locality)
+            .where((element) => element.order.from.locality == locality || element.order.to.locality == locality )
             .toList());
   }
 }

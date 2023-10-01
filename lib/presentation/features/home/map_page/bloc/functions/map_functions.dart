@@ -30,18 +30,20 @@ class MapFunctions {
   final _repo = MapRepositoryImpl();
   final _fbRepo = FirebaseAuthRepositoryImpl();
   void initPositionStream ({bool driverMode = false, AppLatLong? to, Function()? whenComplete}) {
-   _currentPosition = PositionStream(_repo).call().listen((event) async {
+    _routeStream = StreamController.broadcast();
+    _currentPosition = PositionStream(_repo).call().listen((event) async {
      print('changed position');
+
      if(to != null) {
-       _routeStream ??= StreamController();
+
         final routes = await GetRoutes(_repo)
             .call([event, to]);
-        _routeStream?.add(routes!.first);
+        print('from localities func - ${routes?.first.geometry.length}');
+        if(routes != null) {
+          _routeStream!.add(routes.first);
+        }
         if((routes!.first.metadata.weight.distance.value ?? 50) <= 50 && whenComplete != null) whenComplete();
       }
-      if(driverMode) {
-       UpdateDriver(_fbRepo).call(FirebaseAuth.instance.currentUser!.uid ,currentPosition: event);
-     }
    });
   }
 
@@ -56,6 +58,13 @@ class MapFunctions {
       if(pos != null) {
         return await GetAddressFromPoint(_repo).call(AppLatLong(lat: pos.latitude, long: pos.longitude));
       }
+  }
+
+  Future<AppLatLong?> getCurrentPosition () async {
+    final pos = await Geolocator.getLastKnownPosition();
+    if(pos != null) {
+      return AppLatLong(lat: pos.latitude, long: pos.longitude);
+    }
   }
 
 }

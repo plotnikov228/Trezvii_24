@@ -27,12 +27,15 @@ class MapRepositoryImpl extends MapRepository {
 
   Stream<AppLatLong> positionStream () {
     return Geolocator.getPositionStream(locationSettings:  const LocationSettings(
+        accuracy: LocationAccuracy.medium,
     )).map((value) => AppLatLong(lat: value.latitude, long: value.longitude));
   }
 
   @override
   Future<AppLatLong> getCurrentLocation() {
-    return Geolocator.getCurrentPosition().then((value) {
+
+    return Geolocator.getCurrentPosition(forceAndroidLocationManager: true,
+        desiredAccuracy: LocationAccuracy.medium).then((value) {
       return AppLatLong(lat: value.latitude, long: value.longitude);
     }).catchError(
       (_) => defLocation,

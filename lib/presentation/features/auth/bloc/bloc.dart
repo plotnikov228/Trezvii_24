@@ -197,6 +197,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }, (result) {
           _authResult = result;
           _authType = AuthType.userSignUp;
+          add(ChangeAuthStateEvent(SignUpState(status: AuthStatus.Success)));
           add(ChangeAuthStateEvent(InputCodeState()));
         });
       }
@@ -212,6 +213,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }, (result) {
           _authResult = result;
           _authType = AuthType.userSignIn;
+          add(ChangeAuthStateEvent(SignInState(status: AuthStatus.Success)));
+
           add(ChangeAuthStateEvent(InputCodeState()));
         });
       }
@@ -253,6 +256,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }, type: _authType!);
 
       if (result.successful) {
+        add(ChangeAuthStateEvent(InputCodeState(status: AuthStatus.Success)));
+
         emit(InputCodeState(codeController: code, status: AuthStatus.Loading));
       } else {
         emit(InputCodeState(

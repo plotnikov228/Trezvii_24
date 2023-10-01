@@ -27,6 +27,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     }
   }
 
+  @override
   Future addUserToExisted(UserModel userModel) async {
     final doc = _instance.collection(_existedUsersCollection).doc(userModel.number);
     if(!(await doc.get()).exists) {
@@ -43,16 +44,19 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     }
   }
 
+  @override
   Future updateUser(String id,
       {String? number,
       String? email,
       String? name,
+        List<double>? ratings,
       int? bonuses}) async {
     Map<String, dynamic> mapForUpdate = {};
     if(number != null) mapForUpdate['number'] = number;
     if(email != null) mapForUpdate['email'] = email;
     if(name != null) mapForUpdate['name'] = name;
     if(bonuses != null) mapForUpdate['bonuses'] = bonuses;
+    if(ratings != null) mapForUpdate['ratings'] = ratings;
       await _instance.collection( _usersCollection).doc(id).update(mapForUpdate);
       print('updated');
 
@@ -79,6 +83,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     }
   }
 
+  @override
   Future updateDriver(
       String id,
       {String? number,
@@ -93,14 +98,14 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(number != null) mapForUpdate['number'] = number;
     if(email != null) mapForUpdate['email'] = email;
     if(name != null) mapForUpdate['name'] = name;
-    if(currentPosition != null) mapForUpdate['bonuses'] = currentPosition.toJson();
+    if(currentPosition != null) mapForUpdate['currentPosition'] = currentPosition.toJson();
     if(car != null) mapForUpdate['car'] = car.toJson();
     if(personalDataOfTheDriver != null) mapForUpdate['personalDataOfTheDriver'] = personalDataOfTheDriver.toJson();
     if(ratings != null) mapForUpdate['ratings'] = ratings;
-    final doc = _instance.collection(_driversCollection).doc(id).update(mapForUpdate);
-
+    await _instance.collection(_driversCollection).doc(id).update(mapForUpdate);
   }
 
+  @override
   Future<bool> userIsExist(String number) async {
     final doc = _instance.collection(_existedUsersCollection).doc(number);
     return (await doc.get()).exists;

@@ -6,6 +6,7 @@ import '../../../../../../../domain/map/models/address_model.dart';
 import '../../../../../../../domain/map/models/app_lat_long.dart';
 import '../../../../../../../domain/payment/models/card.dart';
 import '../../../../../../../domain/payment/models/payment_ui_model.dart';
+import '../../../../../../domain/firebase/order/model/order.dart';
 import '../../../../../../domain/firebase/order/model/order_with_id.dart';
 
 abstract class MapEvent {}
@@ -30,6 +31,10 @@ class GoMapEvent extends MapEvent {
   GoMapEvent(this.newState);
 }
 
+class GoToCurrentPositionMapEvent extends MapEvent {
+
+}
+
 
 class ChooseTariffMapEvent extends MapEvent {
   final int selectedTariffIndex;
@@ -45,12 +50,18 @@ class ChoosePayMethodMapEvent extends MapEvent {
 
 class CreateOrderMapEvent extends MapEvent {}
 
-class RecheckOrderMapEvent extends MapEvent {}
+class RecheckOrderMapEvent extends MapEvent {
+  final String? id;
+  final Order? order;
+
+  RecheckOrderMapEvent({ this.id,  this.order});
+}
 
 class CancelOrderMapEvent extends MapEvent {
   final String reason;
+  final String? id;
 
-  CancelOrderMapEvent(this.reason);
+  CancelOrderMapEvent(this.id,this.reason);
 }
 
 class CheckPromoMapEvent extends MapEvent {
@@ -87,7 +98,9 @@ class OnPaymentTapMapEvent extends MapEvent {
 }
 
 class CancelSearchMapEvent extends MapEvent {
+final String? id;
 
+  CancelSearchMapEvent({this.id});
 }
 
 class ChangeCostMapEvent extends MapEvent {
@@ -114,6 +127,7 @@ class ProceedOrderMapEvent extends MapEvent {
 
 class CompleteOrderMapEvent extends MapEvent {
   final double? rating;
-
-  CompleteOrderMapEvent({ this.rating});
+  final String? id;
+  final String? orderId;
+  CompleteOrderMapEvent( {this.id, this.rating, this.orderId});
 }

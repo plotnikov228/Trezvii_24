@@ -8,11 +8,11 @@ import 'package:sober_driver_analog/presentation/features/add_address_to_favorit
 import 'package:sober_driver_analog/presentation/features/add_address_to_favorite/search_bottom_sheet/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dart';
 
-import '../../../../utils/app_color_util.dart';
-import '../../../../utils/app_style_util.dart';
-import '../../../../utils/size_util.dart';
-import '../../../../widgets/address_card.dart';
-import '../../search_bottom_sheet/bloc/event.dart';
+import '../../../utils/app_color_util.dart';
+import '../../../utils/app_style_util.dart';
+import '../../../utils/size_util.dart';
+import '../../../widgets/address_card.dart';
+import 'bloc/event.dart';
 
 class SearchBottomSheet extends StatelessWidget {
   final TextEditingController controller;

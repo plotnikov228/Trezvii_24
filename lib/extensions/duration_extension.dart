@@ -20,6 +20,8 @@ extension DurationExtension on Duration {
       result += '$minutes минут';
     }
 
+    if(minutes <= 0) result = 'меньше минуты';
+
     return result.trim();
   }
 }

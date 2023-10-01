@@ -31,10 +31,10 @@ class MenuScreen extends StatelessWidget {
           child: Column(
             children: [
               menuAppBar(
-                child: SizedBox(
-                  height: 100,
-                  child: SafeArea(
-                    child: Align(
+                child: SafeArea(
+          child:SizedBox(
+                  height: 110,
+                  child:  Align(
                       alignment: Alignment.center,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -42,7 +42,7 @@ class MenuScreen extends StatelessWidget {
                           userPhotoWithBorder(
                             url: state.userUrl, size:  85),
                           SizedBox(
-                            height: 85,
+                            height: 100,
                             width: 140,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +134,11 @@ class MenuScreen extends StatelessWidget {
                           prefixWidget: SvgPicture.asset(context.read<HomeBloc>().paymentUiModel?.prefixWidgetAsset ?? AppImages.wallet,
                               width: 25, height: 25, color: AppColor.firstColor)),
                       if(!isUser)
-                        menuChapter(title: 'Баланс', prefixWidget: SvgPicture.asset(AppImages.wallet, width: 30, height: 30, color: AppColor.firstColor,)),
+                        menuChapter(title: 'Баланс',
+
+                            onTap: () => bloc.add(GoMenuEvent(newState: BalanceMenuState())),
+
+                            prefixWidget: SvgPicture.asset(AppImages.wallet, width: 30, height: 30, color: AppColor.firstColor,)),
                       if(isUser)
                       menuChapter(
                                                 width: size.width - 60,

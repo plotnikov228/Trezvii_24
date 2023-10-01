@@ -29,13 +29,15 @@ class SelectOrderWidget extends StatefulWidget {
 class _SelectOrderWidgetState extends State<SelectOrderWidget>{
   final double initialHeight = size.height - 100;
   double height = size.height - 100;
-  final double initialEndHeight = AppOperationMode.userMode() ? 313 : size.height - 200;
+  final double initialEndHeight = AppOperationMode.userMode() ? 340 : size.height - 200;
 
   @override
   void initState() {
     height = initialHeight;
-    setState(() {
-      showContent = true;
+    Future.delayed(const Duration(milliseconds: 60), () {
+      setState(() {
+        showContent = true;
+      });
     });
   }
 
@@ -169,19 +171,22 @@ class _SelectOrderWidgetState extends State<SelectOrderWidget>{
                                                           0,
                                                   itemBuilder:
                                                       (context, index) {
-                                                     return InkWell(
-                                                         onTap: () {
-                                                           setState(() {
-                                                             height = initialEndHeight;
-                                                             showContent = false;
-                                                           });
-                                                           Future.delayed(
-                                                               const Duration(
-                                                                   milliseconds: 500), () {
-                                                             bloc.add(SelectOrderMapEvent(snapshot.data![index]));
-                                                           });
-                                                         },
-                                                         child: OrderCardForDriver(order:snapshot.data![index]));
+                                                     return Padding(
+                                                       padding: const EdgeInsets.symmetric(vertical: 10),
+                                                       child: InkWell(
+                                                           onTap: () {
+                                                             setState(() {
+                                                               height = initialEndHeight;
+                                                               showContent = false;
+                                                             });
+                                                             Future.delayed(
+                                                                 const Duration(
+                                                                     milliseconds: 500), () {
+                                                               bloc.add(SelectOrderMapEvent(snapshot.data![index]));
+                                                             });
+                                                           },
+                                                           child: OrderCardForDriver(order:snapshot.data![index])),
+                                                     );
 
                                                       }),
                                             );

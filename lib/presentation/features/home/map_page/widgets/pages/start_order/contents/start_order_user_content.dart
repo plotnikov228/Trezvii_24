@@ -58,13 +58,20 @@ class StartOrderUserContent extends StatelessWidget {
                   }),
             )),
         MapBottomBar(
+          mainButtonActive: state.canCreateOrder,
+          mainButtonText: state.canCreateOrder ? 'Заказать' : 'Неверный маршрут',
+            suffixWidget: state.canCreateOrder ? null : IconButton(onPressed: () {
+                AppSnackBar.showSnackBar(context, content: 'Выбранный маршрут вне зоны покрытия компании: ${bloc.localities}');
+                }, icon: const Icon(Icons.info, color: Colors.white,)),
             bloc: bloc,
             onMainButtonTap: () {
-              if (bloc.fromAddress == null || bloc.toAddress == null) {
-                AppSnackBar.showSnackBar(context,
-                    content: 'Выберите маршрут поездки');
-              } else {
-                bloc.add(CreateOrderMapEvent());
+            if(state.canCreateOrder) {
+                if (bloc.fromAddress == null || bloc.toAddress == null) {
+                  AppSnackBar.showSnackBar(context,
+                      content: 'Выберите маршрут поездки');
+                } else {
+                  bloc.add(CreateOrderMapEvent());
+                }
               }
             },
             onPaymentMethodTap: () =>

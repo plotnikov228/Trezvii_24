@@ -29,8 +29,7 @@ class _CanceledOrderWidgetState extends State<CanceledOrderWidget> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        print(widget.bloc.previousState);
-        widget.bloc.add(GoMapEvent(widget.bloc.previousState!));
+        widget.bloc.add(GoMapEvent(widget.bloc.currentState!));
         return false;
       },
       child: Container(
@@ -107,7 +106,7 @@ class _CanceledOrderWidgetState extends State<CanceledOrderWidget> {
                       onTap: () {
                         if (currentReason != null) {
 
-                          widget.bloc.add(CancelOrderMapEvent(currentReason !=
+                          widget.bloc.add(CancelOrderMapEvent(widget.state.orderId, currentReason !=
                               widget.state.reasons[widget.state.reasons.length - 1] ? currentReason! :widget.state.otherReason!.text));
                         } else {
                           AppSnackBar.showSnackBar(context,

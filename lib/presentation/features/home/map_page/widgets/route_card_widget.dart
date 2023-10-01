@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
+import 'package:sober_driver_analog/extensions/double_extension.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/adresses_buttons.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
@@ -13,6 +14,7 @@ Widget routeCardWidget(Stream<DrivingRoute> route,
   return StreamBuilder(
       stream: route,
       builder: (context, snapshot) {
+        print(snapshot.data?.metadata.weight.distance.text);
         if (snapshot.hasError) {
           return const Center(
             child: Text(
@@ -78,7 +80,7 @@ Widget routeCardWidget(Stream<DrivingRoute> route,
                     const TextSpan(
                         text: 'Осталось километров:', style: AppStyle.black15),
                     TextSpan(
-                        text: ' $km км',
+                        text: ' ${km.prettify()} км',
                         style: AppStyle.black15
                             .copyWith(fontWeight: FontWeight.bold))
                   ]))
@@ -90,7 +92,7 @@ Widget routeCardWidget(Stream<DrivingRoute> route,
               children: [
                 SelectableText.rich(TextSpan(children: [
                   const TextSpan(
-                      text: 'Осталось времени:', style: AppStyle.black15),
+                      text: 'Осталось времени: ', style: AppStyle.black15),
                   TextSpan(
                       text:
                           minutes > 60 ? '${minutes ~/ 60} ч' : '$minutes мин',

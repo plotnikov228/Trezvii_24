@@ -2,11 +2,22 @@ import 'package:sober_driver_analog/domain/firebase/order/model/order.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_with_id.dart';
 
 extension ListOrderExtension on List<OrderWithId> {
-  OrderWithId nearestOrder () {
-    return reduce((OrderWithId a, OrderWithId b) {
-      Duration diffA = (a.order.startTime.difference(DateTime.now())).abs();
-      Duration diffB = (b.order.startTime.difference(DateTime.now())).abs();
-      return diffA.compareTo(diffB) < 0 ? a : b;
-    });
+  OrderWithId nearestOrder() {
+    OrderWithId? earliestDateTime;
+    if (isNotEmpty) {
+      earliestDateTime = this[0];
+
+      // Проходимся по всем элементам списка
+      for (int i = 1; i < length; i++) {
+        OrderWithId currentDateTime = this[i];
+
+        // Проверяем, является ли текущий элемент раньше earliestDateTime
+        if (currentDateTime.order.startTime
+            .isBefore(earliestDateTime!.order.startTime)) {
+          earliestDateTime = currentDateTime;
+        }
+      }
+    }
+    return earliestDateTime!;
   }
 }

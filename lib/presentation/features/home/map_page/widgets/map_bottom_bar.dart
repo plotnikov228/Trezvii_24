@@ -14,6 +14,8 @@ Widget MapBottomBar(
     VoidCallback? onPaymentMethodTap,
     VoidCallback? onWishesTap,
     VoidCallback? onMainButtonTap,
+      bool mainButtonActive = true,
+      Widget? suffixWidget,
     bool showTopButtons = true}) {
   return Container(
     width: size.width,
@@ -92,9 +94,11 @@ Widget MapBottomBar(
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: AppElevatedButton(
+              bgColor: mainButtonActive ? AppColor.firstColor : AppColor.firstColor.withOpacity(0.8),
                 width: size.width - 60,
                 height: 38,
                 text: mainButtonText,
+                suffixWidget: suffixWidget,
                 onTap: onMainButtonTap),
           )
         ],

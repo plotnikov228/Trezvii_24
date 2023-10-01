@@ -117,7 +117,7 @@ class SignInPage extends StatelessWidget {
                                       content:
                                           'Введите верный формат номера телефона');
                                 }
-                              }
+                              } else
                               bloc.add(SignInEvent(
                                   textFieldHasError:
                                       !key.currentState!.validate()));

@@ -22,12 +22,12 @@ class TutorialPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return Scaffold(
+        body:BlocProvider(
       create: (BuildContext context) =>
       TutorialBloc(ChooseAddressTutorialState())
         ..add(InitializeTutorialEvent()),
-      child: Scaffold(
-        body: BlocBuilder<TutorialBloc, TutorialState>(
+      child:  BlocBuilder<TutorialBloc, TutorialState>(
           builder: (BuildContext context, state) {
             final bloc = context.read<TutorialBloc>();
             return Stack(

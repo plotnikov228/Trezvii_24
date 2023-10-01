@@ -28,14 +28,16 @@ class SelectAddressWidget extends StatefulWidget {
 class _SelectAddressWidgetState extends State<SelectAddressWidget>{
   final double initialHeight = size.height - 100;
   double height = size.height - 100;
-  final double initialEndHeight = 313;
+  final double initialEndHeight = 340;
 
   @override
   void initState() {
     height = initialHeight;
     lastChangedTextField = widget.state.autoFocusedIndex ?? 0;
-    setState(() {
-      showContent = true;
+    Future.delayed(const Duration(milliseconds: 50), () {
+      setState(() {
+        showContent = true;
+      });
     });
   }
 

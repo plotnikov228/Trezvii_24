@@ -29,22 +29,22 @@ class SettingsBloc extends Bloc<SettingsEvent , SettingsState> {
     on<InitSettingsEvent>((event, emit) async  {
       _locally = await GetLocally(_mapRepo).call() ?? 'Краснодар';
       _language = await GetLanguage(_languageRepo).call();
-      _emailVal = !(await UserSubscribeToNewsletter(_notificationRepo).call());
-      _pushVal = !(await UserSubscribeToPushes(_notificationRepo).call());
+      _emailVal = (await UserSubscribeToNewsletter(_notificationRepo).call());
+      _pushVal = (await UserSubscribeToPushes(_notificationRepo).call());
       emit(SettingsState(language: _language?.name ?? _languageRepo.languages.first.name, locally: _locally, pushNotificationDisabled: _pushVal, emailNotificationDisabled: _emailVal));
     });
 
     on<ChangeNotifyDisabledSettingsEvent>((event, emit) async {
       try {
         if (event.email != _emailVal) {
-          if (event.email) {
+          if (!event.email) {
             await DeleteUserFromNewsletter(_notificationRepo).call();
           } else {
             await AddUserToNewsletter(_notificationRepo).call();
           }
         }
         if (event.push != _pushVal) {
-          if (event.email) {
+          if (!event.email) {
             await DeleteUserFromPushes(_notificationRepo).call();
           } else {
             await AddUserToPushes(_notificationRepo).call();

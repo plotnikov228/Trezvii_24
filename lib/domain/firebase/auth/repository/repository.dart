@@ -16,7 +16,7 @@ abstract class FirebaseAuthRepository {
   Future addUserToExisted(UserModel userModel);
 
   Future updateUser( String id,
-      {String? number, String? email, String? name, int? bonuses});
+      {String? number, String? email, String? name, int? bonuses, List<double>? ratings});
 
   Future<UserModel?> sendDriverDataForVerification(Driver driverModel);
 
