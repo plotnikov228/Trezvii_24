@@ -49,6 +49,8 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
       {String? number,
       String? email,
       String? name,
+        bool? blocked,
+
         List<double>? ratings,
       int? bonuses}) async {
     Map<String, dynamic> mapForUpdate = {};
@@ -56,6 +58,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
     if(email != null) mapForUpdate['email'] = email;
     if(name != null) mapForUpdate['name'] = name;
     if(bonuses != null) mapForUpdate['bonuses'] = bonuses;
+    if(blocked != null)mapForUpdate['blocked'] = blocked;
     if(ratings != null) mapForUpdate['ratings'] = ratings;
       await _instance.collection( _usersCollection).doc(id).update(mapForUpdate);
       print('updated');

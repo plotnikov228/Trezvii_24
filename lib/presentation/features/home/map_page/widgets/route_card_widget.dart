@@ -15,6 +15,8 @@ Widget routeCardWidget(Stream<DrivingRoute> route,
       stream: route,
       builder: (context, snapshot) {
         print(snapshot.data?.metadata.weight.distance.text);
+        print('SNAPSHOT STATE - ${snapshot.connectionState}');
+
         if (snapshot.hasError) {
           return const Center(
             child: Text(

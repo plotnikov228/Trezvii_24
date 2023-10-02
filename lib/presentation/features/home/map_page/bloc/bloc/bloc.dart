@@ -31,7 +31,6 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/fun
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/driver_state.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/select_contact_bottom_sheet.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../../../../../../../data/auth/repository/repository.dart';
 import '../../../../../../../data/firebase/auth/models/driver.dart';
@@ -131,14 +130,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   int _currentTariffIndex = 0;
 
   MapBloc(super.initialState) {
-    bool isUser = AppOperationMode.userMode();
     _mapBlocFunctions = MapBlocFunctions(this);
     on<InitMapBloc>((event, emit) async {
-      if (isUser) {
         await _mapBlocFunctions!.userInit();
-      } else {
-        await _mapBlocFunctions!.driverInit();
-      }
     });
 
     on<GoToCurrentPositionMapEvent>((event, emit) async {
@@ -185,7 +179,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         ));
       }
       if (event.newState is StartOrderMapState) {
-        if (isUser) {
           if (_tariffs.isEmpty) {
             _tariffs =
                 (await GetCollectionData(FirebaseFirestoreRepositoryImpl())
@@ -209,19 +202,6 @@ class MapBloc extends Bloc<MapEvent, MapState> {
               tariffList: _tariffs,
               exception: event.newState.exception,
               message: event.newState.message));
-        } else {
-          emit(StartOrderDriverMapState(
-            userModel: _user,
-            exception: event.newState.exception,
-            message: event.newState.message,
-            photoUrl: _userPhotoUrl,
-            orderWithId: _mapBlocFunctions!.orderFunctions.currentOrder != null
-                ? OrderWithId(_mapBlocFunctions!.orderFunctions.currentOrder!,
-                    _mapBlocFunctions!.orderFunctions.currentOrderId!)
-                : null,
-            status: event.newState.status,
-          ));
-        }
       }
       if (event.newState is SelectPaymentMethodMapState) {
         emit(SelectPaymentMethodMapState(
@@ -258,10 +238,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             status: event.newState.status,
             orderId: (event.newState as OrderCompleteMapState).orderId ?? _mapBlocFunctions!.orderFunctions.currentOrderId,
             id: (event.newState as OrderCompleteMapState).id ??
-                (AppOperationMode.userMode()
-                    ? _mapBlocFunctions!.orderFunctions.currentOrder!.driverId
-                    : _mapBlocFunctions!
-                        .orderFunctions.currentOrder!.employerId)));
+                _mapBlocFunctions!.orderFunctions.currentOrder!.driverId));
       }
       if (event.newState is OrderCancelledByDriverMapState) {
         emit(OrderCancelledByDriverMapState(
@@ -328,6 +305,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         emit(AddPriceMapState(
             order: _mapBlocFunctions!.orderFunctions.currentOrder));
       }
+    });
+
+    on<EmergencyCancelMapEvent>((event, emit) async {
+      await _mapBlocFunctions!.orderFunctions.emergenceCancel();
     });
 
     on<SelectOrderMapEvent>((event, emit) async {

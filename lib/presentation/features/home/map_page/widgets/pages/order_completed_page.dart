@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/event/event.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_elevated_button.dart';
 
 import '../../../../../utils/app_style_util.dart';
@@ -33,8 +32,8 @@ class OrderCompletedPage extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.only(top: 0),
-              child: Text(
-                'Поездка завершна, ${AppOperationMode.userMode() ? 'Оцените водителя' : 'Оцените клиента'}',
+              child: const Text(
+                'Поездка завершна, Оцените водителя',
                 style: AppStyle.black16,
               ),
             ),

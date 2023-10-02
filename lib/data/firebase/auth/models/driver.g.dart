@@ -19,9 +19,12 @@ Driver _$DriverFromJson(Map<String, dynamic> json) => Driver(
       number: json['number'] as String,
       email: json['email'] as String,
       name: json['name'] as String,
+      blocked: (json['blocked'] as dynamic) ?? false,
       registrationDate: DateTime.parse(json['registrationDate'] as String),
-      personalDataOfTheDriver: PersonalDataOfTheDriver.fromJson(
-          json['personalDataOfTheDriver'] as Map<String, dynamic>),
+      personalDataOfTheDriver: json['personalDataOfTheDriver'] == null
+          ? null
+          : PersonalDataOfTheDriver.fromJson(
+              json['personalDataOfTheDriver'] as Map<String, dynamic>),
       car: json['car'] == null
           ? null
           : Car.fromJson(json['car'] as Map<String, dynamic>),
@@ -32,10 +35,11 @@ Map<String, dynamic> _$DriverToJson(Driver instance) => <String, dynamic>{
       'number': instance.number,
       'email': instance.email,
       'name': instance.name,
+      'blocked': instance.blocked,
       'registrationDate': instance.registrationDate.toIso8601String(),
       'ratings': instance.ratings,
-      'currentPosition': instance.currentPosition?.toJson(),
+      'currentPosition': instance.currentPosition,
       'confirmed': instance.confirmed,
-      'personalDataOfTheDriver': instance.personalDataOfTheDriver?.toJson(),
-      'car': instance.car?.toJson(),
+      'personalDataOfTheDriver': instance.personalDataOfTheDriver,
+      'car': instance.car,
     };

@@ -19,7 +19,6 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_address_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_payment_method_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/waiting_for_order_acceptance/waiting_for_order_acceptence.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/widgets/map/map_widget.dart';
 
 import '../../../utils/app_color_util.dart';
@@ -68,13 +67,12 @@ class MapPage extends StatelessWidget {
                 firstPlacemark: bloc.fromAddress?.appLatLong,
                 secondPlacemark: bloc.toAddress?.appLatLong,
                 getAddress: (_) {
-                  if (AppOperationMode.userMode()) {
                     if (bloc.getAddressFromMap) {
                       bloc.fromAddress = _;
                       bloc.firstAddressController.text = _.addressName;
                       bloc.add(GoMapEvent(bloc.state));
                     }
-                  }
+
                 },
                 initialCameraPosition: bloc.cameraPosition,
               ),

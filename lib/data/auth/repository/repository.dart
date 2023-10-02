@@ -15,8 +15,6 @@ import 'package:sober_driver_analog/domain/firebase/auth/usecases/send_driver_da
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/user_is_exist.dart';
 import 'package:sober_driver_analog/domain/firebase/storage/usecases/upload_file_to_cloud_storage.dart';
 import 'package:sober_driver_analog/extensions/firebase_auth_exeption_extension.dart';
-import 'package:sober_driver_analog/presentation/app.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 
 import '../../../domain/auth/models/auth_type.dart';
 import '../../../domain/auth/repository/repository.dart';
@@ -122,13 +120,10 @@ class AuthRepositoryImpl extends AuthRepository {
       var _type = type;
       UserModel? userModel;
       if (credential.user != null) {
-        if (_type == AuthType.userSignIn) {
+        if (_type == AuthType.signIn) {
           userModel = await GetUserById(_repo).call(credential.user!.uid);
-          if (userModel == null) {
-            _type = AuthType.driverSignIn;
-          }
         }
-        if (_type == AuthType.userSignUp) {
+        if (_type == AuthType.signUp) {
           userModel = await CreateUser(_repo).call(User(
               bonuses: 0,
               userId: credential.user!.uid,
@@ -144,61 +139,8 @@ class AuthRepositoryImpl extends AuthRepository {
                     'Пользователь с таким номером телефона уже существует');
           }
         }
-        if (_type == AuthType.driverSignIn) {
-          userModel = await GetDriverById(_repo).call(credential.user!.uid);
-          if (!(userModel as Driver).confirmed) {
-            userModel = null;
-          }
-        } else if (_type == AuthType.driverSignUp) {
-          if (await GetDriverById(_repo).call(credential.user!.uid) != null) {
-            return AuthResult(
-                successful: false,
-                exception:
-                    'Вы уже подавали заявку используя данный номер телефона');
-          } else {
-            final usecase =
-                UploadFileToCloudStorage(FirebaseStorageRepositoryImpl());
-            final pass = await usecase.call(
-                authResult.driver!.personalDataOfTheDriver!.passPhoto!,
-                'паспорт',
-                credential.user!.uid);
-            final registration = await usecase.call(
-                authResult.driver!.personalDataOfTheDriver!.registrationPhoto!,
-                'прописка',
-                credential.user!.uid);
-            final front = await usecase.call(
-                authResult
-                    .driver!.personalDataOfTheDriver!.driverLicenseFrontPhoto!,
-                'передняя сторона удостоверения',
-                credential.user!.uid);
-            final back = await usecase.call(
-                authResult
-                    .driver!.personalDataOfTheDriver!.driverLicenseBackPhoto!,
-                'задняя сторона удостоверения',
-                credential.user!.uid);
-            final driver = await usecase.call(
-                authResult.driver!.personalDataOfTheDriver!.driverPhoto!,
-                'photo',
-                credential.user!.uid);
-            final _driver = await authResult.driver!.copyWith(
-                userId: credential.user!.uid,
-                personalDataOfTheDriver:
-                    authResult.driver!.personalDataOfTheDriver!.fillUrls(
-                        passPhotoUrl: pass.imageUrl,
-                        registrationPhotoUrl: registration.imageUrl,
-                        driverLicenceFrontUrl: front.imageUrl,
-                        driverLicenseBackUrl: back.imageUrl,
-                        driverPhotoUrl: driver.imageUrl));
-            await SendDriverDataForVerification(_repo).call(_driver);
-          }
-        }
 
         if (userModel != null) {
-          if (_type == AuthType.driverSignIn) {
-            AppOperationMode.setMode(AppOperationModeEnum.driver);
-          } else {
-            AppOperationMode.setMode(AppOperationModeEnum.user);
-          }
           final db = await InitDB(_dbRepo).call();
           final inserUsecase = DBInsert(_dbRepo);
           final removeUsecase = DBDelete(_dbRepo);

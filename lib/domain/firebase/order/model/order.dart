@@ -1,5 +1,6 @@
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
 import 'package:sober_driver_analog/extensions/string_extension.dart';
+import '../../../payment/models/payment_methods.dart';
 import 'order_for_another.dart';
 import 'order_status.dart';
 
@@ -10,7 +11,7 @@ class Order {
   final AddressModel to;
   final String employerId;
   final String? driverId;
-
+  final bool isPaid;
   final double distance;
   final DateTime startTime;
   final OrderStatus status;
@@ -18,9 +19,12 @@ class Order {
   final double costInRub;
   final String? wishes;
   final String? cancelReason;
+  final PaymentMethod paymentMethod;
 
   Order(this.status,
       {
+        required this.paymentMethod,
+        this.isPaid = false,
         this.orderForAnother,required this.costInRub, this.cancelReason,
       required this.from,
       required this.to,
@@ -35,7 +39,9 @@ class Order {
   Order copyWith({
     AddressModel? from,
     AddressModel? to,
+    PaymentMethod? paymentMethod,
     String? employerId,
+    bool? isPaid,
     String? cancelReason,
     String? driverId,
     double? distance,
@@ -46,7 +52,9 @@ class Order {
     String? wishes,
   }) {
     return Order(
+      paymentMethod: paymentMethod?? this.paymentMethod,
       status ?? this.status,
+      isPaid: isPaid ?? this.isPaid,
       orderForAnother: orderForAnother ?? this.orderForAnother,
       costInRub: costInRub ?? this.costInRub,
       from: from ?? this.from,

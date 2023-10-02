@@ -16,15 +16,11 @@ import 'package:sober_driver_analog/domain/payment/models/tariff.dart';
 import 'package:sober_driver_analog/extensions/double_extension.dart';
 import 'package:sober_driver_analog/extensions/duration_extension.dart';
 import 'package:sober_driver_analog/extensions/order_extension.dart';
-import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 
 import '../../../../../../data/firebase/auth/models/driver.dart';
-import '../../../../../../data/firebase/chat/repository.dart';
 import '../../../../../../domain/auth/usecases/get_user_id.dart';
 import '../../../../../../domain/firebase/auth/usecases/get_driver_by_id.dart';
-import '../../../../../../domain/firebase/chat/usecases/delete_chat.dart';
-import '../../../../../../domain/firebase/chat/usecases/find_chat.dart';
 import '../../../../../../domain/firebase/order/model/order.dart';
 import '../../../../../../domain/firebase/order/model/order_for_another.dart';
 import '../../../../../../domain/firebase/order/model/order_status.dart';
@@ -36,7 +32,8 @@ import '../../../../../../domain/firebase/order/usecases/set_changes_order_liste
 import '../../../../../../domain/firebase/order/usecases/update_order_by_id.dart';
 import '../../../../../../domain/map/usecases/get_cost_in_rub.dart';
 import '../../../../../../domain/map/usecases/get_routes.dart';
-import '../../../../../utils/app_operation_mode.dart';
+import '../../../../../../domain/payment/enums/payment_types.dart';
+import '../../../../../../domain/payment/models/payment_methods.dart';
 import '../../../../../utils/status_enum.dart';
 import '../event/event.dart';
 import '../functions.dart';
@@ -256,8 +253,7 @@ Future recheckOrderStatus({String? id, Order? order}) async {
       case SuccessfullyCompletedOrderStatus():
         bloc.add(GoMapEvent(OrderCompleteMapState(
           orderId: id,
-            id: AppOperationMode.userMode() ? order.driverId : order
-                .employerId)));
+            id:  order.driverId)));
       case ActiveOrderStatus():
         bloc.emit(bloc.state.copyWith(
             message: 'Поездка по маршруту "${order.from.addressName} - ${order
@@ -277,6 +273,8 @@ Future recheckOrderStatus({String? id, Order? order}) async {
         bloc.add(RecheckOrderMapEvent());
       case OrderCancelledByDriverOrderStatus():
         bloc.add(GoMapEvent(OrderCancelledByDriverMapState()));
+      case EmergencyCancellationOrderStatus():
+        bloc.add(GoMapEvent(EmergencyCancellationMapState()));
       case OrderAcceptedOrderStatus():
         var diff = currentOrder!.startTime.difference(DateTime.now());
         if (diff.inHours >= 1) {
@@ -287,18 +285,6 @@ Future recheckOrderStatus({String? id, Order? order}) async {
               message:
               'Водитель принял вашу заявку, за 30 минут до назначенного времени вы вернётесь в окно ожидания водителя')));
         } else {
-          if (AppOperationMode.driverMode()) {
-            mapBlocFunctions.mapFunctions.initPositionStream(
-                driverMode: AppOperationMode.driverMode(),
-                to: bloc.fromAddress?.appLatLong,
-                whenComplete: () async {
-                  mapBlocFunctions.mapFunctions.disposePositionStream();
-                  bloc.emit(bloc.state);
-                   await UpdateOrderById(_orderRepo).call(currentOrderId!,
-                        currentOrder!.copyWith(status: ActiveOrderStatus()));
-
-                });
-          }
           bloc.setDriver(await GetDriverById(FirebaseAuthRepositoryImpl())
               .call(currentOrder!.driverId!) as Driver);
           bloc.add(GoMapEvent(OrderAcceptedMapState()));
@@ -307,7 +293,7 @@ Future recheckOrderStatus({String? id, Order? order}) async {
         bloc.add(GoMapEvent(OrderCompleteMapState()));
       case ActiveOrderStatus():
         mapBlocFunctions.mapFunctions.initPositionStream(
-            driverMode: AppOperationMode.driverMode(),
+            driverMode: false,
             to: bloc.toAddress!.appLatLong,
             whenComplete: () async {
               print('when colmplete on active status');
@@ -322,41 +308,57 @@ Future recheckOrderStatus({String? id, Order? order}) async {
   }
 }
 
-Future createOrder(Tariff tariff, {
-  required String wishes,
-  required String otherName,
-  required String otherNumber,
-}) async {
-  final cost = await GetCostInRub(_mapRepo).call(tariff, bloc.currentRoute!);
-  print(cost);
-  final order = Order(WaitingForOrderAcceptanceOrderStatus(),
-      from: bloc.fromAddress!,
-      to: bloc.toAddress!,
-      wishes: wishes.isNotEmpty ? wishes : null,
-      distance: (bloc.currentRoute!.metadata.weight.distance.value! / 1000)
-          .prettify(),
-      employerId: await GetUserId(AuthRepositoryImpl()).call(),
-      orderForAnother: otherName.isNotEmpty && otherNumber.isNotEmpty
-          ? OrderForAnother(otherNumber, otherName)
-          : null,
-      startTime: orderStartTime,
-      costInRub: cost);
+  Future createOrder(
+      Tariff tariff, {
+        required String wishes,
+        required String otherName,
+        required String otherNumber,
+      }) async {
+    final user = await GetUserById(_fbAuthRepo)
+        .call(await GetUserId(AuthRepositoryImpl()).call());
+    if (!(user?.blocked ?? true)) {
+      final cost =
+      await GetCostInRub(_mapRepo).call(tariff, bloc.currentRoute!);
+      print(cost);
+      final order = Order(WaitingForOrderAcceptanceOrderStatus(),
+          from: bloc.fromAddress!,
+          to: bloc.toAddress!,
+          wishes: wishes.isNotEmpty ? wishes : null,
+          distance: (bloc.currentRoute!.metadata.weight.distance.value! / 1000)
+              .prettify(),
+          employerId: await GetUserId(AuthRepositoryImpl()).call(),
+          orderForAnother: otherName.isNotEmpty && otherNumber.isNotEmpty
+              ? OrderForAnother(otherNumber, otherName)
+              : null,
+          startTime: orderStartTime,
+          costInRub: cost,
+          paymentMethod:
+          bloc.currentPaymentModel.paymentType == PaymentTypes.card
+              ? CardPaymentMethod()
+              : CashPaymentMethod());
 
-  await CreateOrder(_orderRepo).call(order).then((value) {
-
-      activeOrders.add(OrderWithId(order, value));
-      if(currentOrder == null || (activeOrders.nearestOrder().id != currentOrderId && currentOrderId != null)) {
-        if(activeOrders.nearestOrder().id != currentOrderId && currentOrderId != null) {
-          disposeOrderListener(id: currentOrderId);
-          setOrderListeners(id: currentOrderId, order: currentOrder);
+      await CreateOrder(_orderRepo).call(order).then((value) async {
+        activeOrders.add(OrderWithId(order, value));
+        if (currentOrder == null ||
+            (activeOrders.nearestOrder().id != currentOrderId &&
+                currentOrderId != null)) {
+          if (activeOrders.nearestOrder().id != currentOrderId &&
+              currentOrderId != null) {
+            disposeOrderListener(id: currentOrderId);
+            setOrderListeners(id: currentOrderId, order: currentOrder);
+          }
+          currentOrderId = value;
+          currentOrder = order;
+          setOrderListeners();
         }
-      currentOrderId = value;
-      currentOrder = order;
-      setOrderListeners();
+        bloc.add(RecheckOrderMapEvent());
+      });
+    } else {
+      bloc.emit(bloc.state.copyWith(
+          message:
+          'Вы не можете создавать заказы, так как более двух раз экстренно отменяли их. Что бы разблокировать аккаунт обратитесь в техническую поддержку'));
     }
-      bloc.add(RecheckOrderMapEvent());
-  });
-}
+  }
 
 Stream<List<OrderWithId>> availableOrders() =>
     GetListOfOrders(_orderRepo).call(_locality ?? '');
@@ -378,26 +380,36 @@ Future cancelSearch({String? id}) async {
 
 Future completeOrder({double? rating, required String uid, String? orderId}) async {
   if (rating != null) {
-    if (AppOperationMode.userMode()) {
       final driver = await GetDriverById(_fbAuthRepo).call(uid) as Driver;
       driver.ratings.add(rating);
       await UpdateDriver(_fbAuthRepo)
           .call(uid, ratings: driver.ratings);
-    } else {
-      final user =
-      await GetUserById(_fbAuthRepo).call(uid);
-      if (user != null) {
-        user.ratings.add(rating);
-        await UpdateUser(_fbAuthRepo).call(uid, ratings: user.ratings);
-      }
-    }
   }
   if((orderId ?? currentOrderId)== currentOrderId) {
       currentOrder = null;
       currentOrderId = null;
+      bloc.toAddress = null;
+      bloc.fromAddress = null;
+      bloc.currentRoute = null;
       bloc.setDriver(null);
     }
     bloc.add(RecheckOrderMapEvent());
+}
+
+Future emergenceCancel () async {
+  await UpdateOrderById(_orderRepo).call(currentOrderId!, currentOrder!.copyWith(status: EmergencyCancellationOrderStatus()));
+  GetYourOrders(_orderRepo).call().then((value) async {
+    final cancelledOrders = value.where((element) => element.order.status is EmergencyCancellationOrderStatus).toList();
+    if(cancelledOrders.length >= 3) UpdateUser(_fbAuthRepo).call(await GetUserId(AuthRepositoryImpl()).call(), blocked: true);
+  });
+    currentOrder = null;
+    currentOrderId = null;
+    bloc.setDriver(null);
+  bloc.toAddress = null;
+  bloc.fromAddress = null;
+  bloc.currentRoute = null;
+  // снятие средств
+  bloc.add(GoMapEvent(EmergencyCancellationMapState()));
 }
 
 void proceedOrder() {

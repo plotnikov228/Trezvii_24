@@ -1,12 +1,12 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/models/user_model.dart';
 
 import '../../../../domain/firebase/auth/models/car.dart';
 import '../../../../domain/firebase/auth/models/personal_data_of_the_driver.dart';
 import '../../../../domain/map/models/app_lat_long.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'driver.g.dart';
-
+@JsonSerializable()
 class Driver extends UserModel {
   final AppLatLong? currentPosition;
   final bool confirmed;
@@ -18,6 +18,7 @@ class Driver extends UserModel {
     this.currentPosition,
     required super.ratings,
     required super.userId,
+    super.blocked = false,
     required super.number,
     required super.email,
     required super.name,
@@ -55,6 +56,7 @@ class Driver extends UserModel {
   @override
   Map<String, dynamic> toJson() => _$DriverToJson(this);
 
+  @override
   Map<String, dynamic> toDB() => {
     'userId': userId,
     'number': number,
@@ -82,7 +84,7 @@ class Driver extends UserModel {
     else {
       double total = ratings.reduce((a, b) => a + b);
       double average = total / ratings.length;
-      return average.toString();
+      return average.toString().length > 3 ? average.toString().substring(0, 3) : average.toString();
     }
   }
 }

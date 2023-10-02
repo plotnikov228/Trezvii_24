@@ -4,15 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sober_driver_analog/data/db/repository/repository.dart';
-import 'package:sober_driver_analog/domain/db/repository/repository.dart';
 import 'package:sober_driver_analog/domain/db/usecases/init_db.dart';
 import 'package:sober_driver_analog/presentation/features/splash/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/splash/bloc/state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sober_driver_analog/presentation/routes/router.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc(super.initialState) {
@@ -21,7 +18,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       //initialize
       await Firebase.initializeApp();
       //await FirebaseAppCheck.instance.activate();
-      await AppOperationMode.initMode();
       await InitDB(DBRepositoryImpl()).call();
       try {
         late StreamSubscription<User?> listener;

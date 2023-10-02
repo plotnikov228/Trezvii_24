@@ -50,3 +50,11 @@ class OrderAcceptedOrderStatus extends OrderStatus {
     return 'Order accepted';
   }
 }
+
+class EmergencyCancellationOrderStatus extends OrderStatus {
+  @override
+  String toString() {
+    // TODO: implement toString
+    return 'Emergency cancellation';
+  }
+}

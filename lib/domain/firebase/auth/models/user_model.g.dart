@@ -9,8 +9,8 @@ part of 'user_model.dart';
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'userId': instance.userId,
       'number': instance.number,
-      'notification': instance.email,
+      'email': instance.email,
       'name': instance.name,
       'registrationDate': instance.registrationDate.toIso8601String(),
-      'ratings': instance.ratings
+      'ratings': instance.ratings,
     };

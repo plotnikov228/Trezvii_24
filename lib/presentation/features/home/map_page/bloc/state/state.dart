@@ -18,7 +18,6 @@ abstract class MapState {
 }
 
 class InitialMapState extends MapState {
-
   final AddressModel? lastFavoriteAddress;
 
   InitialMapState({
@@ -54,7 +53,7 @@ class StartOrderMapState extends MapState {
     String? message,
   }) {
     return StartOrderMapState(
-     exception: exception ?? this.exception,
+      exception: exception ?? this.exception,
       status: status ?? this.status,
     );
   }
@@ -95,16 +94,28 @@ class SelectAddressesMapState extends MapState {
 class SelectOrderMapState extends MapState {
   final Stream<List<OrderWithId>>? orders;
   final String locality;
-  SelectOrderMapState( {this.locality = '',super.status = Status.Success, super.exception, this.orders, super.message});
+
+  SelectOrderMapState(
+      {this.locality = '',
+      super.status = Status.Success,
+      super.exception,
+      this.orders,
+      super.message});
 
   @override
-  SelectOrderMapState copyWith({Status? status, String? exception, Stream<List<OrderWithId>>? orders, String? locality, String? message}) {
+  SelectOrderMapState copyWith(
+      {Status? status,
+      String? exception,
+      Stream<List<OrderWithId>>? orders,
+      String? locality,
+      String? message}) {
     return SelectOrderMapState(
         locality: locality ?? this.locality,
         message: message ?? this.message,
-        status: status ?? this.status, exception: exception ?? this.exception, orders: orders ?? this.orders);
+        status: status ?? this.status,
+        exception: exception ?? this.exception,
+        orders: orders ?? this.orders);
   }
-
 }
 
 class WaitingForOrderAcceptanceMapState extends MapState {
@@ -131,7 +142,8 @@ class CancelledOrderMapState extends MapState {
   final String? orderId;
   final List<String> reasons;
 
-  CancelledOrderMapState( {this.orderId,
+  CancelledOrderMapState({
+    this.orderId,
     this.otherReason,
     this.reasons = const [],
     String? exception,
@@ -179,17 +191,28 @@ class ActiveOrderMapState extends MapState {
 class OrderCompleteMapState extends MapState {
   final String? id;
   final String? orderId;
-  OrderCompleteMapState({this.id, this.orderId, exception, status = Status.Success, super.message})
+
+  OrderCompleteMapState(
+      {this.id,
+      this.orderId,
+      exception,
+      status = Status.Success,
+      super.message})
       : super(exception: exception, status: status);
 
   @override
-  OrderCompleteMapState copyWith({String? id,String? orderId,  Status? status, String? exception, String? message}) {
+  OrderCompleteMapState copyWith(
+      {String? id,
+      String? orderId,
+      Status? status,
+      String? exception,
+      String? message}) {
     return OrderCompleteMapState(
       id: id ?? this.id,
       orderId: orderId ?? this.orderId,
       message: message ?? this.message,
-      exception:exception??  super.exception,
-      status: status?? super.status,
+      exception: exception ?? super.exception,
+      status: status ?? super.status,
     );
   }
 }
@@ -197,16 +220,18 @@ class OrderCompleteMapState extends MapState {
 class OrderCancelledByDriverMapState extends MapState {
   final Driver? driver;
 
-  OrderCancelledByDriverMapState({this.driver, exception, status = Status.Success, super.message})
+  OrderCancelledByDriverMapState(
+      {this.driver, exception, status = Status.Success, super.message})
       : super(exception: exception, status: status);
 
   @override
-  OrderCancelledByDriverMapState copyWith({ Status? status,Driver? driver, String? exception, String? message}) {
+  OrderCancelledByDriverMapState copyWith(
+      {Status? status, Driver? driver, String? exception, String? message}) {
     return OrderCancelledByDriverMapState(
       driver: driver ?? this.driver,
       message: message ?? this.message,
-      exception: exception?? super.exception,
-      status:status?? super.status,
+      exception: exception ?? super.exception,
+      status: status ?? super.status,
     );
   }
 }
@@ -216,19 +241,30 @@ class OrderAcceptedMapState extends MapState {
   final Duration? waitingTime;
   final String? distance;
 
-  OrderAcceptedMapState({this.distance, this.driver, this.waitingTime, exception, status = Status.Success, super.message})
+  OrderAcceptedMapState(
+      {this.distance,
+      this.driver,
+      this.waitingTime,
+      exception,
+      status = Status.Success,
+      super.message})
       : super(exception: exception, status: status);
 
   @override
-  OrderAcceptedMapState copyWith({ Status? status,Driver? driver, Duration? waitingTime, String? distance, String? exception, String? message}) {
+  OrderAcceptedMapState copyWith(
+      {Status? status,
+      Driver? driver,
+      Duration? waitingTime,
+      String? distance,
+      String? exception,
+      String? message}) {
     return OrderAcceptedMapState(
       driver: driver ?? this.driver,
       message: message ?? this.message,
-
       waitingTime: waitingTime ?? this.waitingTime,
       distance: distance ?? this.distance,
-      exception: exception?? super.exception,
-      status:status?? super.status,
+      exception: exception ?? super.exception,
+      status: status ?? super.status,
     );
   }
 }
@@ -236,16 +272,21 @@ class OrderAcceptedMapState extends MapState {
 class SelectPaymentMethodMapState extends MapState {
   final List methods;
 
-  SelectPaymentMethodMapState({this.methods = const [], exception, status = Status.Success, super.message})
+  SelectPaymentMethodMapState(
+      {this.methods = const [],
+      exception,
+      status = Status.Success,
+      super.message})
       : super(exception: exception, status: status);
 
   @override
-  SelectPaymentMethodMapState copyWith({ Status? status,List? methods, String? exception, String? message}) {
+  SelectPaymentMethodMapState copyWith(
+      {Status? status, List? methods, String? exception, String? message}) {
     return SelectPaymentMethodMapState(
-      methods: methods ?? this.methods,      message: message ?? this.message,
-
-      exception:exception??  super.exception,
-      status:status?? super.status,
+      methods: methods ?? this.methods,
+      message: message ?? this.message,
+      exception: exception ?? super.exception,
+      status: status ?? super.status,
     );
   }
 }
@@ -253,17 +294,18 @@ class SelectPaymentMethodMapState extends MapState {
 class CheckBonusesMapState extends MapState {
   final int balance;
 
-  CheckBonusesMapState({this.balance = 0, message, exception, status = Status.Success})
+  CheckBonusesMapState(
+      {this.balance = 0, message, exception, status = Status.Success})
       : super(message: message, exception: exception, status: status);
 
   @override
-  CheckBonusesMapState copyWith({ Status? status,int? balance, String? exception, String? message}) {
+  CheckBonusesMapState copyWith(
+      {Status? status, int? balance, String? exception, String? message}) {
     return CheckBonusesMapState(
       message: message ?? this.message,
-
       balance: balance ?? this.balance,
       exception: exception ?? super.exception,
-      status:status?? super.status,
+      status: status ?? super.status,
     );
   }
 }
@@ -271,32 +313,36 @@ class CheckBonusesMapState extends MapState {
 class PromoCodeMapState extends MapState {
   final TextEditingController? controller;
 
-  PromoCodeMapState({this.controller, exception, status = Status.Success, message})
+  PromoCodeMapState(
+      {this.controller, exception, status = Status.Success, message})
       : super(exception: exception, status: status, message: message);
 
   @override
-  PromoCodeMapState copyWith({ Status? status,TextEditingController? controller, String? exception, String? message}) {
+  PromoCodeMapState copyWith(
+      {Status? status,
+      TextEditingController? controller,
+      String? exception,
+      String? message}) {
     return PromoCodeMapState(
       controller: controller ?? this.controller,
       message: message ?? this.message,
-      exception: exception ??  super.exception,
-      status:status?? super.status,
+      exception: exception ?? super.exception,
+      status: status ?? super.status,
     );
   }
 }
 
 class AddCardMapState extends MapState {
-  AddCardMapState({exception, status = Status.Success, super.message}) : super(exception: exception, status: status);
+  AddCardMapState({exception, status = Status.Success, super.message})
+      : super(exception: exception, status: status);
 
   @override
-  AddCardMapState copyWith({
-    Status? status, String? exception, String? message
-  }) {
+  AddCardMapState copyWith(
+      {Status? status, String? exception, String? message}) {
     return AddCardMapState(
       message: message ?? this.message,
-
       exception: exception ?? super.exception,
-      status:status?? super.status,
+      status: status ?? super.status,
     );
   }
 }
@@ -306,19 +352,30 @@ class AddWishesMapState extends MapState {
   final TextEditingController? otherName;
   final TextEditingController? otherNumber;
 
-  AddWishesMapState({this.wish, this.otherName, this.otherNumber, exception, status = Status.Success, super.message})
+  AddWishesMapState(
+      {this.wish,
+      this.otherName,
+      this.otherNumber,
+      exception,
+      status = Status.Success,
+      super.message})
       : super(exception: exception, status: status);
 
   @override
-  MapState copyWith({ Status? status,TextEditingController? wish, TextEditingController? otherName, TextEditingController? otherNumber, String? exception, String? message}) {
+  MapState copyWith(
+      {Status? status,
+      TextEditingController? wish,
+      TextEditingController? otherName,
+      TextEditingController? otherNumber,
+      String? exception,
+      String? message}) {
     return AddWishesMapState(
       message: message ?? this.message,
-
       wish: wish ?? this.wish,
       otherName: otherName ?? this.otherName,
       otherNumber: otherNumber ?? this.otherNumber,
       exception: exception ?? super.exception,
-      status:status?? super.status,
+      status: status ?? super.status,
     );
   }
 }
@@ -328,18 +385,28 @@ class ActiveOrdersMapState extends MapState {
   final List<UserModel?>? users;
   final Order? currentOrder;
 
-  ActiveOrdersMapState({this.orders, this.users, this.currentOrder, status = Status.Success, super.message})
+  ActiveOrdersMapState(
+      {this.orders,
+      this.users,
+      this.currentOrder,
+      status = Status.Success,
+      super.message})
       : super(status: status);
 
   @override
-  MapState copyWith({ Status? status,List<OrderWithId>? orders, List<UserModel?>? drivers, Order? currentOrder, String? exception,String? message}) {
+  MapState copyWith(
+      {Status? status,
+      List<OrderWithId>? orders,
+      List<UserModel?>? drivers,
+      Order? currentOrder,
+      String? exception,
+      String? message}) {
     return ActiveOrdersMapState(
       orders: orders ?? this.orders,
       users: drivers ?? this.users,
       currentOrder: currentOrder ?? this.currentOrder,
       message: message ?? this.message,
-
-      status:status?? super.status,
+      status: status ?? super.status,
     );
   }
 }
@@ -347,17 +414,33 @@ class ActiveOrdersMapState extends MapState {
 class AddPriceMapState extends MapState {
   final Order? order;
 
-  AddPriceMapState({ super.status = Status.Success, this.order, super.message, super.exception});
-
+  AddPriceMapState(
+      {super.status = Status.Success,
+      this.order,
+      super.message,
+      super.exception});
 
   @override
-  MapState copyWith({Status? status, Order? order, String? exception, String? message}) {
+  MapState copyWith(
+      {Status? status, Order? order, String? exception, String? message}) {
     return AddPriceMapState(
         status: status ?? this.status,
-      message: message ?? this.message,
-      order: order ?? this.order,
-      exception: exception ?? this.exception
+        message: message ?? this.message,
+        order: order ?? this.order,
+        exception: exception ?? this.exception);
+  }
+}
+
+class EmergencyCancellationMapState extends MapState {
+  EmergencyCancellationMapState(
+      {super.status = Status.Success, super.message, super.exception});
+
+  @override
+  MapState copyWith({Status? status, String? exception, String? message}) {
+    return EmergencyCancellationMapState(
+        status: status ?? this.status,
+        message: message ?? this.message,
+        exception: exception ?? this.exception
     );
   }
-
 }

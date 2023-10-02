@@ -11,11 +11,12 @@ abstract class UserModel {
   final String name;
   final DateTime registrationDate;
   final List<double> ratings;
+  final bool blocked;
 
   UserModel(
       {required this.userId,
-  required this.number,
-      required this.email,
+  required this.number,this.blocked = false,
+        required this.email,
       required this.name,
       required this.registrationDate,
       required this.ratings

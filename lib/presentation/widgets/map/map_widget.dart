@@ -19,7 +19,6 @@ import '../../../domain/map/usecases/get_current_location.dart';
 import '../../../domain/map/usecases/request_permission.dart';
 import '../../../domain/map/usecases/set_last_point.dart';
 import '../../utils/app_color_util.dart';
-import '../../utils/app_operation_mode.dart';
 
 class MapWidget extends StatefulWidget {
   final Size size;
@@ -188,7 +187,6 @@ class _MapWidgetState extends State<MapWidget> {
         children: [
           YandexMap(
             onCameraPositionChanged: (_, __, ___) async {
-              if (AppOperationMode.userMode()) {
                 zoom = _.zoom;
                 final p = _.target;
                 setState(() {
@@ -216,7 +214,6 @@ class _MapWidgetState extends State<MapWidget> {
                     });
                   }
                 });
-              }
 
               if (widget.getCameraPosition != null) {
                 widget.getCameraPosition!(_);

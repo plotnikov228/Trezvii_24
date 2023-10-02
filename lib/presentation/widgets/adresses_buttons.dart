@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sober_driver_analog/domain/map/models/address_model.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/widgets/point_widget.dart';
 
 import '../features/home/ui/widgets/address_button.dart';
@@ -55,7 +54,6 @@ class AddressesButtons extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AddressButton(
-                  showAddressName: AppOperationMode.userMode(),
                   addressModel:from,
 
                   prefixIcon: PointWidget(),
@@ -72,7 +70,6 @@ class AddressesButtons extends StatelessWidget {
                 ),
 
                 AddressButton(
-                    showAddressName: AppOperationMode.userMode(),
 
                     addressModel: to,
                   prefixIcon: const Icon(

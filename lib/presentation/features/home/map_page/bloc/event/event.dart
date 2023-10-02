@@ -131,3 +131,7 @@ class CompleteOrderMapEvent extends MapEvent {
   final String? orderId;
   CompleteOrderMapEvent( {this.id, this.rating, this.orderId});
 }
+
+class EmergencyCancelMapEvent extends MapEvent {
+
+}

@@ -6,7 +6,6 @@ import 'package:sober_driver_analog/presentation/features/home/menu/bloc/state.d
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/orders/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/ui/widgets/menu_app_bar.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_pop_button.dart';
 
@@ -19,7 +18,6 @@ class OrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isUser = AppOperationMode.mode == AppOperationModeEnum.user;
 
   return WillPopScope(
       onWillPop: () async {
@@ -44,7 +42,7 @@ class OrdersPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           child: AppPopButton(context,
                               onTap: () => context.read<MenuBloc>().add(GoMenuEvent(newState: InitialMenuState())),
-                              text: isUser ? 'История заказов' : 'Заказы', color: Colors.white, textStyle: AppStyle.black16.copyWith(color: Colors.white)),
+                              text: 'История заказов' , color: Colors.white, textStyle: AppStyle.black16.copyWith(color: Colors.white)),
                         ),
                       ),
                       Padding(
@@ -61,7 +59,7 @@ class OrdersPage extends StatelessWidget {
                               tabs: [
 
                                 Tab(
-                                  text: isUser ? 'Отменённые' : 'Активные',
+                                  text: 'Отменённые' ,
                                   height: 42,
                                 ),
                                 const Tab(

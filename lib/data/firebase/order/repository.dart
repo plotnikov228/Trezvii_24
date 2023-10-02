@@ -6,7 +6,6 @@ import 'package:sober_driver_analog/domain/firebase/order/model/order.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_status.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_with_id.dart';
 import 'package:sober_driver_analog/domain/firebase/order/repository/repository.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 
 import '../../../presentation/utils/status_enum.dart';
 import '../../db/repository/repository.dart';
@@ -46,9 +45,7 @@ class OrderRepositoryImpl extends OrderRepository {
   Future<List<OrderWithId>> getYourOrders() async {
     final coll = _instance.collection(_orderCollection);
     final datas = coll.where(
-        AppOperationMode.mode == AppOperationModeEnum.user
-            ? 'employerId'
-            : 'driverId',
+        'employerId',
         isEqualTo:
             (await DBQuery(DBRepositoryImpl()).call('user')).first['userId']);
     return (await datas.get())

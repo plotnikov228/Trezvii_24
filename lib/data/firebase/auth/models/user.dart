@@ -1,6 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import '../../../../domain/firebase/auth/models/user_model.dart';
 
-import 'package:json_annotation/json_annotation.dart';
 part 'user.g.dart';
 @JsonSerializable()
 class User extends UserModel {
@@ -22,6 +23,7 @@ class User extends UserModel {
         required this.userId,
         required this.number,
         required super.ratings,
+        super.blocked = false,
         required this.email,
         required this.name,
         required this.registrationDate}) : super(userId: userId, number: number, email: email, name: name, registrationDate: registrationDate);

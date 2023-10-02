@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
-import 'package:sober_driver_analog/presentation/widgets/address_card.dart';
-import 'package:sober_driver_analog/presentation/widgets/app_text_form_field.dart';
 import 'package:sober_driver_analog/presentation/widgets/order_card_for_driver.dart';
-import 'package:sober_driver_analog/presentation/widgets/point_widget.dart';
 
 import '../../../../../utils/app_color_util.dart';
-import '../../../../../utils/app_images_util.dart';
 import '../../../../../utils/size_util.dart';
 import '../../bloc/bloc/bloc.dart';
 import '../../bloc/event/event.dart';
@@ -29,7 +22,7 @@ class SelectOrderWidget extends StatefulWidget {
 class _SelectOrderWidgetState extends State<SelectOrderWidget>{
   final double initialHeight = size.height - 100;
   double height = size.height - 100;
-  final double initialEndHeight = AppOperationMode.userMode() ? 340 : size.height - 200;
+  final double initialEndHeight = 340;
 
   @override
   void initState() {

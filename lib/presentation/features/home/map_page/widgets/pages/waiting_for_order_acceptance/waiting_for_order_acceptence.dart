@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/event/event.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/waiting_for_order_acceptance/contents/driver_content.dart';
-import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
-import 'package:sober_driver_analog/presentation/utils/app_images_util.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
-import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 
 import '../../../../../../utils/size_util.dart';
 import '../../../bloc/bloc/bloc.dart';
@@ -29,7 +23,7 @@ class WaitingForOrderAcceptanceWidget extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: 20,left: 40, right:  40),
-        child: AppOperationMode.userMode() ? userContent(bloc) : driverContent()
+        child: userContent(bloc)
       ),
     );
   }

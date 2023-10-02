@@ -33,8 +33,11 @@ class SignUpPage extends StatelessWidget {
           key: key,
           child: Column(
             children: [
-              const SizedBox(
+               SizedBox(
                 height: 274,
+                child: Center(
+                  child: Image.asset(AppImages.logo, width: 200, height: 200,),
+                ),
               ),
               Container(
                 decoration:
@@ -51,25 +54,16 @@ class SignUpPage extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 46),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CustomTabButton(text: 'Регистрация для пользователей', width: 180),
-                              CustomTabButton(text: 'Вход', width: 70,
-                                  onTap: () =>
-                                      bloc.add(ChangeAuthStateEvent(SignInState())),
-                                  isSelected: false
-                              ),
-                              CustomTabButton(
-                                  text: 'Регистрация для водителей',
-                                  width: 160,
-                                  onTap: () =>
-                                      bloc.add(ChangeAuthStateEvent(AuthDriverState())),
-                                  isSelected: false),
-                            ],
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            CustomTabButton(text: 'Вход', width: 70,
+                                onTap: () =>
+                                    bloc.add(ChangeAuthStateEvent(SignInState())),
+                                isSelected: false
+                            ),
+                            CustomTabButton(text: 'Регистрация', width: 180),
+                          ],
                         ),
                       ),
                       Padding(

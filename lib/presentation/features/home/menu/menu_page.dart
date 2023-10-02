@@ -29,7 +29,6 @@ import 'package:sober_driver_analog/presentation/features/home/menu/settings/blo
 import 'package:sober_driver_analog/presentation/features/home/menu/settings/bloc/state.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/settings/settings_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/ui/menu_screen.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import '../../../utils/status_enum.dart';
 import 'about_tariffs/bloc/state.dart';
 import 'balance/balance_page.dart';
@@ -41,22 +40,14 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isUser = AppOperationMode.mode == AppOperationModeEnum.user;
     return MultiBlocProvider(
       providers: [
         BlocProvider<OrdersBloc>(create: (_) => OrdersBloc(OrdersState())..add(InitOrdersEvent())),
-        if(isUser)
         BlocProvider<FavoriteAddressesBloc>(create: (_) => FavoriteAddressesBloc(FavoriteAddressesState([]))..add(InitFavoriteAddressesEvent())),
-        if(isUser)
         BlocProvider<AboutCompanyBloc>(create: (_) => AboutCompanyBloc(AboutCompanyState())..add(InitAboutCompanyEvent())),
-        if(isUser)
         BlocProvider<AboutTariffsBloc>(create: (_) => AboutTariffsBloc(AboutTariffsState(status: Status.Loading))..add(InitAboutTariffsEvent())),
-        if(isUser)
         BlocProvider<NewsBloc>(create: (_) => NewsBloc(NewsState(status: Status.Loading))..add(InitNewsEvent())),
         BlocProvider<SettingsBloc>(create: (_) => SettingsBloc(SettingsState())..add(InitSettingsEvent())),
-        if(!isUser)
-          BlocProvider<BalanceBloc>(create: (_) => BalanceBloc(BalanceState())..add(InitBalanceEvent())),
-
 
       ],
       child: BlocBuilder<MenuBloc, MenuState>(

@@ -9,18 +9,8 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/start_order/contents/start_order_driver_content.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/start_order/contents/start_order_user_content.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
-import 'package:sober_driver_analog/presentation/widgets/app_elevated_button.dart';
-import 'package:sober_driver_analog/presentation/widgets/app_snack_bar.dart';
 import 'package:sober_driver_analog/presentation/widgets/map/location_button.dart';
-
-import '../../../../../../utils/app_images_util.dart';
-import '../../../../../../utils/app_style_util.dart';
 import '../../../../../../utils/size_util.dart';
-import '../../../../../../widgets/adresses_buttons.dart';
-import '../../../../../../widgets/point_widget.dart';
-import '../../../../../../widgets/tariff_card.dart';
-import '../../../../ui/widgets/address_button.dart';
 import '../../../bloc/event/event.dart';
 
 class StartOrderWidget extends StatefulWidget {
@@ -36,8 +26,8 @@ class StartOrderWidget extends StatefulWidget {
 class _StartOrderWidgetState extends State<StartOrderWidget>{
   bool showContent = false;
 
-  final double initialHeight = AppOperationMode.userMode() ? 340 : size.height - 200;
-  double height = AppOperationMode.userMode() ? 340 : size.height - 200;
+  final double initialHeight = 340 ;
+  double height = 340;
   final double initialEndHeight = size.height - 100;
 
   @override
@@ -61,7 +51,6 @@ class _StartOrderWidgetState extends State<StartOrderWidget>{
 
   @override
   Widget build(BuildContext context) {
-    final isUser = AppOperationMode.userMode();
     print('a');
     return Align(
       alignment: Alignment.bottomCenter,
@@ -95,7 +84,7 @@ class _StartOrderWidgetState extends State<StartOrderWidget>{
 
                 Future.delayed(const Duration(milliseconds: 500), () {
 
-                  widget.bloc.add(GoMapEvent(isUser ? SelectAddressesMapState() : SelectOrderMapState()));
+                  widget.bloc.add(GoMapEvent(SelectAddressesMapState()));
                 });
               }
             },
@@ -109,7 +98,7 @@ class _StartOrderWidgetState extends State<StartOrderWidget>{
                 showContent = false;
 
                 Future.delayed(const Duration(milliseconds: 500), () {
-                  widget.bloc.add(GoMapEvent(isUser ? SelectAddressesMapState() : SelectOrderMapState()));
+                  widget.bloc.add(GoMapEvent(SelectAddressesMapState()));
                 });
               } else {
                 height = initialHeight;
@@ -120,7 +109,7 @@ class _StartOrderWidgetState extends State<StartOrderWidget>{
             child: AnimatedSize(
               duration: const Duration(milliseconds: 400),
               child: Container(
-                  height: height < initialHeight ? AppOperationMode.userMode() ? initialHeight : height < 160 ? 160 : height : height,
+                  height: height < initialHeight ? initialHeight : height,
                   width: size.width,
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
@@ -146,7 +135,7 @@ class _StartOrderWidgetState extends State<StartOrderWidget>{
                     AnimatedOpacity(
                         duration: const Duration(milliseconds: 500),
                         opacity: showContent ? 1 : 0,
-                        child: AppOperationMode.userMode() ? StartOrderUserContent(state: widget.state as StartOrderUserMapState, onToTap: () {
+                        child: StartOrderUserContent(state: widget.state as StartOrderUserMapState, onToTap: () {
                           height = initialEndHeight;
                           setState(() {
                             showContent = false;
@@ -168,18 +157,7 @@ class _StartOrderWidgetState extends State<StartOrderWidget>{
                                 GoMapEvent(SelectAddressesMapState(autoFocusedIndex: 0)));
                           });
                         },
-                        ) : StartOrderDriverContent(state: widget.state as StartOrderDriverMapState, onSelectOrderTap: () {
-                          height = initialEndHeight;
-
-                          setState(() {
-                            showContent = false;
-                          });
-
-                          Future.delayed(const Duration(milliseconds: 500), () {
-                            widget.bloc.add(
-                                GoMapEvent(SelectOrderMapState()));
-                          });
-                        },)
+                        )
                   )]),
             ),
           ),

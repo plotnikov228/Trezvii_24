@@ -3,7 +3,6 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/blo
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/initial_map/contents/initial_map_user_content.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 
 import '../../../../../../utils/app_images_util.dart';
 import '../../../../../../utils/size_util.dart';
@@ -63,7 +62,7 @@ class _InitialMapWidgetState extends State<InitialMapWidget>{
 
             Future.delayed(const Duration(milliseconds: 500), () {
               widget.bloc
-                  .add(GoMapEvent(AppOperationMode.userMode() ? SelectAddressesMapState() : SelectOrderMapState()));
+                  .add(GoMapEvent( SelectAddressesMapState() ));
             });
           }
         },
@@ -81,7 +80,7 @@ class _InitialMapWidgetState extends State<InitialMapWidget>{
           if ((initialHeight - height).abs() > 100) {
             Future.delayed(const Duration(milliseconds: 500), () {
               widget.bloc
-                  .add(GoMapEvent(AppOperationMode.userMode() ? SelectAddressesMapState() : SelectOrderMapState()));
+                  .add(GoMapEvent(SelectAddressesMapState()));
             });
           }
         },
@@ -118,7 +117,7 @@ class _InitialMapWidgetState extends State<InitialMapWidget>{
                     opacity: showContent ? 1 : 0,
                     child: Padding(
                         padding: const EdgeInsets.only(left: 35, right: 35),
-                        child: AppOperationMode.userMode() ? InitialMapUserContent(
+                        child:InitialMapUserContent(
                           state: widget.state,
                           onAddressButtonTap: () {
                             height = initialEndHeight;
@@ -160,19 +159,6 @@ class _InitialMapWidgetState extends State<InitialMapWidget>{
                                     SelectAddressesMapState()));
                               });
                         },
-                        ) : InitialMapDriverContent(
-                          onMainButtonTap: () {
-                            height = initialEndHeight;
-                            setState(() {
-                              showContent = false;
-                            });
-                            Future.delayed(
-                                const Duration(milliseconds: 500),
-                                    () {
-                                  widget.bloc.add(GoMapEvent(
-                                      SelectOrderMapState()));
-                                });
-                          },
                         )
                     ))
               ],

@@ -13,7 +13,6 @@ import 'package:sober_driver_analog/domain/firebase/chat/usecases/find_chat_by_i
 import 'package:sober_driver_analog/domain/firebase/chat/usecases/send_message_to_chat.dart';
 import 'package:sober_driver_analog/presentation/features/chat/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/features/chat/bloc/state.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 
 import '../../../../data/firebase/chat/repository.dart';
 import '../../../../domain/firebase/auth/models/user_model.dart';
@@ -31,8 +30,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final String chatId;
 
   ChatBloc(super.initialState, this.chatId) {
-    bool isDriver = AppOperationMode.mode == AppOperationModeEnum.driver;
-
     on<LoadChatEvent>((event, emit) async {
 
       yourId = await GetUserId(AuthRepositoryImpl()).call();
@@ -40,17 +37,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (chat == null) {
         emit(ChatState(status: ChatStateStatus.chatDoesNotExist));
       } else {
-        if(isDriver) {
-          talker = (await GetUserById(FirebaseAuthRepositoryImpl()).call(chat!.employerId));
-          try {
-            talkerPhotoUrl =
-            await FirebaseStorage.instance.ref('${talker?.userId}/photo')
-                .getDownloadURL();
-          } catch (_) {
 
-          }
-        }
-        if(!isDriver) {
           talker = (await GetDriverById(FirebaseAuthRepositoryImpl()).call(chat!.driverId));
           try {
             talkerPhotoUrl =
@@ -60,7 +47,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             talkerPhotoUrl =
                 (talker as Driver?)?.personalDataOfTheDriver?.driverPhotoUrl;
           }
-        }
+
         _chat = chat;
         emit(ChatState(
           scrollController: _scrollController,
@@ -74,8 +61,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (_controller.text.trim().isNotEmpty) {
         await SendMessageToChat(_repo).call(
             message: ChatMessages(
-                idFrom: isDriver ? _chat!.driverId : _chat!.employerId,
-                idTo: isDriver ? _chat!.employerId : _chat!.driverId,
+                idFrom: _chat!.employerId,
+                idTo: _chat!.driverId,
                 timestamp: DateTime.now().toIso8601String(),
                 content: _controller.text.trim()),
             chatId: chatId);

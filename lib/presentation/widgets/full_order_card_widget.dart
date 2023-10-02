@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:sober_driver_analog/data/firebase/auth/repository.dart';
 import 'package:sober_driver_analog/data/firebase/storage/repository.dart';
-import 'package:sober_driver_analog/domain/firebase/auth/repository/repository.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_driver_by_id.dart';
-import 'package:sober_driver_analog/domain/firebase/order/model/order.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_status.dart';
 import 'package:sober_driver_analog/domain/firebase/order/model/order_with_id.dart';
 import 'package:sober_driver_analog/domain/firebase/storage/usecases/get_photo_by_id.dart';
 import 'package:sober_driver_analog/extensions/date_time_extension.dart';
 import 'package:sober_driver_analog/extensions/order_status_extension.dart';
-import 'package:sober_driver_analog/presentation/app.dart';
 import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
-import 'package:sober_driver_analog/presentation/utils/app_operation_mode.dart';
 import 'package:sober_driver_analog/presentation/utils/app_style_util.dart';
 import 'package:sober_driver_analog/presentation/widgets/adresses_buttons.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_elevated_button.dart';
 import 'package:sober_driver_analog/presentation/widgets/user_photo_with_border.dart';
 
-import '../../data/auth/repository/repository.dart';
-import '../../data/firebase/auth/models/driver.dart';
 import '../../domain/firebase/auth/models/user_model.dart';
-import '../../domain/firebase/auth/usecases/get_user_by_id.dart';
 import '../utils/size_util.dart';
 
 class FullOrderCardWidget extends StatefulWidget {
@@ -43,20 +36,12 @@ class _FullOrderCardWidgetState extends State<FullOrderCardWidget> {
     super.initState();
     final repo = FirebaseAuthRepositoryImpl();
     final storageRepo = FirebaseStorageRepositoryImpl();
-    final String? uid = AppOperationMode.driverMode() ? widget.order.order.employerId : widget.order.order.driverId;
+    final String? uid = widget.order.order.driverId;
     if(uid != null) {
-      if (AppOperationMode.userMode()) {
         GetDriverById(repo).call(uid).then((value) {
           user = value;
           setState(() {});
         });
-      } else if (AppOperationMode.driverMode()) {
-        GetUserById(repo).call(uid).then((value) {
-          user = value;
-          setState(() {});
-        });
-      }
-
 
       GetPhotoById(storageRepo).call(uid).then((value) {
         setState(() {

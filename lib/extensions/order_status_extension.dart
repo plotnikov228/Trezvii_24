@@ -3,6 +3,8 @@ import 'package:sober_driver_analog/domain/firebase/order/model/order_status.dar
 extension OrderStatusExtension on OrderStatus {
   String description () {
     switch (this) {
+      case EmergencyCancellationOrderStatus():
+        return 'Был экстренно отменён';
       case ActiveOrderStatus():
         return 'Активный заказ';
       case WaitingForOrderAcceptanceOrderStatus():

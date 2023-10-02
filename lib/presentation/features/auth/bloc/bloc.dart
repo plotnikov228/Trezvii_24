@@ -196,7 +196,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               SignUpState(error: result.exception!, status: AuthStatus.Error)));
         }, (result) {
           _authResult = result;
-          _authType = AuthType.userSignUp;
+          _authType = AuthType.signUp;
           add(ChangeAuthStateEvent(SignUpState(status: AuthStatus.Success)));
           add(ChangeAuthStateEvent(InputCodeState()));
         });
@@ -212,7 +212,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               SignInState(error: result.exception!, status: AuthStatus.Error)));
         }, (result) {
           _authResult = result;
-          _authType = AuthType.userSignIn;
+          _authType = AuthType.signIn;
           add(ChangeAuthStateEvent(SignInState(status: AuthStatus.Success)));
 
           add(ChangeAuthStateEvent(InputCodeState()));
@@ -286,7 +286,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       add(ChangeAuthStateEvent(EnterPhotoState()));
     });
 
-    on<CreateRequestEvent>((event, emit) async {
+    /*on<CreateRequestEvent>((event, emit) async {
       SignUpForDriver(_repo).call(
           _driverNumber.text,
           Driver(
@@ -323,7 +323,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _authType = AuthType.driverSignUp;
         add(ChangeAuthStateEvent(InputCodeState()));
       });
-    });
+    });*/
   }
 }
 

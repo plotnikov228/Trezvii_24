@@ -50,26 +50,17 @@ class SignInPage extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 33),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          CustomTabButton(
-                              text: 'Регистрация для пользователей',
-                              width: 180,
-                              onTap: () =>
-                                  bloc.add(ChangeAuthStateEvent(SignUpState())),
-                              isSelected: false),
-                          CustomTabButton(text: 'Вход', width: 70),
-                          CustomTabButton(
-                              text: 'Регистрация для водителей',
-                              width: 160,
-                              onTap: () =>
-                                  bloc.add(ChangeAuthStateEvent(AuthDriverState())),
-                              isSelected: false),
-                        ],
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        CustomTabButton(text: 'Вход', width: 70),
+                        CustomTabButton(
+                            text: 'Регистрация',
+                            width: 180,
+                            onTap: () =>
+                                bloc.add(ChangeAuthStateEvent(SignUpState())),
+                            isSelected: false),
+                      ],
                     ),
                   ),
                   Padding(

@@ -19,7 +19,6 @@ import '../../../../../domain/firebase/auth/usecases/get_driver_by_id.dart';
 import '../../../../../domain/firebase/auth/usecases/get_user_by_id.dart';
 import '../../../../../domain/payment/models/payment_ui_model.dart';
 import '../../../../../domain/payment/usecases/get_current_payment_ui_model.dart';
-import '../../../../utils/app_operation_mode.dart';
 
 class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
@@ -34,23 +33,15 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   PaymentUiModel? _paymentUiModel;
 
   MenuBloc(super.initialState) {
-    bool isDriver = AppOperationMode.mode == AppOperationModeEnum.driver;
 
     on<InitMenuEvent>((event, emit) async {
       final id = await GetUserId(_authRepo).call();
 
-      final userFromDb = AppOperationMode.userMode() ? (await GetUserById(_firebaseAuthRepo).call(id)) : (await GetDriverById(_firebaseAuthRepo).call(id));
+      final userFromDb = (await GetUserById(_firebaseAuthRepo).call(id));
         if(_user == null || (_user != null && _user!.name != userFromDb!.name || _user!.email != userFromDb!.email)) {
         _user = userFromDb;
         _paymentUiModel = await GetCurrentPaymentModel(_paymentRepo).call();
           _userPhotoUrl = await GetPhotoById(FirebaseStorageRepositoryImpl()).call(_user!.userId);
-
-
-        if (isDriver && _userPhotoUrl == null) {
-          _user = (await GetDriverById(_firebaseAuthRepo).call(id));
-          _userPhotoUrl =
-              (_user as Driver?)?.personalDataOfTheDriver?.driverPhotoUrl;
-        }
 
         balance = await GetBonusesBalance(PaymentRepositoryImpl()).call();
         print('username ${_user!.name}');

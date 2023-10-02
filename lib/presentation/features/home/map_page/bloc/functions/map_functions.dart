@@ -39,8 +39,10 @@ class MapFunctions {
         final routes = await GetRoutes(_repo)
             .call([event, to]);
         print('from localities func - ${routes?.first.geometry.length}');
-        if(routes != null) {
-          _routeStream!.add(routes.first);
+        try {
+          _routeStream!.add(routes!.first);
+        } catch (_) {
+
         }
         if((routes!.first.metadata.weight.distance.value ?? 50) <= 50 && whenComplete != null) whenComplete();
       }
