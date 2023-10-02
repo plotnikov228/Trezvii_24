@@ -15,6 +15,8 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/start_order/start_order_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/initial_map/initial_map_widget.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/emergency_cancellation/emergency_cancellation_bottom_sheet.dart';
+
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/promo_code_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_address_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_payment_method_page.dart';
@@ -157,6 +159,10 @@ class MapPage extends StatelessWidget {
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: SelectPaymentMethodWidget(bloc: bloc, state: state)),
+              if (state is EmergencyCancellationMapState)
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: EmergencyCancellationBottomSheet()),
               if (state is WaitingForOrderAcceptanceMapState)
                 Align(
                     alignment: Alignment.bottomCenter,
