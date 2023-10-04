@@ -80,10 +80,13 @@ class MapRepositoryImpl extends MapRepository {
           ),
         entrance: address.toponymMetadata
             ?.address
-            .addressComponents[SearchComponentKind.locality],
+            .addressComponents[SearchComponentKind.entrance],
         locality: address.toponymMetadata
             ?.address
-            .addressComponents[SearchComponentKind.locality]
+            .addressComponents[SearchComponentKind.locality],
+        province: address.toponymMetadata
+            ?.address
+            .addressComponents[SearchComponentKind.province]
       );
     }
     return null;
@@ -104,7 +107,10 @@ class MapRepositoryImpl extends MapRepository {
         ,
         entrance: e.toponymMetadata
             ?.address
-            .addressComponents[SearchComponentKind.locality],
+            .addressComponents[SearchComponentKind.entrance],
+      province: e.toponymMetadata
+          ?.address
+          .addressComponents[SearchComponentKind.province]
     ))
         .toList();
     return list;

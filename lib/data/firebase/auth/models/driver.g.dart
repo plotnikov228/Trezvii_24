@@ -16,10 +16,10 @@ Driver _$DriverFromJson(Map<String, dynamic> json) => Driver(
           .map((e) => (e as num).toDouble())
           .toList(),
       userId: json['userId'] as String,
+      blocked: json['blocked'] as bool? ?? false,
       number: json['number'] as String,
       email: json['email'] as String,
       name: json['name'] as String,
-      blocked: (json['blocked'] as dynamic) ?? false,
       registrationDate: DateTime.parse(json['registrationDate'] as String),
       personalDataOfTheDriver: json['personalDataOfTheDriver'] == null
           ? null
@@ -35,9 +35,9 @@ Map<String, dynamic> _$DriverToJson(Driver instance) => <String, dynamic>{
       'number': instance.number,
       'email': instance.email,
       'name': instance.name,
-      'blocked': instance.blocked,
       'registrationDate': instance.registrationDate.toIso8601String(),
       'ratings': instance.ratings,
+      'blocked': instance.blocked,
       'currentPosition': instance.currentPosition,
       'confirmed': instance.confirmed,
       'personalDataOfTheDriver': instance.personalDataOfTheDriver,

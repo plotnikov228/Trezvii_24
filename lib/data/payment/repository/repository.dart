@@ -9,6 +9,8 @@ import 'package:sober_driver_analog/data/db/repository/repository.dart';
 import 'package:sober_driver_analog/data/firebase/auth/repository.dart';
 import 'package:sober_driver_analog/data/firebase/firestore/repository.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/get_user_id.dart';
+import 'package:sober_driver_analog/domain/db/constants.dart';
+import 'package:sober_driver_analog/domain/db/usecases/db_insert.dart';
 import 'package:sober_driver_analog/domain/db/usecases/db_query.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_user_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_user.dart';
@@ -34,6 +36,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
   final _bonusesBalancePrefsKey = 'bonusesBalanse';
 
   final _fbAuthRepo = FirebaseAuthRepositoryImpl();
+  final _dbRepo = DBRepositoryImpl();
 
   @override
   List<PaymentUiModel> getCurrentPaymentUiModels(bool functionalOn,
@@ -154,7 +157,7 @@ class PaymentRepositoryImpl extends PaymentRepository {
   }
 
   @override
-  Future<String> cardPay(UserCard card) async {
+  Future<String> cardPay(UserCard card, {required double cost}) async {
     // some func
     return '';
   }
@@ -247,7 +250,8 @@ class PaymentRepositoryImpl extends PaymentRepository {
       {bool getHourPrice = false,
       getKmPrice = false,
       bool getStartPrice = false,
-      bool getPriceOfFirstHours = false}) async {
+      bool getPriceOfFirstHours = false,
+      }) async {
     final remoteConfig = FirebaseRemoteConfig.instance
       ..setConfigSettings(RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 14),
@@ -273,5 +277,39 @@ class PaymentRepositoryImpl extends PaymentRepository {
       return remoteConfig.getDouble(tariff.theCostOfFirstHoursKey ?? '');
     }
     return 0;
+  }
+
+  @override
+  Future<bool> paymentOfThePenalty() async {
+    final penalty = await getPenaltyCost();
+    bool wasPayed = false;
+    for(var item in await getCards()){
+      try {
+        await cardPay(item, cost: penalty);
+        wasPayed = true;
+        break;
+
+      } catch (_) {
+
+      }
+    }
+    return wasPayed;
+  }
+
+  @override
+  Future addCard(UserCard card) async {
+    await DBInsert(_dbRepo).call(DBConstants.cardsTable, card.toJson());
+  }
+  @override
+  Future<List<UserCard>> getCards() async {
+    return (await DBQuery(_dbRepo).call(DBConstants.cardsTable)).map((e) => UserCard.fromJson(e)).toList();
+  }
+
+  @override
+  Future<double> getPenaltyCost() async {
+    final instance = FirebaseRemoteConfig.instance;
+    await instance.fetch();
+    await instance.activate();
+    return instance.getDouble('penalty');
   }
 }

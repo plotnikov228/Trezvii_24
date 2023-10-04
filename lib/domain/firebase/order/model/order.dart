@@ -71,7 +71,7 @@ class Order {
   bool isActive () {
     return status.toString() != OrderCancelledByDriverOrderStatus().toString() &&
         status.toString() != CancelledOrderStatus().toString() &&
-        status.toString() != SuccessfullyCompletedOrderStatus().toString();
+        status.toString() != SuccessfullyCompletedOrderStatus().toString() && status.toString() != EmergencyCancellationOrderStatus().toString();
 
   }
 

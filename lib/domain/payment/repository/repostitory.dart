@@ -23,7 +23,9 @@ abstract class PaymentRepository {
 
   Future<PromoCode?> checkPromoForActivity();
 
-  Future<String> cardPay(UserCard card);
+  Future<String> cardPay(UserCard card,  {required double cost});
+
+  Future addCard(UserCard card);
 
   Future<int> addBonusesToBalance(int quantity);
 
@@ -36,4 +38,11 @@ abstract class PaymentRepository {
   Future spendBonuses();
 
   Future<double> getCosts(Tariff tariff, {bool getHourPrice = true, getKmPrice = false, bool getStartPrice = false, bool getPriceOfFirstHours = false});
+
+  Future<double> getPenaltyCost();
+
+  Future<List<UserCard>> getCards ();
+
+  Future<bool> paymentOfThePenalty ();
+
 }

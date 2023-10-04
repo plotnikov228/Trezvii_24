@@ -10,7 +10,8 @@ class AddressModel {
   final String? entrance;
   final String? comment;
   final String? locality;
-  AddressModel( {this.name,this.locality, this.comment,required this.addressName,this.entrance, required this.appLatLong});
+  final String? province;
+  AddressModel( {this.name,this.locality, this.comment,required this.addressName,this.entrance, required this.appLatLong, this.province});
 
   factory AddressModel.fromJson (Map<String, dynamic> json) => _$AddressModelFromJson(json);
   Map<String, dynamic> toJson () => _$AddressModelToJson(this);
@@ -23,7 +24,7 @@ class AddressModel {
         'entrance': entrance,
         'comment': comment,
         'locality': locality,
-
+        'province': province
       };
 
   factory AddressModel.fromDB(Map<String, dynamic> json) => AddressModel(
@@ -32,6 +33,7 @@ class AddressModel {
     addressName: json['addressName'] as String,
     entrance: json['entrance'] as String?,
     locality: json['locality'],
+    province: json['province'],
     appLatLong:
     AppLatLong(lat: json['lat'], long: json['long']),
   );

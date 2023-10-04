@@ -26,6 +26,7 @@ class MapFunctions {
   StreamSubscription<AppLatLong>? _currentPosition;
   StreamController<DrivingRoute>? _routeStream;
   Stream<DrivingRoute>? get positionStream => _routeStream?.stream;
+  DrivingRoute? lastRoute;
 
   final _repo = MapRepositoryImpl();
   final _fbRepo = FirebaseAuthRepositoryImpl();
@@ -40,6 +41,7 @@ class MapFunctions {
             .call([event, to]);
         print('from localities func - ${routes?.first.geometry.length}');
         try {
+          lastRoute = routes!.first;
           _routeStream!.add(routes!.first);
         } catch (_) {
 

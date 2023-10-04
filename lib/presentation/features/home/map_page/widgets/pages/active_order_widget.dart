@@ -41,7 +41,7 @@ class ActiveOrderWidget extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            routeCardWidget(bloc.routeStream!,
+            routeCardWidget(bloc.routeStream!, lastRoute: bloc.lastRoute,
                 from: bloc.fromAddress, to: bloc.toAddress),
             const SizedBox(
               height: 10,

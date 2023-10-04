@@ -13,4 +13,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'name': instance.name,
       'registrationDate': instance.registrationDate.toIso8601String(),
       'ratings': instance.ratings,
+      'blocked': instance.blocked,
     };

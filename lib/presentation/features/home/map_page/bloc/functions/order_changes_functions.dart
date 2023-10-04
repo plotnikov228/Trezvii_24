@@ -145,9 +145,9 @@ class OrderChangesFunctions {
     if (_locality == null) {
       final address = await mapBlocFunctions.mapFunctions.getCurrentAddress();
       if (address?.locality == null) {
-        bloc.emit(bloc.state.copyWith(
+        bloc.add(GoMapEvent(bloc.state.copyWith(
             status: Status.Failed,
-            exception: 'Не смогли определить ваш город'));
+            exception: 'Не смогли определить ваш город')));
       } else {
         _locality = address!.locality;
         SetLocally(_mapRepo).call(_locality!);
@@ -223,10 +223,10 @@ Future recheckOrderStatus({String? id, Order? order}) async {
     print(order.status);
     switch (order.status) {
       case CancelledOrderStatus():
-        bloc.emit(bloc.state.copyWith(
+        bloc.add(GoMapEvent(bloc.state.copyWith(
             message:
             'Заказ "${order.from.addressName} - ${order.to
-                .addressName}" был отменён'));
+                .addressName}" был отменён')));
         activeOrders.removeWhere((element) => element.id == id);
       case OrderAcceptedOrderStatus():
         final driver = await GetDriverById(FirebaseAuthRepositoryImpl())
@@ -244,20 +244,20 @@ Future recheckOrderStatus({String? id, Order? order}) async {
                 .value! ~/
                 60)
             : const Duration(minutes: 15);
-        bloc.emit(bloc.state.copyWith(
+        bloc.add(GoMapEvent(bloc.state.copyWith(
             message:
             'Заказ "${order.from.addressName} - ${order.to
                 .addressName}" был отменён, водитель прибудет на место встречи примерно через ${dur
-                .calculateTimeBetweenDates()}'));
+                .calculateTimeBetweenDates()}')));
 
       case SuccessfullyCompletedOrderStatus():
         bloc.add(GoMapEvent(OrderCompleteMapState(
           orderId: id,
             id:  order.driverId)));
       case ActiveOrderStatus():
-        bloc.emit(bloc.state.copyWith(
+        bloc.add(GoMapEvent(bloc.state.copyWith(
             message: 'Поездка по маршруту "${order.from.addressName} - ${order
-                .to.addressName}" началась'));
+                .to.addressName}" началась')));
     }
   } else if (currentOrder != null) {
     print('currentOrder != null');
@@ -314,49 +314,62 @@ Future recheckOrderStatus({String? id, Order? order}) async {
         required String otherName,
         required String otherNumber,
       }) async {
-    final user = await GetUserById(_fbAuthRepo)
-        .call(await GetUserId(AuthRepositoryImpl()).call());
-    if (!(user?.blocked ?? true)) {
-      final cost =
-      await GetCostInRub(_mapRepo).call(tariff, bloc.currentRoute!);
-      print(cost);
-      final order = Order(WaitingForOrderAcceptanceOrderStatus(),
-          from: bloc.fromAddress!,
-          to: bloc.toAddress!,
-          wishes: wishes.isNotEmpty ? wishes : null,
-          distance: (bloc.currentRoute!.metadata.weight.distance.value! / 1000)
-              .prettify(),
-          employerId: await GetUserId(AuthRepositoryImpl()).call(),
-          orderForAnother: otherName.isNotEmpty && otherNumber.isNotEmpty
-              ? OrderForAnother(otherNumber, otherName)
-              : null,
-          startTime: orderStartTime,
-          costInRub: cost,
-          paymentMethod:
-          bloc.currentPaymentModel.paymentType == PaymentTypes.card
-              ? CardPaymentMethod()
-              : CashPaymentMethod());
-
-      await CreateOrder(_orderRepo).call(order).then((value) async {
-        activeOrders.add(OrderWithId(order, value));
-        if (currentOrder == null ||
-            (activeOrders.nearestOrder().id != currentOrderId &&
-                currentOrderId != null)) {
-          if (activeOrders.nearestOrder().id != currentOrderId &&
-              currentOrderId != null) {
-            disposeOrderListener(id: currentOrderId);
-            setOrderListeners(id: currentOrderId, order: currentOrder);
-          }
-          currentOrderId = value;
-          currentOrder = order;
-          setOrderListeners();
-        }
-        bloc.add(RecheckOrderMapEvent());
-      });
-    } else {
+    if(mapBlocFunctions.paymentsFunctions.penalties.isNotEmpty) {
       bloc.emit(bloc.state.copyWith(
-          message:
-          'Вы не можете создавать заказы, так как более двух раз экстренно отменяли их. Что бы разблокировать аккаунт обратитесь в техническую поддержку'));
+          status: Status.Failed,
+          exception:
+          'У вас есть неоплаченные штрафы, прежде чем создавать заказы, оплатите их.'));
+    } else {
+      final user = await GetUserById(_fbAuthRepo)
+          .call(await GetUserId(AuthRepositoryImpl()).call());
+      if (!(user?.blocked ?? true)) {
+        final cost =
+        await GetCostInRub(_mapRepo).call(tariff, bloc.currentRoute!);
+        print(cost);
+        final order = Order(WaitingForOrderAcceptanceOrderStatus(),
+            from: bloc.fromAddress!,
+            to: bloc.toAddress!,
+            wishes: wishes.isNotEmpty ? wishes : null,
+            distance: (bloc.currentRoute!.metadata.weight.distance.value! /
+                1000)
+                .prettify(),
+            employerId: await GetUserId(AuthRepositoryImpl()).call(),
+            orderForAnother: otherName.isNotEmpty && otherNumber.isNotEmpty
+                ? OrderForAnother(otherNumber, otherName)
+                : null,
+            startTime: orderStartTime,
+            costInRub: cost,
+            paymentMethod:
+            bloc.currentPaymentModel.paymentType == PaymentTypes.card
+                ? CardPaymentMethod()
+                : CashPaymentMethod());
+
+        await CreateOrder(_orderRepo).call(order).then((value) async {
+          activeOrders.add(OrderWithId(order, value));
+          if (currentOrder == null ||
+              (activeOrders
+                  .nearestOrder()
+                  .id != currentOrderId &&
+                  currentOrderId != null)) {
+            if (activeOrders
+                .nearestOrder()
+                .id != currentOrderId &&
+                currentOrderId != null) {
+              disposeOrderListener(id: currentOrderId);
+              setOrderListeners(id: currentOrderId, order: currentOrder);
+            }
+            currentOrderId = value;
+            currentOrder = order;
+            setOrderListeners();
+          }
+          bloc.add(RecheckOrderMapEvent());
+        });
+      } else {
+        bloc.add(GoMapEvent(bloc.state.copyWith(
+            status: Status.Failed,
+            exception:
+            'Вы не можете создавать заказы, так как более двух раз экстренно отменяли их. Что бы разблокировать аккаунт обратитесь в техническую поддержку')));
+      }
     }
   }
 
@@ -408,6 +421,7 @@ Future emergenceCancel () async {
   bloc.toAddress = null;
   bloc.fromAddress = null;
   bloc.currentRoute = null;
+  await mapBlocFunctions.paymentsFunctions.paymentOfThePenalty();
   // снятие средств
   bloc.add(GoMapEvent(EmergencyCancellationMapState()));
 }

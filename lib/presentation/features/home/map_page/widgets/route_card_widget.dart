@@ -10,13 +10,12 @@ import '../../../../utils/app_color_util.dart';
 import '../../../../widgets/point_widget.dart';
 
 Widget routeCardWidget(Stream<DrivingRoute> route,
-    {AddressModel? from, AddressModel? to}) {
+
+    {AddressModel? from, AddressModel? to, DrivingRoute? lastRoute,}) {
   return StreamBuilder(
       stream: route,
       builder: (context, snapshot) {
         print(snapshot.data?.metadata.weight.distance.text);
-        print('SNAPSHOT STATE - ${snapshot.connectionState}');
-
         if (snapshot.hasError) {
           return const Center(
             child: Text(
@@ -24,6 +23,74 @@ Widget routeCardWidget(Stream<DrivingRoute> route,
               style: AppStyle.black16,
               overflow: TextOverflow.visible,
             ),
+          );
+        }
+        if(lastRoute != null && snapshot.connectionState == ConnectionState.waiting) {
+          final km = (lastRoute.metadata.weight.distance.value ?? 50) / 1000;
+          final minutes =
+              (lastRoute.metadata.weight.timeWithTraffic.value ?? 1600) ~/
+                  60;
+          return Column(
+            children: [
+              if (from != null && to != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: AddressesButtons(
+                    from: from,
+                    to: to,
+                  ),
+                ),
+              if (from == null && to != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.location_pin,
+                        color: Colors.black87,
+                        size: 24,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        to.addressName,
+                        style: AppStyle.black16,
+                      )
+                    ],
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SelectableText.rich(TextSpan(children: [
+                      const TextSpan(
+                          text: 'Осталось километров:', style: AppStyle.black15),
+                      TextSpan(
+                          text: ' ${km.prettify()} км',
+                          style: AppStyle.black15
+                              .copyWith(fontWeight: FontWeight.bold))
+                    ]))
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SelectableText.rich(TextSpan(children: [
+                    const TextSpan(
+                        text: 'Осталось времени: ', style: AppStyle.black15),
+                    TextSpan(
+                        text:
+                        minutes > 60 ? '${minutes ~/ 60} ч' : '$minutes мин',
+                        style: AppStyle.black15
+                            .copyWith(fontWeight: FontWeight.bold))
+                  ]))
+                ],
+              ),
+            ],
           );
         }
 
@@ -97,7 +164,7 @@ Widget routeCardWidget(Stream<DrivingRoute> route,
                       text: 'Осталось времени: ', style: AppStyle.black15),
                   TextSpan(
                       text:
-                          minutes > 60 ? '${minutes ~/ 60} ч' : '$minutes мин',
+                      minutes > 60 ? '${minutes ~/ 60} ч' : '$minutes мин',
                       style: AppStyle.black15
                           .copyWith(fontWeight: FontWeight.bold))
                 ]))

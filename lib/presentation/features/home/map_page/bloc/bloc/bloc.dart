@@ -72,7 +72,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   Stream<DrivingRoute>? get routeStream =>
       _mapBlocFunctions!.mapFunctions.positionStream;
-
+  DrivingRoute? get lastRoute =>
+      _mapBlocFunctions!.mapFunctions.lastRoute;
   final mapCompleter = Completer<YandexMapController>();
 
   bool get orderInCompanyRange {
@@ -80,10 +81,14 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     if (fromAddress != null && toAddress != null) {
       bool fromContains = _mapBlocFunctions!.addressesFunctions.localities
           .map((e) => e.toLowerCase())
-          .contains(fromAddress!.locality?.toLowerCase());
+          .contains(fromAddress!.locality?.toLowerCase()) || _mapBlocFunctions!.addressesFunctions.localities
+          .map((e) => e.toLowerCase())
+          .contains(fromAddress!.province?.toLowerCase());
       bool toContains = _mapBlocFunctions!.addressesFunctions.localities
           .map((e) => e.toLowerCase())
-          .contains(toAddress!.locality?.toLowerCase());
+          .contains(toAddress!.locality?.toLowerCase()) || _mapBlocFunctions!.addressesFunctions.localities
+          .map((e) => e.toLowerCase())
+          .contains(toAddress!.province?.toLowerCase());
       print('$fromContains $toContains');
       if (!fromContains && !toContains) {
         createOrder = false;
@@ -177,6 +182,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
           addresses: (event.newState as SelectAddressesMapState).addresses,
           favoriteAddresses: _favoriteAddresses,
         ));
+      }
+      if(event.newState is EmergencyCancellationMapState) {
+        emit(EmergencyCancellationMapState());
       }
       if (event.newState is StartOrderMapState) {
           if (_tariffs.isEmpty) {

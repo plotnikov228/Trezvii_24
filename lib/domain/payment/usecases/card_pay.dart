@@ -6,7 +6,7 @@ class CardPay {
 
   CardPay(this.repository);
 
-  Future<String> call(UserCard card) async {
-    return await repository.cardPay(card);
+  Future<String> call(UserCard card,{required double cost}) async {
+    return await repository.cardPay(card, cost: cost);
   }
 }
