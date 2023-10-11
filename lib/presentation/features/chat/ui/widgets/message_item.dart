@@ -30,21 +30,6 @@ class MessageItem extends StatelessWidget {
     bool isCurrentUser = messages[index].idFrom == bloc.yourId;
     return Column(
       children: [
-        if (messages.asMap().containsKey(index - 1) &&
-            DateTime.parse(messages[index - 1].timestamp)
-                    .difference(DateTime.parse(messages[index].timestamp))
-                    .inHours >
-                4)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Center(
-              child: Text(
-                DateTime.parse(messages[index].timestamp)
-                    .formatDateTimeForMessageItem(),
-                style: AppStyle.hintText16.copyWith(fontSize: 13),
-              ),
-            ),
-          ),
         Padding(
           // add some padding
           padding: EdgeInsets.fromLTRB(
@@ -110,6 +95,21 @@ class MessageItem extends StatelessWidget {
             ),
           ),
         ),
+        if (messages.asMap().containsKey(index - 1) &&
+            DateTime.parse(messages[index - 1].timestamp)
+                .difference(DateTime.parse(messages[index].timestamp))
+                .inHours >
+                4 && index != messages.length - 1)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Center(
+              child: Text(
+                DateTime.parse(messages[index].timestamp)
+                    .formatDateTimeForMessageItem(),
+                style: AppStyle.hintText16.copyWith(fontSize: 13),
+              ),
+            ),
+          ),
       ],
     );
   }

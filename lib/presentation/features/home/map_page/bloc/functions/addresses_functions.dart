@@ -25,7 +25,7 @@ class AddressesFunctions {
   final _dbRepo = DBRepositoryImpl();
   AddressModel? lastFavoriteAddress;
 
-  late final List<String> _localities;
+  List<String> _localities = [];
   List<String> get localities => _localities;
 
 

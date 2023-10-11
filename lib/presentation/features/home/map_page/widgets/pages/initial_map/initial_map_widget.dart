@@ -6,6 +6,7 @@ import 'package:sober_driver_analog/presentation/utils/app_color_util.dart';
 
 import '../../../../../../utils/app_images_util.dart';
 import '../../../../../../utils/size_util.dart';
+import '../../../../../../widgets/map/location_button.dart';
 import '../../../../ui/widgets/address_button.dart';
 import '../../../bloc/event/event.dart';
 import 'contents/initial_map_driver_content.dart';
@@ -45,126 +46,140 @@ class _InitialMapWidgetState extends State<InitialMapWidget>{
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: GestureDetector(
-        onPanStart: (_) {
-          startPosition = _.globalPosition;
-        },
-        onPanUpdate: (_) {
-          setState(() {
-            updatedPosition =
-                Offset(0, startPosition.dy - _.globalPosition.dy);
-            height = initialHeight + updatedPosition.dy;
-          });
-          if (height == initialEndHeight) {
-            setState(() {
-              showContent = false;
-            });
+      child: Column(        mainAxisAlignment: MainAxisAlignment.end,
 
-            Future.delayed(const Duration(milliseconds: 500), () {
-              widget.bloc
-                  .add(GoMapEvent( SelectAddressesMapState() ));
-            });
-          }
-        },
-        onPanEnd: (_) async {
-          setState(() {
-            if ((initialHeight - height).abs() > 100) {
-              height = initialEndHeight;
+        children: [
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: showContent ? 1 : 0,
+            child: Align(alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: LocationButton(onTap: () => widget.bloc.add(GoToCurrentPositionMapEvent())),
+              ),),
+          ),
+          GestureDetector(
+            onPanStart: (_) {
+              startPosition = _.globalPosition;
+            },
+            onPanUpdate: (_) {
+              setState(() {
+                updatedPosition =
+                    Offset(0, startPosition.dy - _.globalPosition.dy);
+                height = initialHeight + updatedPosition.dy;
+              });
+              if (height == initialEndHeight) {
+                setState(() {
+                  showContent = false;
+                });
 
-              showContent = false;
-            } else {
-              height = initialHeight;
-            }
-          });
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  widget.bloc
+                      .add(GoMapEvent( SelectAddressesMapState() ));
+                });
+              }
+            },
+            onPanEnd: (_) async {
+              setState(() {
+                if ((initialHeight - height).abs() > 100) {
+                  height = initialEndHeight;
 
-          if ((initialHeight - height).abs() > 100) {
-            Future.delayed(const Duration(milliseconds: 500), () {
-              widget.bloc
-                  .add(GoMapEvent(SelectAddressesMapState()));
-            });
-          }
-        },
-        child: AnimatedSize(
-          duration: const Duration(milliseconds: 400),
-          child: Container(
-            height: height < initialHeight ? initialHeight : height,
-            width: size.width,
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(5), topLeft: Radius.circular(5)),
-                color: Colors.white),
-            child: Column(
-              children: [
+                  showContent = false;
+                } else {
+                  height = initialHeight;
+                }
+              });
 
-                SizedBox(
-                  height: 43,
-                  width: size.width,
-                  child: Center(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 12),
-                      width: 50,
-                      height: 5,
-                      decoration: BoxDecoration(
-                          borderRadius:
-                          const BorderRadius.all(Radius.circular(5)),
-                          color: AppColor.darkGray),
+              if ((initialHeight - height).abs() > 100) {
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  widget.bloc
+                      .add(GoMapEvent(SelectAddressesMapState()));
+                });
+              }
+            },
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 400),
+              child: Container(
+                height: height < initialHeight ? initialHeight : height,
+                width: size.width,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(5), topLeft: Radius.circular(5)),
+                    color: Colors.white),
+                child: Column(
+                  children: [
+
+                    SizedBox(
+                      height: 43,
+                      width: size.width,
+                      child: Center(
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 12),
+                          width: 50,
+                          height: 5,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                              const BorderRadius.all(Radius.circular(5)),
+                              color: AppColor.darkGray),
+                        ),
+                      ),
+
                     ),
-                  ),
-
-                ),
-                AnimatedOpacity(
-                    duration: const Duration(milliseconds: 500),
-                    opacity: showContent ? 1 : 0,
-                    child: Padding(
-                        padding: const EdgeInsets.only(left: 35, right: 35),
-                        child:InitialMapUserContent(
-                          state: widget.state,
-                          onAddressButtonTap: () {
-                            height = initialEndHeight;
-                            setState(() {
-                              showContent = false;
-                            });
-                            Future.delayed(
-                                const Duration(milliseconds: 500),
-                                    () {
-                                  widget.bloc.add(GoMapEvent(
-                                      SelectAddressesMapState(
-                                          autoFocusedIndex: 1)));
+                    AnimatedOpacity(
+                        duration: const Duration(milliseconds: 500),
+                        opacity: showContent ? 1 : 0,
+                        child: Padding(
+                            padding: const EdgeInsets.only(left: 35, right: 35),
+                            child:InitialMapUserContent(
+                              state: widget.state,
+                              onAddressButtonTap: () {
+                                height = initialEndHeight;
+                                setState(() {
+                                  showContent = false;
                                 });
-                          }, onArrowTap: () {
-                          setState(() {
-                            height = 313;
-                          });
-                          setState(() {
-                            showContent = false;
-                          });
-
-                          Future.delayed(
-                              const Duration(milliseconds: 500),
-                                  () {
-                                widget.bloc.add(GoMapEvent(
-                                    StartOrderMapState()));
+                                Future.delayed(
+                                    const Duration(milliseconds: 500),
+                                        () {
+                                      widget.bloc.add(GoMapEvent(
+                                          SelectAddressesMapState(
+                                              autoFocusedIndex: 1)));
+                                    });
+                              }, onArrowTap: () {
+                              setState(() {
+                                height = 313;
                               });
-                        }, onFavoriteAddressButtonTap: () {
-                          height = initialEndHeight;
-
-                          setState(() {
-                            showContent = false;
-                          });
-
-                          Future.delayed(
-                              const Duration(milliseconds: 500),
-                                  () {
-                                widget.bloc.add(GoMapEvent(
-                                    SelectAddressesMapState()));
+                              setState(() {
+                                showContent = false;
                               });
-                        },
-                        )
-                    ))
-              ],
+
+                              Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                      () {
+                                    widget.bloc.add(GoMapEvent(
+                                        StartOrderMapState()));
+                                  });
+                            }, onFavoriteAddressButtonTap: () {
+                              height = initialEndHeight;
+
+                              setState(() {
+                                showContent = false;
+                              });
+
+                              Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                      () {
+                                    widget.bloc.add(GoMapEvent(
+                                        SelectAddressesMapState()));
+                                  });
+                            },
+                            )
+                        ))
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

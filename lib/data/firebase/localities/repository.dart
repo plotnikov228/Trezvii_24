@@ -10,6 +10,7 @@ class LocalitiesRepositoryImpl extends LocalitiesRepository {
     if(_localities != null) return _localities!;
     final col = await _instance.collection(_localitiesCollection).get();
     _localities = col.docs.map((e) => e.id).toList();
+    print('localities = $_localities');
     return _localities!;
   }
 }

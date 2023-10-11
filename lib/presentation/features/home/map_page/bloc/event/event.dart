@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sober_driver_analog/domain/firebase/penalties/model/penalty.dart';
 import 'package:sober_driver_analog/domain/payment/enums/payment_types.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
 
@@ -134,4 +135,11 @@ class CompleteOrderMapEvent extends MapEvent {
 
 class EmergencyCancelMapEvent extends MapEvent {
 
+}
+
+class PaymentOfThePenaltyMapEvent extends MapEvent {
+  final Penalty penalty;
+  final UserCard? card;
+
+  PaymentOfThePenaltyMapEvent(this.penalty, {this.card});
 }

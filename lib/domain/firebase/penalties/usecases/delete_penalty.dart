@@ -6,5 +6,5 @@ class DeletePenalty {
 
   DeletePenalty(this.repository);
 
-  Future call (String penaltyId) => repository.deletePenalty(penaltyId);
+  Future call (Penalty penalty) => repository.deletePenalty(penalty);
 }

@@ -13,10 +13,10 @@ Widget AddressButton ({AddressModel? addressModel,required double width, Functio
         children: [
           if(prefixIcon != null)
           prefixIcon,
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           Flexible(
               fit: FlexFit.loose,
-              child: Text(showAddressName ? addressModel?.name ?? text : text, style: addressModel == null ? AppStyle.hintText16 : AppStyle.black16, overflow: TextOverflow.ellipsis, maxLines: 2,)),
+              child: Text(showAddressName ? addressModel?.name ?? text : text, style: addressModel == null ? AppStyle.hintText16.copyWith(fontSize: 14) : AppStyle.black14, overflow: TextOverflow.ellipsis, maxLines: 2,)),
         ],
       )
     ),

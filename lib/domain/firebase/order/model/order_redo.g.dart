@@ -17,7 +17,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
   cancelReason: json['cancelReason'],
   isPaid: (json['isPaid'] as dynamic)?? false,
   driverId: json['driverId'] as String?,
-  startTime: DateTime.parse(json['startTime'] as String),
+  startTime: json['startTime'] is String ? DateTime.parse(json['startTime'] as String) : (json['startTime'] as Timestamp).toDate(),
   orderForAnother: json['orderForAnother'] != null ? OrderForAnother.fromJson(json['orderForAnother']) : null, costInRub: double.parse(json['costInRub'].toString()),
 );
 
@@ -32,7 +32,7 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
   'driverId': instance.driverId,
   'cancelReason': instance.cancelReason,
   'distance': instance.distance,
-  'startTime': instance.startTime.toIso8601String(),
+  'startTime': instance.startTime,
   'orderForAnother': instance.orderForAnother?.toJson(),
   'costInRub': instance.costInRub
 };

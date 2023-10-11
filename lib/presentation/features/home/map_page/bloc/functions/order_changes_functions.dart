@@ -315,10 +315,10 @@ Future recheckOrderStatus({String? id, Order? order}) async {
         required String otherNumber,
       }) async {
     if(mapBlocFunctions.paymentsFunctions.penalties.isNotEmpty) {
-      bloc.emit(bloc.state.copyWith(
+      bloc.add(GoMapEvent(bloc.state.copyWith(
           status: Status.Failed,
           exception:
-          'У вас есть неоплаченные штрафы, прежде чем создавать заказы, оплатите их.'));
+          'У вас есть неоплаченные штрафы, прежде чем создавать заказы, оплатите их.')));
     } else {
       final user = await GetUserById(_fbAuthRepo)
           .call(await GetUserId(AuthRepositoryImpl()).call());

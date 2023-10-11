@@ -21,6 +21,8 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_address_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_payment_method_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/waiting_for_order_acceptance/waiting_for_order_acceptence.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/penalty_bottom_sheet.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/penalty_notification_container.dart';
 import 'package:sober_driver_analog/presentation/widgets/map/map_widget.dart';
 
 import '../../../utils/app_color_util.dart';
@@ -58,11 +60,7 @@ class MapPage extends StatelessWidget {
                     state is OrderAcceptedMapState,
                 drivingRoute: bloc.currentRoute,
                 routeStream: bloc.routeStream,
-                size: Size(
-                    size.width,
-                    state is WaitingForOrderAcceptanceMapState
-                        ? size.height - 146
-                        : size.height - 160),
+                size: size,
                 getCameraPosition: (_) {
                   bloc.setCameraPosition(_);
                 },
@@ -77,6 +75,86 @@ class MapPage extends StatelessWidget {
 
                 },
                 initialCameraPosition: bloc.cameraPosition,
+                child: Stack(
+                  children: [
+                    if (state is InitialMapState)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: InitialMapWidget(
+                            state: state,
+                            bloc: bloc,
+                          )),
+                    if (state is SelectAddressesMapState)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SelectAddressWidget(bloc: bloc, state: state)),
+                    if (state is SelectOrderMapState)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SelectOrderWidget(bloc: bloc, state: state)),
+                    if (state is StartOrderMapState)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: StartOrderWidget(
+                          bloc: bloc,
+                          state: state,
+                        ),
+                      ),
+                    if (state is CancelledOrderMapState)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CanceledOrderWidget(
+                          bloc: bloc,
+                          state: state,
+                        ),
+                      ),
+                    if (state is CheckBonusesMapState)
+                      CheckBonusesWidget(
+                        bloc: bloc,
+                        state: state,
+                      ),
+                    if (state is PromoCodeMapState)
+                      PromoCodeWidget(
+                        bloc: bloc,
+                        state: state,
+                      ),
+                    if (state is AddWishesMapState)
+                      AddWishesWidget(
+                        bloc: bloc,
+                        state: state,
+                      ),
+                    if (state is SelectPaymentMethodMapState)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SelectPaymentMethodWidget(bloc: bloc, state: state)),
+                    if (state is EmergencyCancellationMapState)
+                      const Align(
+                          alignment: Alignment.bottomCenter,
+                          child: EmergencyCancellationBottomSheet()),
+                    if (state is WaitingForOrderAcceptanceMapState)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: WaitingForOrderAcceptanceWidget(
+                              state: state, bloc: bloc)),
+                    if (state is OrderAcceptedMapState)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: OrderAcceptedWidget(
+                          state: state,
+                        ),
+                      ),
+                    if (state is ActiveOrderMapState)
+                      const Align(
+                        alignment: Alignment.bottomCenter,
+                        child: ActiveOrderWidget(),
+                      ),
+                    if (state is OrderCompleteMapState)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: OrderCompletedPage(state: state,),
+                      ),
+                  ],
+                ),
               ),
               IgnorePointer(
                 child: Align(
@@ -96,6 +174,24 @@ class MapPage extends StatelessWidget {
                   ),
                 ),
               ),
+              if(bloc.penalties.isNotEmpty)
+                PenaltyNotificationContainer(penalty: bloc.penalties.first, onTap: (penalty) {
+                    showModalBottomSheet(context: context, builder: (context) {
+                      return PenaltyBottomSheet(penalty: penalty,
+                      cards: bloc.cards,
+                        ifEmpty: () {
+                        context.pop();
+                          bloc.add(GoMapEvent(AddCardMapState()));
+                        }, onCardTap: (card) {
+
+                        },
+                        pay: (card) {
+                        bloc.add(PaymentOfThePenaltyMapEvent(penalty, card: card));
+                        context.pop();
+                        },
+                      );
+                    });
+                },),
               Visibility(
                 visible: bloc.activeOrders.isNotEmpty,
                 child: Align(
@@ -109,82 +205,6 @@ class MapPage extends StatelessWidget {
                   ),
                 ),
               ),
-              if (state is InitialMapState)
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: InitialMapWidget(
-                      state: state,
-                      bloc: bloc,
-                    )),
-              if (state is SelectAddressesMapState)
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SelectAddressWidget(bloc: bloc, state: state)),
-              if (state is SelectOrderMapState)
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SelectOrderWidget(bloc: bloc, state: state)),
-              if (state is StartOrderMapState)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: StartOrderWidget(
-                    bloc: bloc,
-                    state: state,
-                  ),
-                ),
-              if (state is CancelledOrderMapState)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CanceledOrderWidget(
-                    bloc: bloc,
-                    state: state,
-                  ),
-                ),
-              if (state is CheckBonusesMapState)
-                CheckBonusesWidget(
-                  bloc: bloc,
-                  state: state,
-                ),
-              if (state is PromoCodeMapState)
-                PromoCodeWidget(
-                  bloc: bloc,
-                  state: state,
-                ),
-              if (state is AddWishesMapState)
-                AddWishesWidget(
-                  bloc: bloc,
-                  state: state,
-                ),
-              if (state is SelectPaymentMethodMapState)
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SelectPaymentMethodWidget(bloc: bloc, state: state)),
-              if (state is EmergencyCancellationMapState)
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: EmergencyCancellationBottomSheet()),
-              if (state is WaitingForOrderAcceptanceMapState)
-                Align(
-                    alignment: Alignment.bottomCenter,
-                    child: WaitingForOrderAcceptanceWidget(
-                        state: state, bloc: bloc)),
-              if (state is OrderAcceptedMapState)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: OrderAcceptedWidget(
-                    state: state,
-                  ),
-                ),
-              if (state is ActiveOrderMapState)
-                const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ActiveOrderWidget(),
-                ),
-              if (state is OrderCompleteMapState)
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: OrderCompletedPage(state: state,),
-                ),
               if (state is AddCardMapState)
                 AddCardWidget(bloc: bloc, state: state),
               if (state is AddPriceMapState)

@@ -23,9 +23,9 @@ class AppLatLong {
 
 
 
-class MoscowLocation extends AppLatLong {
-  const MoscowLocation({
-    super.lat = 55.7522200,
-    super.long = 37.6155600,
+class KrasnodarLocation extends AppLatLong {
+  const KrasnodarLocation({
+    super.lat = 45.035470,
+    super.long = 38.975313,
   });
 }

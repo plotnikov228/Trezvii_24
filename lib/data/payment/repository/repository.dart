@@ -15,6 +15,7 @@ import 'package:sober_driver_analog/domain/db/usecases/db_query.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/get_user_by_id.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/usecases/update_user.dart';
 import 'package:sober_driver_analog/domain/firebase/firestore/usecases/get_collection_data.dart';
+import 'package:sober_driver_analog/domain/firebase/penalties/model/penalty.dart';
 import 'package:sober_driver_analog/domain/payment/models/payment_ui_model.dart';
 import 'package:sober_driver_analog/domain/payment/models/promo_code.dart';
 import 'package:sober_driver_analog/domain/payment/models/tariff.dart';
@@ -280,15 +281,14 @@ class PaymentRepositoryImpl extends PaymentRepository {
   }
 
   @override
-  Future<bool> paymentOfThePenalty() async {
-    final penalty = await getPenaltyCost();
+  Future<bool> paymentOfThePenalty({Penalty? penalty, UserCard? card}) async {
+    final penaltyCost = penalty?.cost ?? await getPenaltyCost();
     bool wasPayed = false;
-    for(var item in await getCards()){
+    for(var item in card != null ? [card] : await getCards()){
       try {
-        await cardPay(item, cost: penalty);
+        await cardPay(item, cost: penaltyCost);
         wasPayed = true;
         break;
-
       } catch (_) {
 
       }

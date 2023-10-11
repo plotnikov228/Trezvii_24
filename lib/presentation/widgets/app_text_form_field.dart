@@ -40,7 +40,7 @@ Widget AppTextFormField(
         cursorColor: AppColor.firstColor,
         cursorWidth: 2,
         cursorRadius: const Radius.circular(8),
-        style: AppStyle.black16,
+        style: AppStyle.black14,
         validator: validator,
         maxLength: maxLength,
         minLines: minLines,

@@ -40,6 +40,8 @@ import '../../../../../../../domain/map/models/address_model.dart';
 import '../../../../../../domain/db/constants.dart';
 import '../../../../../../domain/db/usecases/db_query.dart';
 import '../../../../../../domain/firebase/auth/models/user_model.dart';
+import '../../../../../../domain/firebase/penalties/model/penalty.dart';
+import '../../../../../../domain/payment/models/card.dart';
 import '../../../../../../domain/payment/models/tariff.dart';
 import '../../../../../utils/status_enum.dart';
 import '../state/state.dart';
@@ -110,6 +112,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
   PaymentUiModel get currentPaymentModel =>
       _mapBlocFunctions!.paymentsFunctions.currentPaymentModel;
+
+  List<Penalty> get penalties => _mapBlocFunctions?.paymentsFunctions.penalties ?? [];
+  List<UserCard> get cards => _mapBlocFunctions?.paymentsFunctions.cards ?? [];
 
   UserModel? _user;
   String? _userPhotoUrl;
@@ -257,7 +262,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
             (await GetDriverById(_fbAuthRepo).call(_driver!.userId) as Driver)
                 .currentPosition;
         final route = (await GetRoutes(_mapRepo).call([
-          driverPosition ?? const MoscowLocation(),
+          driverPosition ?? const KrasnodarLocation(),
           fromAddress!.appLatLong
         ]))!
             .first;
@@ -313,6 +318,10 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         emit(AddPriceMapState(
             order: _mapBlocFunctions!.orderFunctions.currentOrder));
       }
+    });
+
+    on<PaymentOfThePenaltyMapEvent>((event, emit) async {
+      _mapBlocFunctions!.paymentsFunctions.paymentOfThePenalty(penalty: event.penalty, card: event.card);
     });
 
     on<EmergencyCancelMapEvent>((event, emit) async {
@@ -459,13 +468,13 @@ class MapBloc extends Bloc<MapEvent, MapState> {
                   await FlutterContacts.openExternalView(c.id);
                   Contact? contact = await FlutterContacts.getContact(c.id);
                   _otherNameController.text = contact!.displayName;
-                  String number = contact.phones.length != 0
+                  String number = contact.phones.isNotEmpty
                       ? contact.phones.first.number
                       : '';
-                  if (number[0] == '+') {
+                  if (number.isNotEmpty && number[0] == '+') {
                     number = number.substring(1, number.length);
                   }
-                  if (number.isNotEmpty) {
+                  else if (number.isNotEmpty) {
                     number = number.substring(1, number.length);
                   }
                   _otherNumberController.text = number;

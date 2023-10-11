@@ -17,7 +17,7 @@ class MapBlocFunctions {
   MapBlocFunctions(this.bloc) {
     driverPositionFunctions = DriverPositionFunctions(bloc);
     orderFunctions = OrderChangesFunctions(bloc, this);
-    paymentsFunctions = PaymentsFunctions();
+    paymentsFunctions = PaymentsFunctions(bloc);
     addressesFunctions = AddressesFunctions(bloc);
     mapFunctions = MapFunctions(bloc);
   }
@@ -29,10 +29,12 @@ class MapBlocFunctions {
   late final MapFunctions mapFunctions;
 
   Future userInit () async {
+    await paymentsFunctions.init();
+    bloc.emit(bloc.state);
     await addressesFunctions.init();
     await addressesFunctions.initLocalities();
     print(' localities - ${addressesFunctions.localities}');
-    await paymentsFunctions.init();
+
     await orderFunctions.initForUser();
     }
 

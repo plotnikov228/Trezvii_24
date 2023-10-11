@@ -20,15 +20,19 @@ class PenaltyRepositoryImpl extends PenaltyRepository {
   }
 
   @override
-  Future deletePenalty(String penaltyId) async {
+  Future deletePenalty(Penalty penalty) async {
     // TODO: implement deletePenalty
-    await _instance
+    final col = _instance
         .collection(_penaltyCollections)
         .doc(await GetUserId(_authRepo).call())
-        .collection(_penaltyCollections)
-        .doc(penaltyId)
-        .delete();
+        .collection(_penaltyCollections);
+    final doc = await col
+        .where('userId', isEqualTo: penalty.userId).where('dateTime', isEqualTo: penalty.dateTime).where('cost', isEqualTo: penalty.cost).get();
+    final id = doc.docs.first.id;
+    await col.doc(id).delete();
   }
+
+
 
   @override
   Future<List<Penalty>> getPenalties() async {

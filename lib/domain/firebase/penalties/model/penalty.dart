@@ -11,4 +11,15 @@ class Penalty {
   Penalty({required this.dateTime, required this.userId, required this.cost, });
   factory Penalty.fromJson(Map<String, dynamic> json) => _$PenaltyFromJson(json);
   Map<String,dynamic> toJson() =>_$PenaltyToJson(this);
+
+  @override
+  bool operator ==(Object other) {
+    // TODO: implement ==
+    return other is Penalty && other.cost == cost && other.dateTime == dateTime && other.userId == userId;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
+
 }

@@ -29,9 +29,10 @@ extension DateTimeExtension on DateTime {
     String prefix ='$day $month в';
 
     final now = DateTime.now();
-    final dif = difference(now).inDays;
-    if(dif <= 1) {
-      prefix = dif == 0  ?'Сегодня в' : 'Вчера в';
+    final dif = this.difference(now).inDays;
+    if(dif.abs() < 2) {
+      print('dif -' + dif.toString());
+      prefix = dif == 0  ? 'Сегодня в' : 'Вчера в';
     }
 
     return "$prefix $hour:$minute";

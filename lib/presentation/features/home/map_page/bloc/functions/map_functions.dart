@@ -19,56 +19,68 @@ import '../event/event.dart';
 
 class MapFunctions {
   final MapBloc bloc;
+
   MapFunctions(this.bloc);
-
-
 
   StreamSubscription<AppLatLong>? _currentPosition;
   StreamController<DrivingRoute>? _routeStream;
+
   Stream<DrivingRoute>? get positionStream => _routeStream?.stream;
   DrivingRoute? lastRoute;
 
   final _repo = MapRepositoryImpl();
   final _fbRepo = FirebaseAuthRepositoryImpl();
-  void initPositionStream ({bool driverMode = false, AppLatLong? to, Function()? whenComplete}) {
+
+  void initPositionStream(
+      {bool driverMode = false, AppLatLong? to, Function()? whenComplete}) {
     _routeStream = StreamController.broadcast();
     _currentPosition = PositionStream(_repo).call().listen((event) async {
-     print('changed position');
+      print('changed position');
 
-     if(to != null) {
-
-        final routes = await GetRoutes(_repo)
-            .call([event, to]);
-        print('from localities func - ${routes?.first.geometry.length}');
-        try {
-          lastRoute = routes!.first;
-          _routeStream!.add(routes!.first);
-        } catch (_) {
-
+      if (to != null) {
+        final routes = await GetRoutes(_repo).call([event, to]);
+        if ((routes?.isEmpty ?? true)) {
+          final distance = Geolocator.distanceBetween(
+              event.lat, event.long, to.lat, to.long);
+          if ((distance) <= 50 && whenComplete != null) {
+            whenComplete();
+            disposePositionStream();
+          }
+        } else {
+          print('from localities func - ${routes?.first.geometry.length}');
+          try {
+            print('route len ${routes!.first.geometry.length}');
+            lastRoute = routes!.first;
+            _routeStream!.add(routes!.first);
+          } catch (_) {}
         }
-        if((routes!.first.metadata.weight.distance.value ?? 50) <= 50 && whenComplete != null) whenComplete();
+        if ((routes!.first.metadata.weight.distance.value ?? 50) <= 50 &&
+            whenComplete != null) {
+          whenComplete();
+          disposePositionStream();
+        }
       }
-   });
+    });
   }
 
-  void disposePositionStream () {
-    if(_currentPosition != null) _currentPosition!.cancel();
+  void disposePositionStream() {
+    if (_currentPosition != null) _currentPosition!.cancel();
     _currentPosition = null;
     _routeStream = null;
   }
 
-  Future<AddressModel?> getCurrentAddress () async {
-      final pos = await Geolocator.getLastKnownPosition();
-      if(pos != null) {
-        return await GetAddressFromPoint(_repo).call(AppLatLong(lat: pos.latitude, long: pos.longitude));
-      }
-  }
-
-  Future<AppLatLong?> getCurrentPosition () async {
+  Future<AddressModel?> getCurrentAddress() async {
     final pos = await Geolocator.getLastKnownPosition();
-    if(pos != null) {
-      return AppLatLong(lat: pos.latitude, long: pos.longitude);
+    if (pos != null) {
+      return await GetAddressFromPoint(_repo)
+          .call(AppLatLong(lat: pos.latitude, long: pos.longitude));
     }
   }
 
+  Future<AppLatLong?> getCurrentPosition() async {
+    final pos = await Geolocator.getLastKnownPosition();
+    if (pos != null) {
+      return AppLatLong(lat: pos.latitude, long: pos.longitude);
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:sober_driver_analog/domain/payment/models/card.dart';
 
+import '../../firebase/penalties/model/penalty.dart';
 import '../models/payment_ui_model.dart';
 import '../models/promo_code.dart';
 import '../models/tariff.dart';
@@ -43,6 +44,6 @@ abstract class PaymentRepository {
 
   Future<List<UserCard>> getCards ();
 
-  Future<bool> paymentOfThePenalty ();
+  Future<bool> paymentOfThePenalty ({Penalty? penalty , UserCard? card});
 
 }
