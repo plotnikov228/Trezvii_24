@@ -16,7 +16,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       blocked: json['blocked'] as bool? ?? false,
       email: json['email'] as String,
       name: json['name'] as String,
-      registrationDate: json['registrationDate'] is String ? DateTime.parse(json['registrationDate'] as String) : (json['registrationDate'] as Timestamp).toDate(),
+      registrationDate: DateTime.parse(json['registrationDate'] as String),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -26,6 +26,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'number': instance.number,
       'email': instance.email,
       'name': instance.name,
-      'registrationDate': instance.registrationDate,
+      'registrationDate': instance.registrationDate.toIso8601String(),
       'bonuses': instance.bonuses,
     };
