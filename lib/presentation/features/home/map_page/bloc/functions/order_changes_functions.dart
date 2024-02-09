@@ -77,7 +77,7 @@ class OrderChangesFunctions {
       final listener = SetChangesOrderListener(_orderRepo)
           .call(id ?? currentOrderId!)
           .listen((event) async {
-        if ((order ?? currentOrder!).status != event?.status && event != null) {
+        if ((order ?? currentOrder!).status != event?.status && ((event?.status.stage() ?? 0 )>=( currentOrder?.status.stage() ?? 0))  && event != null) {
           if (order == null) {
             currentOrder = event;
           } else {
@@ -294,13 +294,10 @@ Future recheckOrderStatus({String? id, Order? order}) async {
       case ActiveOrderStatus():
         mapBlocFunctions.mapFunctions.initPositionStream(
             driverMode: false,
-            to: bloc.toAddress!.appLatLong,
+            to: bloc.toAddress?.appLatLong,
             whenComplete: () async {
               print('when colmplete on active status');
-                UpdateOrderById(_orderRepo).call(
-                    currentOrderId!,
-                    currentOrder!.copyWith(
-                        status: SuccessfullyCompletedOrderStatus()));
+
                 bloc.add(RecheckOrderMapEvent());
             });
         bloc.add(GoMapEvent(ActiveOrderMapState()));

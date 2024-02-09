@@ -137,7 +137,7 @@ class _SelectTimeTabState extends State<SelectTimeTab> {
                                         dates[index].month ==
                                             DateTime.now().month
                                         ? 'Сегодня'
-                                        : '${dates[index].getWeekDay()} ${dates[index].day} ${dates[index].getMonth()}',
+                                        : '${dates[index].getWeekDay()} ${dates[index].day} ${dates[index ].getMonth()}',
                                     style: index != currentDateIndex
                                         ? AppStyle.gray22
                                         : AppStyle.gray22

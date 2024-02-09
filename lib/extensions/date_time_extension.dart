@@ -6,7 +6,7 @@ extension DateTimeExtension on DateTime {
 
   getMonth () {
     List<String> monthsInStr = ['Января', 'Февраля','Марта', 'Апреля','Мая','Июня','Июля','Августа','Сентября','Октября','Ноября','Декабря'];
-    return monthsInStr[month];
+    return monthsInStr[month - 1];
   }
 
   String formatDateTime() {
