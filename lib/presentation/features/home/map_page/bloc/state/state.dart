@@ -347,6 +347,26 @@ class AddCardMapState extends MapState {
   }
 }
 
+
+class CardMapState extends MapState {
+  final TextEditingController card;
+  final TextEditingController cvc;
+  final TextEditingController date;
+
+  CardMapState( {required this.card, required this.cvc, required this.date,exception, status = Status.Success, super.message})
+      : super(exception: exception, status: status);
+
+  @override
+  CardMapState copyWith(
+      {Status? status, String? exception, String? message}) {
+    return CardMapState(
+      message: message ?? this.message,
+      exception: exception ?? super.exception,
+      status: status ?? super.status, card: card, cvc: cvc, date: date,
+    );
+  }
+}
+
 class AddWishesMapState extends MapState {
   final TextEditingController? wish;
   final TextEditingController? otherName;

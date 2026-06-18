@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 extension FirebaseAuthExceptionExtension on FirebaseAuthException {
   String getExceptionText() {
+    debugPrint(this.toString());
     final String exc = _authErrors.containsKey(this) ? _authErrors[toString()]!
         : 'Произошла непредвиденная ошибка, проверьте подключение к интернету или попробуйте позднее';
     return exc;

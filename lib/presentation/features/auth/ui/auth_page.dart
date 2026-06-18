@@ -52,9 +52,6 @@ class AuthPage extends StatelessWidget {
             if (current != null) {
               previous = current;
             }
-            if (previous != null && previous!.status == AuthStatus.Loading) {
-              context.pop();
-            }
             current = state;
             if (state.error != null) {
               AppSnackBar.showSnackBar(context, content: state.error!);

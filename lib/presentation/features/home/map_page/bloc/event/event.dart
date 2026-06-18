@@ -77,6 +77,9 @@ class UseBonusesMapEvent extends MapEvent {
 class AddCardMapEvent extends MapEvent {
 }
 
+class AddNewCardMapEvent extends MapEvent {
+}
+
 class GetOtherFromContactsMapEvent extends MapEvent {
   final BuildContext context;
 

@@ -136,7 +136,7 @@ class SignUpPage extends StatelessWidget {
                               }
                                 bloc.add(SignUpEvent(
                                     textFieldHasError:
-                                        !key.currentState!.validate() || !state.checkBoxIsAccepted!));
+                                        !key.currentState!.validate() || !(state.checkBoxIsAccepted ?? false)));
                             }),
                       ),
                       Padding(

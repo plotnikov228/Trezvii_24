@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/bloc/bloc.dart';
@@ -29,11 +30,13 @@ class OrdersPage extends StatelessWidget {
           return DefaultTabController(
             length: 2,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 menuAppBar(
                   padding: EdgeInsets.zero,
                     child: SafeArea(
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                       Align(
@@ -80,42 +83,43 @@ class OrdersPage extends StatelessWidget {
                   ],
                 ),
                     )),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50),
-                  child: SizedBox(
-                    height: size.height - 250,
-                    width: size.width,
-                    child: TabBarView(
-                      children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: SizedBox(
+                      width: size.width,
+                      child: TabBarView(
+                        children: [
 
-                        SizedBox(
-                          height: size.height - 250,
-                          width: size.width,
-                          child:state.otherOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
-                            children: List.generate(
-                                state.otherOrders.length,
-                                (index) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: FullOrderCardWidget(
-                                     order: state.otherOrders[index],),
-                                )),
+                          SizedBox(
+                            height: size.height - 250,
+                            width: size.width,
+                            child:state.otherOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
+                              children: List.generate(
+                                  state.otherOrders.length,
+                                  (index) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: FullOrderCardWidget(
+                                       order: state.otherOrders[index],),
+                                  )),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: size.height - 250,
-                          width: size.width,
-                          child: state.completedOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
-                            children: List.generate(
-                                state.completedOrders.length,
-                                    (index) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: FullOrderCardWidget(
-                                      order:state.completedOrders[index],
-                                  ),
-                                )),
+                          SizedBox(
+                            height: size.height - 250,
+                            width: size.width,
+                            child: state.completedOrders.isEmpty ? Center(child: Text('Нет заказов', style: AppStyle.black22.copyWith(color: AppColor.firstColor),),) : ListView(
+                              children: List.generate(
+                                  state.completedOrders.length,
+                                      (index) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: FullOrderCardWidget(
+                                        order:state.completedOrders[index],
+                                    ),
+                                  )),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 )

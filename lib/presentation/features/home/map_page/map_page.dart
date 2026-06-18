@@ -10,6 +10,7 @@ import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/add_card_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/add_wishes_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/cancelled_order_widget.dart';
+import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/card_enter_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/check_bonuses_widget.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/order_completed_page.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/widgets/pages/select_order_widget.dart';
@@ -207,6 +208,8 @@ class MapPage extends StatelessWidget {
               ),
               if (state is AddCardMapState)
                 AddCardWidget(bloc: bloc, state: state),
+              if(state is CardMapState)
+                const CardEnterWidget(),
               if (state is AddPriceMapState)
                 AddPricePage(bloc: bloc, state: state),
               Align(

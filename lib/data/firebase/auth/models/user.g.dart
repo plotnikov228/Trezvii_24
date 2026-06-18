@@ -10,8 +10,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       bonuses: json['bonuses'] as int,
       userId: json['userId'] as String,
       number: json['number'] as String,
-      ratings: (json['ratings'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      ratings: (json['ratings'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
       blocked: json['blocked'] as bool? ?? false,
       email: json['email'] as String,

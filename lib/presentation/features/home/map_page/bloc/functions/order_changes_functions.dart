@@ -390,10 +390,14 @@ Future cancelSearch({String? id}) async {
 
 Future completeOrder({double? rating, required String uid, String? orderId}) async {
   if (rating != null) {
-      final driver = await GetDriverById(_fbAuthRepo).call(uid) as Driver;
-      driver.ratings.add(rating);
+      var driver = await GetDriverById(_fbAuthRepo).call(uid) as Driver;
+      if(driver.ratings != null)
+      driver.ratings!.add(rating);
+      else {
+        driver = driver.copyWith(ratings: [rating]);
+      }
       await UpdateDriver(_fbAuthRepo)
-          .call(uid, ratings: driver.ratings);
+          .call(uid, ratings:  driver.ratings);
   }
   if((orderId ?? currentOrderId)== currentOrderId) {
       currentOrder = null;

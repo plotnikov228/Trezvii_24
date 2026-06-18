@@ -41,7 +41,7 @@ class User extends UserModel {
     'number': number,
     'email': email,
     'name': name,
-    'ratings': ratings.join(',') ,
+    'ratings': (ratings ?? []).join(',') ,
     'registrationDate': registrationDate.toIso8601String(),
     'bonuses': bonuses,
   };

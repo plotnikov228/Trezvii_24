@@ -30,7 +30,9 @@ class DBRepositoryImpl extends DBRepository {
       long INTEGER NOT NULL,
       entrance TEXT, 
       comment TEXT,
-      locality TEXT
+      locality TEXT,
+      province TEXT
+
     );
   ''')
       ..execute('''
@@ -48,7 +50,7 @@ class DBRepositoryImpl extends DBRepository {
     CREATE TABLE ${DBConstants.cardsTable} (
       id INTEGER NOT NULL PRIMARY KEY,
       number TEXT NOT NULL,
-      monthAddYear TEXT NOT NULL,
+      monthAndYear TEXT NOT NULL,
       cvvOrCvc TEXT NOT NULL,
       email TEXT NULL
       );
@@ -56,8 +58,9 @@ class DBRepositoryImpl extends DBRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> query(String table) async =>
-      _db!.query(table);
+  Future<List<Map<String, dynamic>>> query(String table) async {
+    return( await _db?.query(table) ?? []);
+  }
 
   @override
   Future<int> insert(String table, Map<String, dynamic> model) async =>

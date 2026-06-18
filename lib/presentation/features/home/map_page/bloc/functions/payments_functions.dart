@@ -1,6 +1,12 @@
+import 'dart:async';
+
 import 'package:sober_driver_analog/data/auth/repository/repository.dart';
+import 'package:sober_driver_analog/data/db/repository/repository.dart';
 import 'package:sober_driver_analog/data/payment/repository/repository.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/get_user_id.dart';
+import 'package:sober_driver_analog/domain/db/constants.dart';
+import 'package:sober_driver_analog/domain/db/repository/repository.dart';
+import 'package:sober_driver_analog/domain/db/usecases/db_query.dart';
 import 'package:sober_driver_analog/domain/firebase/penalties/model/penalty.dart';
 import 'package:sober_driver_analog/domain/firebase/penalties/repository.dart';
 import 'package:sober_driver_analog/domain/firebase/penalties/usecases/add_penalty.dart';
@@ -43,6 +49,12 @@ class PaymentsFunctions {
   List<Penalty> _penalties = [];
   List<Penalty> get penalties => _penalties;
 
+  /*Future addCard (String number, String cvc, String date) async {
+    final card = UserCard(number: number, monthAndYear: date, cvvOrCvc: cvc);
+    DBRepositoryImpl().insert(DBConstants.cardsTable, card.toJson());
+    _cards.add(card);
+  }*/
+
   Future init () async {
     activePromo = await CheckPromoForActivity(_paymentRepo).call();
     bonusesBalance = await GetBonusesBalance(_paymentRepo).call();
@@ -56,8 +68,9 @@ class PaymentsFunctions {
   }
 
   Future addCard(UserCard card) async {
-    await AddCard(_paymentRepo).call(card);
     _cards.add(card);
+    methodsList = GetCurrentPaymentModels(_paymentRepo).call(true, cards: _cards);
+    await AddCard(_paymentRepo).call(card);
   }
 
   Future paymentOfThePenalty ({Penalty? penalty, UserCard? card}) async {

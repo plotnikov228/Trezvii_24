@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/map_page/bloc/state/state.dart';
@@ -37,12 +38,28 @@ class _AddCardWidgetState extends State<AddCardWidget> {
           children: [
             Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 100),
-                  child: Text(
-                    'Добавить карту',
-                    style: AppStyle.black17,
-                  ),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10, top: 90),
+                        child: IconButton(onPressed: (){
+                          widget.bloc.add(GoMapEvent(SelectPaymentMethodMapState()));
+
+                        }, icon: Icon(Icons.arrow_back_ios, color: Colors.black,)),
+                      ),
+                    ),
+                    Center(
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 100),
+                        child: Text(
+                          'Добавить карту',
+                          style: AppStyle.black17,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                     padding: const EdgeInsets.only(top: 48, left: 20, right: 20),

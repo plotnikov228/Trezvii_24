@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/settings/bloc/bloc.dart';
 import 'package:sober_driver_analog/presentation/features/home/menu/settings/bloc/event.dart';
 import 'package:sober_driver_analog/presentation/widgets/app_switch.dart';
 import 'package:sober_driver_analog/presentation/widgets/composite_text_widget.dart';
 
+import '../../../../routes/routes.dart';
 import '../../../../utils/app_style_util.dart';
 import '../../../../utils/size_util.dart';
 import '../../../../widgets/app_pop_button.dart';
@@ -69,6 +73,14 @@ class SettingsPage extends StatelessWidget {
                           }),
                         ],
                       ),
+                      CompositeTextWidget(title: 'Выйти',
+                        onTap: () {
+                          FirebaseAuth.instance.signOut();
+                          context.pushReplacementNamed(AppRoutes.auth);
+
+                        },
+                        subTitle: '', width: size.width - 80,),
+
                     ],
                   ),
                 )

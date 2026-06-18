@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/material.dart';
 import 'package:sober_driver_analog/data/firebase/auth/models/driver.dart';
 import 'package:sober_driver_analog/data/firebase/auth/repository.dart';
 import 'package:sober_driver_analog/data/firebase/storage/repository.dart';
@@ -33,6 +34,8 @@ class AuthRepositoryImpl extends AuthRepository {
     try {
       final userAlreadyExist = await UserIsExist(_repo).call(phonePrefix + number);
       if (!userAlreadyExist) {
+        debugPrint('Аккаунт ещё не создан, перейдите в окно регистрации');
+
         onError(AuthResult(successful: false, exception: 'Аккаунт ещё не создан, перейдите в окно регистрации'));
       } else {
         await _authInstance.verifyPhoneNumber(
@@ -50,9 +53,15 @@ class AuthRepositoryImpl extends AuthRepository {
         );
       }
     } on auth.FirebaseAuthException catch (_) {
+      debugPrint(_.getExceptionText());
       return AuthResult(successful: false, exception: _.getExceptionText());
     }
 
+    catch (_) {
+      debugPrint(_.toString());
+
+      return AuthResult(successful: false, exception: 'Ошибка авторизации');
+    }
   }
 
   @override
@@ -75,6 +84,7 @@ class AuthRepositoryImpl extends AuthRepository {
         codeAutoRetrievalTimeout: (String verificationId) {},
       );
     } on auth.FirebaseAuthException catch (_) {
+      debugPrint(_.getExceptionText());
       return AuthResult(successful: false, exception: _.getExceptionText());
     }
   }
@@ -139,21 +149,23 @@ class AuthRepositoryImpl extends AuthRepository {
                     'Пользователь с таким номером телефона уже существует');
           }
         }
+        try {
+          if (userModel != null) {
+            await AddUserToExisted(_repo).call(userModel);
 
-        if (userModel != null) {
-          final db = await InitDB(_dbRepo).call();
-          final inserUsecase = DBInsert(_dbRepo);
-          final removeUsecase = DBDelete(_dbRepo);
-          final listUsers = await DBQuery(_dbRepo).call('user');
-          if (listUsers.isNotEmpty) {
-            for (var item in listUsers) {
-              await removeUsecase.call(
-                  'user', (item as UserModel).toJson(), 'userId');
+            final db = await InitDB(_dbRepo).call();
+            final inserUsecase = DBInsert(_dbRepo);
+            final removeUsecase = DBDelete(_dbRepo);
+            final listUsers = await DBQuery(_dbRepo).call('user');
+            if (listUsers.isNotEmpty) {
+              for (var item in listUsers) {
+                await removeUsecase.call(
+                    'user', (item as UserModel).toJson(), 'userId');
+              }
             }
+            await inserUsecase.call('user', userModel.toDB());
           }
-          await AddUserToExisted(_repo).call(userModel);
-          await inserUsecase.call('user', userModel.toDB());
-        }
+        } catch (_) {}
       }
       if (userModel == null) {
         try {
@@ -169,7 +181,7 @@ class AuthRepositoryImpl extends AuthRepository {
           successful: false,
           exception:
               'Проверьте правильность введённого вами кода ил попробуйте позднее');
-    } catch (_) {
+    }/* catch (_) {
       try {
         _authInstance.signOut();
       } catch (_) {
@@ -180,7 +192,7 @@ class AuthRepositoryImpl extends AuthRepository {
           successful: false,
           exception:
               'Возникла непредвиденная ошибка, проверьте подключение к интернету или попробуйте позднее');
-    }
+    }*/
   }
 
   @override

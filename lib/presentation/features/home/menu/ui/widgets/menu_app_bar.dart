@@ -6,7 +6,6 @@ import '../../../../../utils/size_util.dart';
 
 Widget menuAppBar ({required Widget child, EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 25)}) {
   return Container(
-    height: 162,
     width: size.width,
     decoration: BoxDecoration(
         gradient: LinearGradient(colors: [

@@ -65,7 +65,7 @@ class Driver extends UserModel {
     'name': name,
     'registrationDate': registrationDate.toIso8601String(),
     'bonuses': null,
-    'ratings': ratings.join(',')
+    'ratings': (ratings ?? []).join(',')
   };
 
   factory Driver.fromDB(Map<String, dynamic> json) {
@@ -79,12 +79,12 @@ class Driver extends UserModel {
   }
 
   String getRating () {
-    if (ratings.isEmpty) {
+    if ((ratings ?? []).isEmpty) {
       return '0.0';
     }
     else {
-      double total = ratings.reduce((a, b) => a + b);
-      double average = total / ratings.length;
+      double total = (ratings ?? []).reduce((a, b) => a + b);
+      double average = total / (ratings ?? []).length;
       return average.toString().length > 3 ? average.toString().substring(0, 3) : average.toString();
     }
   }

@@ -10,11 +10,14 @@ import 'package:sober_driver_analog/domain/auth/usecases/sign_in.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/sign_up.dart';
 import 'package:sober_driver_analog/domain/auth/usecases/sign_up_for_driver.dart';
 import 'package:sober_driver_analog/domain/firebase/auth/models/personal_data_of_the_driver.dart';
+import 'package:sober_driver_analog/domain/firebase/auth/models/user_model.dart';
 import 'package:sober_driver_analog/domain/firebase/notification/usecases/add_user_to_newsletter.dart';
 import 'package:sober_driver_analog/domain/firebase/notification/usecases/add_user_to_pushes.dart';
 import 'package:sober_driver_analog/domain/map/models/app_lat_long.dart';
 import 'package:sober_driver_analog/presentation/routes/routes.dart';
 import '../../../../data/firebase/auth/models/driver.dart';
+import '../../../../data/firebase/auth/repository.dart';
+import '../../../../data/firebase/firestore/repository.dart';
 import '../../../../domain/auth/models/auth_type.dart';
 import '../../../../domain/auth/usecases/verify_code.dart';
 import '../../../../domain/firebase/auth/models/car.dart';
@@ -191,16 +194,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         add(ChangeAuthStateEvent(SignUpState(checkBoxIsAccepted: event.updatedCheckBoxValue)));
       }
       else if (!event.textFieldHasError) {
-        SignUp(_repo).call(signUpNumber.text, signUpEmail.text, (result) {
+        await SignUp(_repo).call(signUpNumber.text, signUpEmail.text, (result) {
+          debugPrint(result.exception);
+
           add(ChangeAuthStateEvent(
               SignUpState(error: result.exception!, status: AuthStatus.Error)));
+          return;
+
         }, (result) {
+          debugPrint('all ok');
+
           _authResult = result;
           _authType = AuthType.signUp;
           add(ChangeAuthStateEvent(SignUpState(status: AuthStatus.Success)));
           add(ChangeAuthStateEvent(InputCodeState()));
         });
+      } else {
+        add(ChangeAuthStateEvent(SignUpState(status: AuthStatus.Error, error: 'Заполните данные корректно')));
+
+      return;
       }
+      add(ChangeAuthStateEvent(SignUpState(status: AuthStatus.Success)));
+
     });
 
     on<SignInEvent>((event, emit) async {

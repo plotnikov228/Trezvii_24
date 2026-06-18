@@ -110,6 +110,7 @@ class FirebaseAuthRepositoryImpl extends FirebaseAuthRepository {
 
   @override
   Future<bool> userIsExist(String number) async {
+
     final doc = _instance.collection(_existedUsersCollection).doc(number);
     return (await doc.get()).exists;
   }

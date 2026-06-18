@@ -10,7 +10,7 @@ abstract class UserModel {
   final String email;
   final String name;
   final DateTime registrationDate;
-  final List<double> ratings;
+  final List<double>? ratings;
   final bool blocked;
 
   UserModel(

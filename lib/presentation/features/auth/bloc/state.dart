@@ -10,6 +10,12 @@ abstract class AuthState {
   final String? error;
   final AuthStatus? status;
   AuthState( {this.status,this.error});
+
+  @override
+  bool operator ==(Object other) {
+    // TODO: implement ==
+    return false;
+  }
 }
 
 class SignInState extends AuthState {

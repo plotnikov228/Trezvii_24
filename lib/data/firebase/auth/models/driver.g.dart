@@ -12,8 +12,8 @@ Driver _$DriverFromJson(Map<String, dynamic> json) => Driver(
           ? null
           : AppLatLong.fromJson(
               json['currentPosition'] as Map<String, dynamic>),
-      ratings: (json['ratings'] as List<dynamic>)
-          .map((e) => (e as num).toDouble())
+      ratings: (json['ratings'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
           .toList(),
       userId: json['userId'] as String,
       blocked: json['blocked'] as bool? ?? false,

@@ -408,6 +408,21 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       }
     });
 
+    final _card = TextEditingController();
+    final _cvc = TextEditingController();
+    final _date = TextEditingController();
+
+    on<AddCardMapEvent>((event, emit) {
+      emit(CardMapState(card: _card, cvc: _cvc, date: _date));
+    });
+    on<AddNewCardMapEvent>((event, emit) async {
+      await _mapBlocFunctions?.paymentsFunctions.addCard(UserCard(number: _card.text, monthAndYear: _date.text, cvvOrCvc: _cvc.text));
+      _card.text = '';
+      _cvc.text = '';
+      _date.text = '';
+      add(GoMapEvent(SelectPaymentMethodMapState()));
+    });
+
     on<UseBonusesMapEvent>((event, emit) {
       try {
         ActivateBonuses(_paymentRepo).call().then((value) => emit(
